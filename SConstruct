@@ -11,7 +11,6 @@ if sys.platform == 'win32':
     cpp17 = Environment(
         CCFLAGS=['-std=c++17', '-Wall', '-O2', '-g'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi')
-    cpp17[VULKAN_DIR] = vulkan_sdk_dir
 
     cpp17.Append(LIBS = [
         "vulkan-1",
@@ -24,11 +23,11 @@ if sys.platform == 'win32':
 
     cpp17.Append(LIBPATH = [
 		"third_party/glfw/lib-vc2019",
-		os.path.join(cpp17[VULKAN_DIR], "Lib")
+		os.path.join(vulkan_sdk_dir, "Lib")
 	])
 
     cpp17.Append(CPPPATH = [
-		os.path.join(cpp17[VULKAN_DIR], "Include")
+		os.path.join(vulkan_sdk_dir, "Include")
 	])
 
 
@@ -65,5 +64,8 @@ add_sources(sources, 'engine/vulkan_renderer')
 add_sources(sources, 'engine')
 
 #------------------------------------------------------------------------------
-program = cpp17.Program(target=(output_folder + project_name), source=sources,LIBPATH=['.'])
+if sys.platform == 'win32':
+    program = cpp17.Program(target=(output_folder + project_name), source=sources)
+else:
+    program = cpp17.Program(target=(output_folder + project_name), source=sources,LIBPATH=['.'])
 Default(program)
