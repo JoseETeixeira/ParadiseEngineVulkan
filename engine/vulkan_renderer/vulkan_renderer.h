@@ -24,6 +24,7 @@
 #include <cstdlib>
 #include <vector>
 #include <cstring>
+#include <map>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;

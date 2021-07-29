@@ -197,22 +197,52 @@ bool isDeviceSuitable(VkPhysicalDevice device) {
     return true;
 }
 
+int rateDeviceSuitability(VkPhysicalDevice device) {
+
+    VkPhysicalDeviceProperties deviceProperties;
+    VkPhysicalDeviceFeatures deviceFeatures;
+    vkGetPhysicalDeviceProperties(device, &deviceProperties);
+    vkGetPhysicalDeviceFeatures(device, &deviceFeatures);
+
+    int score = 0;
+
+    // Discrete GPUs have a significant performance advantage
+    if (deviceProperties.deviceType == VK_PHYSICAL_DEVICE_TYPE_DISCRETE_GPU) {
+        score += 1000;
+    }
+
+    // Maximum possible size of textures affects graphics quality
+    score += deviceProperties.limits.maxImageDimension2D;
+
+    // Application can't function without geometry shaders
+    if (!deviceFeatures.geometryShader) {
+        return 0;
+    }
+
+    return score;
+}
+
 void VulkanRenderer::pickPhysicalDevice(){
     uint32_t deviceCount = 0;
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, nullptr);
     if (deviceCount == 0) {
         throw std::runtime_error("Failed to find GPUs with Vulkan support!");
     }
+
     std::vector<VkPhysicalDevice> devices(deviceCount);
     vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices.data());
+    // Use an ordered map to automatically sort candidates by increasing score
+    std::multimap<int, VkPhysicalDevice> candidates;
+
     for (const auto& device : devices) {
-        if (isDeviceSuitable(device)) {
-            g_PhysicalDevice = device;
-            break;
-        }
+        int score = rateDeviceSuitability(device);
+        candidates.insert(std::make_pair(score, device));
     }
 
-    if (g_PhysicalDevice == VK_NULL_HANDLE) {
+    // Check if the best candidate is suitable at all
+    if (candidates.rbegin()->first > 0) {
+        g_PhysicalDevice = candidates.rbegin()->second;
+    } else {
         throw std::runtime_error("Failed to find a suitable GPU!");
     }
 }
