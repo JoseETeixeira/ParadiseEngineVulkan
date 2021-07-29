@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="16.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <CustomBuild Include="C:\Users\Eduardo\OneDrive\Ambiente de Trabalho\ParadiseEngine\Paradise_Engine_Vulkan\third_party\glm\glm\CMakeFiles\e7cd0e4ecc2a9e0b2d83db47f21cb14e\generate.stamp.rule">
+      <Filter>CMake Rules</Filter>
+    </CustomBuild>
+  </ItemGroup>
+  <ItemGroup>
+    <Filter Include="CMake Rules">
+      <UniqueIdentifier>{D73EE5C0-C33B-35E8-8FA3-500DFE0B17CE}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+</Project>
