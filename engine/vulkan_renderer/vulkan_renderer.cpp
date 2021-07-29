@@ -10,6 +10,8 @@
 #include "vulkan_renderer.h"
 
 
+
+
 void VulkanRenderer::initWindow(){
     glfwInit();
     //Because GLFW was originally designed to create an OpenGL context, we need to tell it to not create an OpenGL context with a subsequent call:
@@ -24,6 +26,7 @@ void VulkanRenderer::initWindow(){
 void VulkanRenderer::initVulkan(){
    createInstance();
    setupDebugMessenger();
+   pickPhysicalDevice();
 
 }
 
@@ -94,7 +97,7 @@ void VulkanRenderer::createInstance(){
 
     //We've now specified everything Vulkan needs to create an instance and we can finally issue the vkCreateInstance call:
 
-    if (vkCreateInstance(&createInfo, nullptr, &g_instance) != VK_SUCCESS) {
+    if (vkCreateInstance(&createInfo, nullptr, &g_Instance) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create Vulkan instance!");
     }
 
@@ -177,7 +180,7 @@ void VulkanRenderer::setupDebugMessenger(){
     VkDebugUtilsMessengerCreateInfoEXT createInfo;
     populateDebugMessengerCreateInfo(createInfo);
 
-    if (CreateDebugUtilsMessengerEXT(g_instance, &createInfo, nullptr, &g_debugMessenger) != VK_SUCCESS) {
+    if (CreateDebugUtilsMessengerEXT(g_Instance, &createInfo, nullptr, &g_debugMessenger) != VK_SUCCESS) {
         throw std::runtime_error("Failed to set up debug messenger!");
     }
 }
@@ -190,13 +193,38 @@ void VulkanRenderer::DestroyDebugUtilsMessengerEXT(VkInstance instance, VkDebugU
 }
 
 
+bool isDeviceSuitable(VkPhysicalDevice device) {
+    return true;
+}
+
+void VulkanRenderer::pickPhysicalDevice(){
+    uint32_t deviceCount = 0;
+    vkEnumeratePhysicalDevices(g_Instance, &deviceCount, nullptr);
+    if (deviceCount == 0) {
+        throw std::runtime_error("Failed to find GPUs with Vulkan support!");
+    }
+    std::vector<VkPhysicalDevice> devices(deviceCount);
+    vkEnumeratePhysicalDevices(g_Instance, &deviceCount, devices.data());
+    for (const auto& device : devices) {
+        if (isDeviceSuitable(device)) {
+            g_PhysicalDevice = device;
+            break;
+        }
+    }
+
+    if (g_PhysicalDevice == VK_NULL_HANDLE) {
+        throw std::runtime_error("Failed to find a suitable GPU!");
+    }
+}
+
+
 
 void VulkanRenderer::cleanup(){
     if (enableValidationLayers) {
-        DestroyDebugUtilsMessengerEXT(g_instance, g_debugMessenger, nullptr);
+        DestroyDebugUtilsMessengerEXT(g_Instance, g_debugMessenger, nullptr);
     }
 
-    vkDestroyInstance(g_instance, nullptr);
+    vkDestroyInstance(g_Instance, nullptr);
 
     glfwDestroyWindow(window);
 
