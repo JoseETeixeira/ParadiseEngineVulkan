@@ -25,6 +25,7 @@
 #include <vector>
 #include <cstring>
 #include <map>
+#include <optional>
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -38,6 +39,10 @@ const std::vector<const char*> validationLayers = {
 #else
     const bool enableValidationLayers = true;
 #endif
+
+struct QueueFamilyIndices {
+    uint32_t graphicsFamily;
+};
 
 
 
@@ -71,10 +76,12 @@ private:
     };
     void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
     void pickPhysicalDevice();
-
+    void createLogicalDevice();
+    QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
 
     GLFWwindow* window;
-    VkInstance g_Instance;
-    VkDebugUtilsMessengerEXT g_debugMessenger;
+    VkInstance g_Instance  = VK_NULL_HANDLE;
+    VkDebugUtilsMessengerEXT g_debugMessenger  = VK_NULL_HANDLE;
     VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
+    VkDevice g_Device  = VK_NULL_HANDLE ;
 };
