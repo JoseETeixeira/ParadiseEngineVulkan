@@ -1,5 +1,5 @@
 #include "vulkan_renderer.h"
-#include <vector>
+
 
 void VulkanRenderer::initWindow(){
     glfwInit();
@@ -18,6 +18,9 @@ void VulkanRenderer::initVulkan(){
 }
 
 void VulkanRenderer::createInstance(){
+    if (enableValidationLayers && !checkValidationLayerSupport()) {
+        throw std::runtime_error("validation layers requested, but not available!");
+    }
 
     //Now, to create an instance we'll first have to fill in a struct with some information about our application. This data is technically optional, but it may provide some useful information to the driver in order to optimize our specific application (e.g. because it uses a well-known graphics engine with certain special behavior). This struct is called VkApplicationInfo:
     VkApplicationInfo appInfo{};
@@ -62,7 +65,12 @@ void VulkanRenderer::createInstance(){
 
     //The last two members of the struct determine the global validation layers to enable. We'll talk about these more in-depth in the next chapter, so just leave these empty for now.
 
-    createInfo.enabledLayerCount = 0;
+    if (enableValidationLayers) {
+        createInfo.enabledLayerCount = static_cast<uint32_t>(validationLayers.size());
+        createInfo.ppEnabledLayerNames = validationLayers.data();
+    } else {
+        createInfo.enabledLayerCount = 0;
+    }
 
     //We've now specified everything Vulkan needs to create an instance and we can finally issue the vkCreateInstance call:
 
@@ -77,6 +85,31 @@ void VulkanRenderer::mainLoop(){
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
     }
+}
+
+bool VulkanRenderer::checkValidationLayerSupport(){
+    uint32_t layerCount;
+    vkEnumerateInstanceLayerProperties(&layerCount, nullptr);
+
+    std::vector<VkLayerProperties> availableLayers(layerCount);
+    vkEnumerateInstanceLayerProperties(&layerCount, availableLayers.data());
+
+    for (const char* layerName : validationLayers) {
+        bool layerFound = false;
+
+        for (const auto& layerProperties : availableLayers) {
+            if (strcmp(layerName, layerProperties.layerName) == 0) {
+                layerFound = true;
+                break;
+            }
+        }
+
+        if (!layerFound) {
+            return false;
+        }
+    }
+
+    return true;
 }
 
 void VulkanRenderer::cleanup(){
