@@ -5,7 +5,7 @@ ParadiseEngine is an open source under development game engine based on Vulkan f
 ## CLONING
 
 ```bash
-git clone --recursive <giturl>
+git clone --recursive https://github.com/JoseETeixeira/ParadiseEngineVulkan.git
 ```
 Delete everything from `third_party/imgui/backends` EXCEPT FOR:
 
