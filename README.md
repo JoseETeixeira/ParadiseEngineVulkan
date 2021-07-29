@@ -52,3 +52,4 @@ scons -Q
 - https://www.youtube.com/watch?v=6NWfznwFnMs&t=20s
 - https://www.youtube.com/watch?v=JpmK0zu4Mts&t=480s
 - https://scons.org/doc/production/PDF/scons-user.pdf
+- https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization
