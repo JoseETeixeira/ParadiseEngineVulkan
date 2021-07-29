@@ -296,6 +296,8 @@ void VulkanRenderer::createLogicalDevice(){
         throw std::runtime_error("Failed to create logical device!");
     }
 
+    vkGetDeviceQueue(g_Device, indices.graphicsFamily, 0, &g_Queue);
+
 }
 
 
