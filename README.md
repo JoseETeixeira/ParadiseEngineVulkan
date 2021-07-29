@@ -1,3 +1,5 @@
+[![Discord](https://img.shields.io/discord/798876142458109952?logo=Discord "Discord")](https://discord.gg/Xfv3xrxT)
+
 ## Paradise Engine
 
 ParadiseEngine is an open source under development game engine based on Vulkan for both Windows and Linux
