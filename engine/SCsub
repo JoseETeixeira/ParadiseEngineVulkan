@@ -1,0 +1,44 @@
+#!/usr/bin/env python
+
+Import("cpp17")
+import os
+import sys;
+
+if sys.platform == 'win32':
+    cpp17.Append(LIBS = [
+        "vulkan-1",
+        "glfw3dll",
+        "imgui",
+        "imgui_impl_vulkan"
+    ])
+    cpp17.Append(CPPPATH=['../third_party/glfw/include','../third_party/glm','../third_party/imgui','../third_party/imgui/backends','.'])
+    cpp17.Append(CPPDEFINES = [
+        "GLFW_DLL"
+    ])
+
+    cpp17.Append(LIBPATH = [
+		"../third_party/glfw/lib-vc2019",
+		os.path.join(cpp17[VULKAN_DIR], "Lib")
+	])
+
+    cpp17.Append(CPPPATH = [
+		os.path.join(cpp17[VULKAN_DIR], "Include")
+	])
+
+else:
+    cpp17.Append(LIBS = [
+        "vulkan",
+        "glfw",
+        "imgui",
+        "imgui_impl_vulkan"
+    ])
+
+    cpp17.Append(CPPPATH=['../third_party/glfw/include','../third_party/glm','../third_party/imgui','../third_party/imgui/backends','.'])
+
+cpp17.Library('imgui',Glob('../third_party/imgui/*.cpp'))
+cpp17.Library('imgui_impl_vulkan',Glob('../third_party/imgui/backends/*.cpp'))
+
+modules_sources = ["engine.cpp"]
+obj = cpp17.Object(modules_sources)
+Return('obj')
+
