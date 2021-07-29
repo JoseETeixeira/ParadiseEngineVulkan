@@ -70,6 +70,9 @@ private:
         }
     }   
 
+    void populateDebugMessengerCreateInfo(VkDebugUtilsMessengerCreateInfoEXT& createInfo);
+    
+
 
     GLFWwindow* window;
     VkInstance g_instance;
