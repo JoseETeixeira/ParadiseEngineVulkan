@@ -45,7 +45,6 @@ struct QueueFamilyIndices {
 };
 
 
-
 class VulkanRenderer {
 public:
     void run() {
@@ -78,6 +77,7 @@ private:
     void pickPhysicalDevice();
     void createLogicalDevice();
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
+    void createSurface();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -85,4 +85,5 @@ private:
     VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
     VkDevice g_Device  = VK_NULL_HANDLE ;
     VkQueue g_Queue = VK_NULL_HANDLE;
+    VkSurfaceKHR surface;
 };
