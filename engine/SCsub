@@ -38,7 +38,7 @@ else:
 cpp17.Library('imgui',Glob('../third_party/imgui/*.cpp'))
 cpp17.Library('imgui_impl_vulkan',Glob('../third_party/imgui/backends/*.cpp'))
 
-modules_sources = ["engine.cpp"]
+modules_sources = ["core/vulkan_renderer.cpp"]
 obj = cpp17.Object(modules_sources)
 Return('obj')
 
