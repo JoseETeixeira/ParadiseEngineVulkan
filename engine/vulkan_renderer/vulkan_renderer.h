@@ -45,6 +45,18 @@ struct QueueFamilyIndices {
 };
 
 
+struct SwapChainSupportDetails {
+    /*
+    Basic surface capabilities (min/max number of images in swap chain, min/max width and height of images)
+    Surface formats (pixel format, color space)
+    Available presentation modes
+    */
+    VkSurfaceCapabilitiesKHR capabilities;
+    std::vector<VkSurfaceFormatKHR> formats;
+    std::vector<VkPresentModeKHR> presentModes;
+};
+
+
 class VulkanRenderer {
 public:
     void run() {
@@ -78,6 +90,7 @@ private:
     void createLogicalDevice();
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void createSurface();
+    SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;

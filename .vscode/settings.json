@@ -55,6 +55,7 @@
         "xstring": "cpp",
         "xtr1common": "cpp",
         "xutility": "cpp",
-        "optional": "cpp"
+        "optional": "cpp",
+        "xtree": "cpp"
     }
 }
