@@ -110,6 +110,7 @@ private:
     void createSwapChain();
     bool isDeviceSuitable(VkPhysicalDevice device);
     void createImageViews();
+    void createRenderPass();
     void createGraphicsPipeline();
     static std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
@@ -127,5 +128,7 @@ private:
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
     std::vector<VkImageView> swapChainImageViews;
+    VkRenderPass renderPass;
     VkPipelineLayout pipelineLayout;
+    VkPipeline g_GraphicsPipeline;
 };
