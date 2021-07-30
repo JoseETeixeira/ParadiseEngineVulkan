@@ -9,7 +9,7 @@ vulkan_sdk_dir = "C:/VulkanSDK/1.2.182.0"
 
 if sys.platform == 'win32':
     cpp17 = Environment(
-        CCFLAGS=['-std=c++17', '-Wall', '-O2', '-g'],
+        CCFLAGS=['/std:c++17', '-Wall', '-O2', '-g'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi')
 
     cpp17.Append(LIBS = [
