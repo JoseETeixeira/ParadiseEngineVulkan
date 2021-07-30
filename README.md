@@ -77,3 +77,7 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 
 ## TODO:
 - Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
+
+## DEBUGGING:
+
+- [RenderDoc](https://renderdoc.org/)
