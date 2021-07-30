@@ -115,6 +115,8 @@ private:
     static std::vector<char> readFile(const std::string& filename);
     VkShaderModule createShaderModule(const std::vector<char>& code);
     void createFramebuffers();
+    void createCommandPool();
+    void createCommandBuffers();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -133,4 +135,6 @@ private:
     VkPipelineLayout pipelineLayout;
     VkPipeline g_GraphicsPipeline;
     std::vector<VkFramebuffer> swapChainFramebuffers;
+    VkCommandPool commandPool;
+    std::vector<VkCommandBuffer> commandBuffers;
 };

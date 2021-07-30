@@ -31,9 +31,92 @@ void VulkanRenderer::initVulkan(){
    createLogicalDevice();
    createSwapChain();
    createImageViews();
+
    createRenderPass();
    createGraphicsPipeline();
    createFramebuffers();
+   createCommandPool();
+   createCommandBuffers();
+}
+
+void VulkanRenderer::createCommandBuffers(){
+    commandBuffers.resize(swapChainFramebuffers.size());
+    VkCommandBufferAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_ALLOCATE_INFO;
+    allocInfo.commandPool = commandPool;
+    allocInfo.level = VK_COMMAND_BUFFER_LEVEL_PRIMARY;
+    allocInfo.commandBufferCount = (uint32_t) commandBuffers.size();
+
+    if (vkAllocateCommandBuffers(g_Device, &allocInfo, commandBuffers.data()) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to allocate command buffers!");
+    }
+
+    /*Starting command buffer recording
+    We begin recording a command buffer by calling vkBeginCommandBuffer with a small VkCommandBufferBeginInfo structure as argument that specifies some details about the usage of this specific command buffer.
+    
+    The flags parameter specifies how we're going to use the command buffer. The following values are available:
+
+        VK_COMMAND_BUFFER_USAGE_ONE_TIME_SUBMIT_BIT: The command buffer will be rerecorded right after executing it once.
+        VK_COMMAND_BUFFER_USAGE_RENDER_PASS_CONTINUE_BIT: This is a secondary command buffer that will be entirely within a single render pass.
+        VK_COMMAND_BUFFER_USAGE_SIMULTANEOUS_USE_BIT: The command buffer can be resubmitted while it is also already pending execution.
+    */
+
+    for (size_t i = 0; i < commandBuffers.size(); i++) {
+        VkCommandBufferBeginInfo beginInfo{};
+        beginInfo.sType = VK_STRUCTURE_TYPE_COMMAND_BUFFER_BEGIN_INFO;
+        beginInfo.flags = 0; // Optional
+        beginInfo.pInheritanceInfo = nullptr; // Optional
+
+        if (vkBeginCommandBuffer(commandBuffers[i], &beginInfo) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to begin recording command buffer!");
+        }
+        VkRenderPassBeginInfo renderPassInfo{};
+        renderPassInfo.sType = VK_STRUCTURE_TYPE_RENDER_PASS_BEGIN_INFO;
+        renderPassInfo.renderPass = renderPass;
+        renderPassInfo.framebuffer = swapChainFramebuffers[i];
+        renderPassInfo.renderArea.offset = {0, 0};
+        renderPassInfo.renderArea.extent = swapChainExtent;
+        VkClearValue clearColor = {{{0.0f, 0.0f, 0.0f, 1.0f}}};
+        renderPassInfo.clearValueCount = 1;
+        renderPassInfo.pClearValues = &clearColor;
+
+        vkCmdBeginRenderPass(commandBuffers[i], &renderPassInfo, VK_SUBPASS_CONTENTS_INLINE);
+
+        vkCmdBindPipeline(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, g_GraphicsPipeline);
+
+        /*The actual vkCmdDraw function is a bit anticlimactic, but it's so simple because of all the information we specified in advance. It has the following parameters, aside from the command buffer:
+
+        vertexCount: Even though we don't have a vertex buffer, we technically still have 3 vertices to draw.
+        instanceCount: Used for instanced rendering, use 1 if you're not doing that.
+        firstVertex: Used as an offset into the vertex buffer, defines the lowest value of gl_VertexIndex.
+        firstInstance: Used as an offset for instanced rendering, defines the lowest value of gl_InstanceIndex.*/
+        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+
+        vkCmdEndRenderPass(commandBuffers[i]);
+
+        if (vkEndCommandBuffer(commandBuffers[i]) != VK_SUCCESS) {
+            throw std::runtime_error("Failed to record command buffer!");
+        }
+
+
+    }
+
+    
+
+
+}
+
+void VulkanRenderer::createCommandPool(){
+    QueueFamilyIndices queueFamilyIndices = findQueueFamilies(g_PhysicalDevice);
+
+    VkCommandPoolCreateInfo poolInfo{};
+    poolInfo.sType = VK_STRUCTURE_TYPE_COMMAND_POOL_CREATE_INFO;
+    poolInfo.queueFamilyIndex = queueFamilyIndices.graphicsFamily.value();
+    poolInfo.flags = 0; // Optional
+
+    if (vkCreateCommandPool(g_Device, &poolInfo, nullptr, &commandPool) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create command pool!");
+    }
 }
 
 void VulkanRenderer::createFramebuffers(){
@@ -751,6 +834,9 @@ void VulkanRenderer::createSwapChain(){
 }
 
 void VulkanRenderer::cleanup(){
+
+    vkDestroyCommandPool(g_Device, commandPool, nullptr);
+
     for (auto framebuffer : swapChainFramebuffers) {
         vkDestroyFramebuffer(g_Device, framebuffer, nullptr);
     }
