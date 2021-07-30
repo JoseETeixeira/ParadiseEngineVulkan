@@ -25,13 +25,20 @@
 #include <vector>
 #include <cstring>
 #include <map>
+#include <set>
 #include <optional>
+#include <cstdint> // Necessary for UINT32_MAX
+#include <algorithm> // Necessary for std::min/std::max
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
+};
+
+const std::vector<const char*> deviceExtensions = {
+    VK_KHR_SWAPCHAIN_EXTENSION_NAME
 };
 
 #ifdef NDEBUG
@@ -41,7 +48,12 @@ const std::vector<const char*> validationLayers = {
 #endif
 
 struct QueueFamilyIndices {
-    uint32_t graphicsFamily;
+    std::optional<uint32_t> graphicsFamily = 0;
+    std::optional<uint32_t> presentFamily = 0;
+
+    bool isComplete() {
+        return graphicsFamily.has_value() && presentFamily.has_value();
+    }
 };
 
 
@@ -91,6 +103,11 @@ private:
     QueueFamilyIndices findQueueFamilies(VkPhysicalDevice device);
     void createSurface();
     SwapChainSupportDetails querySwapChainSupport(VkPhysicalDevice device);
+    VkSurfaceFormatKHR chooseSwapSurfaceFormat(const std::vector<VkSurfaceFormatKHR>& availableFormats);
+    VkPresentModeKHR chooseSwapPresentMode(const std::vector<VkPresentModeKHR>& availablePresentModes);
+    VkExtent2D chooseSwapExtent(const VkSurfaceCapabilitiesKHR& capabilities);
+    void createSwapChain();
+    bool isDeviceSuitable(VkPhysicalDevice device);
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -98,5 +115,10 @@ private:
     VkPhysicalDevice g_PhysicalDevice = VK_NULL_HANDLE;
     VkDevice g_Device  = VK_NULL_HANDLE ;
     VkQueue g_Queue = VK_NULL_HANDLE;
+    VkQueue g_PresentQueue = VK_NULL_HANDLE;
     VkSurfaceKHR surface;
+    VkSwapchainKHR g_SwapChain = VK_NULL_HANDLE;
+    std::vector<VkImage> swapChainImages;
+    VkFormat swapChainImageFormat;
+    VkExtent2D swapChainExtent;
 };
