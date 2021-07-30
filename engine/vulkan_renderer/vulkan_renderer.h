@@ -31,6 +31,7 @@
 #include <algorithm> // Necessary for std::min/std::max
 #include <fstream>
 #define GLM_FORCE_RADIANS
+#define GLM_FORCE_DEFAULT_ALIGNED_GENTYPES
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 
@@ -116,9 +117,9 @@ const std::vector<uint16_t> indices = {
 };
 
 struct UniformBufferObject {
-    glm::mat4 model;
-    glm::mat4 view;
-    glm::mat4 proj;
+    alignas(16) glm::mat4 model;
+    alignas(16) glm::mat4 view;
+    alignas(16) glm::mat4 proj;
 };
 
 class VulkanRenderer {
@@ -181,7 +182,8 @@ private:
     void createDescriptorSetLayout();
     void createUniformBuffers();
     void updateUniformBuffer(uint32_t currentImage);
-
+    void createDescriptorPool();
+    void createDescriptorSets();
 
 
     GLFWwindow* window;
@@ -216,6 +218,8 @@ private:
     VkDeviceMemory g_IndexBufferMemory;
     std::vector<VkBuffer> g_UniformBuffers;
     std::vector<VkDeviceMemory> g_UniformBuffersMemory;
+    VkDescriptorPool g_DescriptorPool;
+    std::vector<VkDescriptorSet> g_DescriptorSets;
 
     
 };
