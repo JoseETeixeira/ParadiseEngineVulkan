@@ -40,6 +40,37 @@ void VulkanRenderer::initVulkan(){
    createSyncObjects();
 }
 
+void VulkanRenderer::recreateSwapChain(){
+    vkDeviceWaitIdle(g_Device);
+
+    cleanupSwapChain();
+
+    createSwapChain();
+    createImageViews();
+    createRenderPass();
+    createGraphicsPipeline();
+    createFramebuffers();
+    createCommandBuffers();
+}
+
+void VulkanRenderer::cleanupSwapChain(){
+    for (size_t i = 0; i < swapChainFramebuffers.size(); i++) {
+        vkDestroyFramebuffer(g_Device, swapChainFramebuffers[i], nullptr);
+    }
+
+    vkFreeCommandBuffers(g_Device, commandPool, static_cast<uint32_t>(commandBuffers.size()), commandBuffers.data());
+
+    vkDestroyPipeline(g_Device, g_GraphicsPipeline, nullptr);
+    vkDestroyPipelineLayout(g_Device, pipelineLayout, nullptr);
+    vkDestroyRenderPass(g_Device, renderPass, nullptr);
+
+    for (size_t i = 0; i < swapChainImageViews.size(); i++) {
+        vkDestroyImageView(g_Device, swapChainImageViews[i], nullptr);
+    }
+
+    vkDestroySwapchainKHR(g_Device, g_SwapChain, nullptr);
+}
+
 void VulkanRenderer::createSyncObjects(){
     imageAvailableSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
     renderFinishedSemaphores.resize(MAX_FRAMES_IN_FLIGHT);
@@ -932,32 +963,21 @@ void VulkanRenderer::createSwapChain(){
 
 void VulkanRenderer::cleanup(){
 
+    cleanupSwapChain();
+
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(g_Device, renderFinishedSemaphores[i], nullptr);
         vkDestroySemaphore(g_Device, imageAvailableSemaphores[i], nullptr);
         vkDestroyFence(g_Device, inFlightFences[i], nullptr);
     }
 
-
     vkDestroyCommandPool(g_Device, commandPool, nullptr);
 
-    for (auto framebuffer : swapChainFramebuffers) {
-        vkDestroyFramebuffer(g_Device, framebuffer, nullptr);
-    }
+    vkDestroyDevice(g_Device, nullptr);
+
     if (enableValidationLayers) {
         DestroyDebugUtilsMessengerEXT(g_Instance, g_debugMessenger, nullptr);
     }
-    vkDestroyPipeline(g_Device, g_GraphicsPipeline, nullptr);
-    vkDestroyPipelineLayout(g_Device, pipelineLayout, nullptr);
-    vkDestroyRenderPass(g_Device, renderPass, nullptr);
-
-    for (auto imageView : swapChainImageViews) {
-        vkDestroyImageView(g_Device, imageView, nullptr);
-    }
-
-    vkDestroySwapchainKHR(g_Device, g_SwapChain, nullptr);
-
-    vkDestroyDevice(g_Device, nullptr);
 
     vkDestroySurfaceKHR(g_Instance, surface, nullptr);
     vkDestroyInstance(g_Instance, nullptr);

@@ -120,6 +120,8 @@ private:
     void createCommandBuffers();
     void drawFrame();
     void createSyncObjects();
+    void recreateSwapChain();
+    void cleanupSwapChain();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
