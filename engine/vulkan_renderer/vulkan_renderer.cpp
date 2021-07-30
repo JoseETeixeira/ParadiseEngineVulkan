@@ -57,7 +57,44 @@ void VulkanRenderer::createVertexBuffer() {
     if (vkCreateBuffer(g_Device, &bufferInfo, nullptr, &g_VertexBuffer) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create vertex buffer!");
     }
+    VkMemoryRequirements memRequirements;
+    vkGetBufferMemoryRequirements(g_Device, g_VertexBuffer, &memRequirements);
 
+    VkMemoryAllocateInfo allocInfo{};
+    allocInfo.sType = VK_STRUCTURE_TYPE_MEMORY_ALLOCATE_INFO;
+    allocInfo.allocationSize = memRequirements.size;
+    allocInfo.memoryTypeIndex = findMemoryType(memRequirements.memoryTypeBits, VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT | VK_MEMORY_PROPERTY_HOST_COHERENT_BIT);
+        
+    if (vkAllocateMemory(g_Device, &allocInfo, nullptr, &g_VertexBufferMemory) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to allocate vertex buffer memory!");
+    }
+
+    vkBindBufferMemory(g_Device, g_VertexBuffer, g_VertexBufferMemory, 0);
+
+    void* data;
+    vkMapMemory(g_Device, g_VertexBufferMemory, 0, bufferInfo.size, 0, &data);
+    memcpy(data, vertices.data(), (size_t) bufferInfo.size);
+    vkUnmapMemory(g_Device, g_VertexBufferMemory);
+
+
+
+}
+
+uint32_t VulkanRenderer::findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties){
+    VkPhysicalDeviceMemoryProperties memProperties;
+    vkGetPhysicalDeviceMemoryProperties(g_PhysicalDevice, &memProperties);
+    /*The typeFilter parameter will be used to specify the bit field of memory types that are suitable. That means that we can find the index of a suitable memory type by simply iterating over them and checking if the corresponding bit is set to 1.
+
+    However, we're not just interested in a memory type that is suitable for the vertex buffer. We also need to be able to write our vertex data to that memory. The memoryTypes array consists of VkMemoryType structs that specify the heap and properties of each type of memory. The properties define special features of the memory, like being able to map it so we can write to it from the CPU. This property is indicated with VK_MEMORY_PROPERTY_HOST_VISIBLE_BIT, but we also need to use the VK_MEMORY_PROPERTY_HOST_COHERENT_BIT property. We'll see why when we map the memory.
+
+    We can now modify the loop to also check for the support of this property:*/
+    for (uint32_t i = 0; i < memProperties.memoryTypeCount; i++) {
+        if ((typeFilter & (1 << i)) && (memProperties.memoryTypes[i].propertyFlags & properties) == properties) {
+            return i;
+        }
+    }
+
+    throw std::runtime_error("Failed to find suitable memory type!");
 }
 
 void VulkanRenderer::recreateSwapChain(){
@@ -174,7 +211,11 @@ void VulkanRenderer::createCommandBuffers(){
         instanceCount: Used for instanced rendering, use 1 if you're not doing that.
         firstVertex: Used as an offset into the vertex buffer, defines the lowest value of gl_VertexIndex.
         firstInstance: Used as an offset for instanced rendering, defines the lowest value of gl_InstanceIndex.*/
-        vkCmdDraw(commandBuffers[i], 3, 1, 0, 0);
+        VkBuffer vertexBuffers[] = {g_VertexBuffer};
+        VkDeviceSize offsets[] = {0};
+        vkCmdBindVertexBuffers(commandBuffers[i], 0, 1, vertexBuffers, offsets);
+
+        vkCmdDraw(commandBuffers[i], static_cast<uint32_t>(vertices.size()), 1, 0, 0);
 
         vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -1013,6 +1054,7 @@ void VulkanRenderer::cleanup(){
 
     cleanupSwapChain();
     vkDestroyBuffer(g_Device, g_VertexBuffer, nullptr);
+    vkFreeMemory(g_Device, g_VertexBufferMemory, nullptr);
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(g_Device, renderFinishedSemaphores[i], nullptr);

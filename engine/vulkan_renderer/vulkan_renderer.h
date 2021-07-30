@@ -161,6 +161,7 @@ private:
     void cleanupSwapChain();
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
     void createVertexBuffer();
+    uint32_t findMemoryType(uint32_t typeFilter, VkMemoryPropertyFlags properties);
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -188,6 +189,7 @@ private:
     size_t currentFrame = 0;
     bool framebufferResized = false;
     VkBuffer g_VertexBuffer;
+    VkDeviceMemory g_VertexBufferMemory;
 
     
 };
