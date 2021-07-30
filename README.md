@@ -74,3 +74,6 @@ Create a compile.sh file with the following contents:
 /home/user/VulkanSDK/x.x.x.x/x86_64/bin/glslc shader.vert -o vert.spv
 /home/user/VulkanSDK/x.x.x.x/x86_64/bin/glslc shader.frag -o frag.spv
 Replace the path to glslc with the path to where you installed the Vulkan SDK. Make the script executable with chmod +x compile.sh and run it.`
+
+## TODO:
+- Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
