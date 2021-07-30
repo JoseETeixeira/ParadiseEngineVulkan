@@ -30,8 +30,11 @@
 #include <cstdint> // Necessary for UINT32_MAX
 #include <algorithm> // Necessary for std::min/std::max
 #include <fstream>
-
+#define GLM_FORCE_RADIANS
 #include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+#include <chrono>
 #include <array>
 
 const uint32_t WIDTH = 800;
@@ -112,6 +115,11 @@ const std::vector<uint16_t> indices = {
     0, 1, 2, 2, 3, 0
 };
 
+struct UniformBufferObject {
+    glm::mat4 model;
+    glm::mat4 view;
+    glm::mat4 proj;
+};
 
 class VulkanRenderer {
 public:
@@ -170,6 +178,11 @@ private:
     void createBuffer(VkDeviceSize size, VkBufferUsageFlags usage, VkMemoryPropertyFlags properties, VkBuffer& buffer, VkDeviceMemory& bufferMemory);
     void copyBuffer(VkBuffer srcBuffer, VkBuffer dstBuffer, VkDeviceSize size);
     void createIndexBuffer();
+    void createDescriptorSetLayout();
+    void createUniformBuffers();
+    void updateUniformBuffer(uint32_t currentImage);
+
+
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -185,6 +198,7 @@ private:
     VkExtent2D swapChainExtent;
     std::vector<VkImageView> swapChainImageViews;
     VkRenderPass renderPass;
+    VkDescriptorSetLayout descriptorSetLayout;
     VkPipelineLayout pipelineLayout;
     VkPipeline g_GraphicsPipeline;
     std::vector<VkFramebuffer> swapChainFramebuffers;
@@ -200,6 +214,8 @@ private:
     VkDeviceMemory g_VertexBufferMemory;
     VkBuffer g_IndexBuffer;
     VkDeviceMemory g_IndexBufferMemory;
+    std::vector<VkBuffer> g_UniformBuffers;
+    std::vector<VkDeviceMemory> g_UniformBuffersMemory;
 
     
 };
