@@ -117,6 +117,8 @@ private:
     void createFramebuffers();
     void createCommandPool();
     void createCommandBuffers();
+    void drawFrame();
+    void createSemaphores();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -137,4 +139,6 @@ private:
     std::vector<VkFramebuffer> swapChainFramebuffers;
     VkCommandPool commandPool;
     std::vector<VkCommandBuffer> commandBuffers;
+    VkSemaphore imageAvailableSemaphore;
+    VkSemaphore renderFinishedSemaphore;
 };

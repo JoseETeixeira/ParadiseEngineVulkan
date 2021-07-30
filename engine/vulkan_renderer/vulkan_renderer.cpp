@@ -8,7 +8,6 @@
 
 
 #include "vulkan_renderer.h"
-#include <algorithm>
 
 
 
@@ -30,6 +29,7 @@ void VulkanRenderer::initVulkan(){
    pickPhysicalDevice();
    createLogicalDevice();
    createSwapChain();
+
    createImageViews();
 
    createRenderPass();
@@ -37,6 +37,18 @@ void VulkanRenderer::initVulkan(){
    createFramebuffers();
    createCommandPool();
    createCommandBuffers();
+   createSemaphores();
+}
+
+void VulkanRenderer::createSemaphores(){
+    VkSemaphoreCreateInfo semaphoreInfo{};
+    semaphoreInfo.sType = VK_STRUCTURE_TYPE_SEMAPHORE_CREATE_INFO;
+
+    if (vkCreateSemaphore(g_Device, &semaphoreInfo, nullptr, &imageAvailableSemaphore) != VK_SUCCESS ||
+        vkCreateSemaphore(g_Device, &semaphoreInfo, nullptr, &renderFinishedSemaphore) != VK_SUCCESS) {
+
+        throw std::runtime_error("Failed to create semaphores!");
+    }
 }
 
 void VulkanRenderer::createCommandBuffers(){
@@ -196,9 +208,27 @@ void VulkanRenderer::createRenderPass(){
     renderPassInfo.subpassCount = 1;
     renderPassInfo.pSubpasses = &subpass;
 
+    VkSubpassDependency dependency{};
+    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
+    dependency.dstSubpass = 0;
+    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.srcAccessMask = 0;
+    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
+    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
+    renderPassInfo.dependencyCount = 1;
+    renderPassInfo.pDependencies = &dependency;
+
+    
+
+   
+
     if (vkCreateRenderPass(g_Device, &renderPassInfo, nullptr, &renderPass) != VK_SUCCESS) {
         throw std::runtime_error("Failed to create render pass!");
     }
+
+    
+
+
 
 
 }
@@ -465,7 +495,47 @@ void VulkanRenderer::createInstance(){
 void VulkanRenderer::mainLoop(){
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
+        drawFrame();
     }
+}
+
+void VulkanRenderer::drawFrame() {
+    uint32_t imageIndex;
+    vkAcquireNextImageKHR(g_Device, g_SwapChain, UINT64_MAX, imageAvailableSemaphore, VK_NULL_HANDLE, &imageIndex);
+    VkSubmitInfo submitInfo{};
+    submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+    VkSemaphore waitSemaphores[] = {imageAvailableSemaphore};
+    VkPipelineStageFlags waitStages[] = {VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT};
+    submitInfo.waitSemaphoreCount = 1;
+    submitInfo.pWaitSemaphores = waitSemaphores;
+    submitInfo.pWaitDstStageMask = waitStages;
+
+    submitInfo.commandBufferCount = 1;
+    submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+
+    VkSemaphore signalSemaphores[] = {renderFinishedSemaphore};
+    submitInfo.signalSemaphoreCount = 1;
+    submitInfo.pSignalSemaphores = signalSemaphores;
+
+    if (vkQueueSubmit(g_Queue, 1, &submitInfo, VK_NULL_HANDLE) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to submit draw command buffer!");
+    }
+
+    VkPresentInfoKHR presentInfo{};
+    presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+    presentInfo.waitSemaphoreCount = 1;
+    presentInfo.pWaitSemaphores = signalSemaphores;
+
+    VkSwapchainKHR swapChains[] = {g_SwapChain};
+    presentInfo.swapchainCount = 1;
+    presentInfo.pSwapchains = swapChains;
+    presentInfo.pImageIndices = &imageIndex;
+
+    presentInfo.pResults = nullptr; // Optional
+
+    vkQueuePresentKHR(g_PresentQueue, &presentInfo);
 }
 
 bool VulkanRenderer::checkValidationLayerSupport(){
@@ -682,7 +752,7 @@ void VulkanRenderer::createLogicalDevice() {
     }
 
     if (vkCreateDevice(g_PhysicalDevice, &createInfo, nullptr, &g_Device) != VK_SUCCESS) {
-        throw std::runtime_error("failed to create logical device!");
+        throw std::runtime_error("Failed to create logical device!");
     }
 
     vkGetDeviceQueue(g_Device, indices.graphicsFamily.value(), 0, &g_Queue);
@@ -834,6 +904,9 @@ void VulkanRenderer::createSwapChain(){
 }
 
 void VulkanRenderer::cleanup(){
+
+    vkDestroySemaphore(g_Device, renderFinishedSemaphore, nullptr);
+    vkDestroySemaphore(g_Device, imageAvailableSemaphore, nullptr);
 
     vkDestroyCommandPool(g_Device, commandPool, nullptr);
 
