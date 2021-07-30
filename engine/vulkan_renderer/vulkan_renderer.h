@@ -122,6 +122,7 @@ private:
     void createSyncObjects();
     void recreateSwapChain();
     void cleanupSwapChain();
+    static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -147,4 +148,5 @@ private:
     std::vector<VkFence> inFlightFences;
     std::vector<VkFence> imagesInFlight;
     size_t currentFrame = 0;
+    bool framebufferResized = false;
 };

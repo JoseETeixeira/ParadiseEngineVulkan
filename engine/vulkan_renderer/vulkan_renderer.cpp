@@ -15,11 +15,17 @@ void VulkanRenderer::initWindow(){
     glfwInit();
     //Because GLFW was originally designed to create an OpenGL context, we need to tell it to not create an OpenGL context with a subsequent call:
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
-    //Because handling resized windows takes special care that we'll look into later, disable it for now with another window hint call:
-    glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
+
     //The first three parameters specify the width, height and title of the window. The fourth parameter allows you to optionally specify a monitor to open the window on and the last parameter is only relevant to OpenGL.
     window = glfwCreateWindow(WIDTH, HEIGHT, "Paradise Engine", nullptr, nullptr);
+    glfwSetWindowUserPointer(window, this);
+    glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
+}
+
+void VulkanRenderer::framebufferResizeCallback(GLFWwindow* window, int width, int height){
+    auto app = reinterpret_cast<VulkanRenderer*>(glfwGetWindowUserPointer(window));
+    app->framebufferResized = true;
 }
 
 void VulkanRenderer::initVulkan(){
@@ -41,6 +47,14 @@ void VulkanRenderer::initVulkan(){
 }
 
 void VulkanRenderer::recreateSwapChain(){
+
+    int width = 0, height = 0;
+    glfwGetFramebufferSize(window, &width, &height);
+    while (width == 0 || height == 0) {
+        glfwGetFramebufferSize(window, &width, &height);
+        glfwWaitEvents();
+    }
+
     vkDeviceWaitIdle(g_Device);
 
     cleanupSwapChain();
@@ -548,7 +562,14 @@ void VulkanRenderer::drawFrame() {
     vkWaitForFences(g_Device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
     
     uint32_t imageIndex;
-    vkAcquireNextImageKHR(g_Device, g_SwapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+    VkResult result = vkAcquireNextImageKHR(g_Device, g_SwapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+        recreateSwapChain();
+        return;
+    } else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+        throw std::runtime_error("failed to acquire swap chain image!");
+    }
 
     // Check if a previous frame is using this image (i.e. there is its fence to wait on)
     if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
@@ -591,8 +612,14 @@ void VulkanRenderer::drawFrame() {
 
     presentInfo.pResults = nullptr; // Optional
 
-    vkQueuePresentKHR(g_PresentQueue, &presentInfo);
-    vkQueueWaitIdle(g_PresentQueue);
+    result = vkQueuePresentKHR(g_PresentQueue, &presentInfo);
+
+    if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+        framebufferResized = false;
+        recreateSwapChain();
+    } else if (result != VK_SUCCESS) {
+        throw std::runtime_error("Failed to present swap chain image!");
+    }
     currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
 }
 
