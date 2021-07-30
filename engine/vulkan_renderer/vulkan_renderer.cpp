@@ -31,6 +31,11 @@ void VulkanRenderer::initVulkan(){
    createLogicalDevice();
    createSwapChain();
    createImageViews();
+   createGraphicsPipeline();
+}
+
+void VulkanRenderer::createGraphicsPipeline(){
+    
 }
 
 

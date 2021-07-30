@@ -109,6 +109,7 @@ private:
     void createSwapChain();
     bool isDeviceSuitable(VkPhysicalDevice device);
     void createImageViews();
+    void createGraphicsPipeline();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
