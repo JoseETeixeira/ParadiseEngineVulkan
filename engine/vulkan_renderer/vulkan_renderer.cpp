@@ -42,8 +42,22 @@ void VulkanRenderer::initVulkan(){
    createGraphicsPipeline();
    createFramebuffers();
    createCommandPool();
+   createVertexBuffer();
    createCommandBuffers();
    createSyncObjects();
+}
+
+void VulkanRenderer::createVertexBuffer() {
+    VkBufferCreateInfo bufferInfo{};
+    bufferInfo.sType = VK_STRUCTURE_TYPE_BUFFER_CREATE_INFO;
+    bufferInfo.size = sizeof(vertices[0]) * vertices.size();
+    bufferInfo.usage = VK_BUFFER_USAGE_VERTEX_BUFFER_BIT;
+    bufferInfo.sharingMode = VK_SHARING_MODE_EXCLUSIVE;
+
+    if (vkCreateBuffer(g_Device, &bufferInfo, nullptr, &g_VertexBuffer) != VK_SUCCESS) {
+        throw std::runtime_error("Failed to create vertex buffer!");
+    }
+
 }
 
 void VulkanRenderer::recreateSwapChain(){
@@ -998,6 +1012,7 @@ void VulkanRenderer::createSwapChain(){
 void VulkanRenderer::cleanup(){
 
     cleanupSwapChain();
+    vkDestroyBuffer(g_Device, g_VertexBuffer, nullptr);
 
     for (size_t i = 0; i < MAX_FRAMES_IN_FLIGHT; i++) {
         vkDestroySemaphore(g_Device, renderFinishedSemaphores[i], nullptr);

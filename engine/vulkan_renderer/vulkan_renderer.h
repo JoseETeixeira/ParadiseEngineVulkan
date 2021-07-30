@@ -101,6 +101,12 @@ struct Vertex {
 };
 
 
+const std::vector<Vertex> vertices = {
+    {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
+    {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
+    {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
+};
+
 
 class VulkanRenderer {
 public:
@@ -154,6 +160,7 @@ private:
     void recreateSwapChain();
     void cleanupSwapChain();
     static void framebufferResizeCallback(GLFWwindow* window, int width, int height);
+    void createVertexBuffer();
 
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
@@ -180,10 +187,7 @@ private:
     std::vector<VkFence> imagesInFlight;
     size_t currentFrame = 0;
     bool framebufferResized = false;
+    VkBuffer g_VertexBuffer;
 
-    const std::vector<Vertex> vertices = {
-        {{0.0f, -0.5f}, {1.0f, 0.0f, 0.0f}},
-        {{0.5f, 0.5f}, {0.0f, 1.0f, 0.0f}},
-        {{-0.5f, 0.5f}, {0.0f, 0.0f, 1.0f}}
-    };
+    
 };
