@@ -44,7 +44,7 @@ else:
     ])
 
 
-cpp17.Append(CPPPATH=['third_party/glfw/include','third_party/glm','third_party/imgui','third_party/imgui/backends','.'])
+cpp17.Append(CPPPATH=['third_party/glfw/include','third_party/glm','third_party/stb','third_party/imgui','third_party/imgui/backends','.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
 cpp17.SharedLibrary('imgui_impl_vulkan',Glob('third_party/imgui/backends/*.cpp'))
