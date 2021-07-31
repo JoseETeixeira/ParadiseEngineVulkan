@@ -59,7 +59,7 @@ void GUI::initImGui(){
     init_info.DescriptorPool = gui_DescriptorPool;
     init_info.Allocator = VK_NULL_HANDLE;
     init_info.MinImageCount = g_MinImageCount;
-    init_info.ImageCount = 2;
+    init_info.ImageCount = g_MinImageCount;
     init_info.CheckVkResultFn = check_vk_result;
 
     SwapChainSupportDetails swapChainSupport = querySwapChainSupport(g_PhysicalDevice);
@@ -109,5 +109,30 @@ void GUI::initImGui(){
 
     ImGui_ImplVulkan_Init(&init_info, imgui_renderpass);
 
+    VkCommandBuffer command_buffer = beginSingleTimeCommands();
+    ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
+    endSingleTimeCommands(command_buffer);
+
 
  }
+
+ void GUI::mainLoop(){
+    QueueFamilyIndices indices = findQueueFamilies(g_PhysicalDevice);
+    while (!glfwWindowShouldClose(window)) {
+        glfwPollEvents();
+        if (g_SwapChainRebuild)
+        {
+            g_SwapChainRebuild = false;
+            ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
+            ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance,g_PhysicalDevice,g_Device,&g_MainWindowData,indices.graphicsFamily.value(),nullptr,WIDTH,HEIGHT,g_MinImageCount);
+            g_MainWindowData.FrameIndex = 0;
+        }
+        ImGui_ImplVulkan_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+        ImGui::ShowDemoWindow();
+        ImGui::Render();
+        drawFrame();
+    }
+    vkDeviceWaitIdle(g_Device);
+}

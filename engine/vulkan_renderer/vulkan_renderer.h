@@ -141,7 +141,7 @@ public:
 
     void initWindow();
     void initVulkan();
-    void mainLoop();
+    virtual void mainLoop();
     void cleanup();
     void createInstance();
     bool checkValidationLayerSupport();

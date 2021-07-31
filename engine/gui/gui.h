@@ -37,13 +37,14 @@ public:
 
 private:
     void initImGui();
+    void mainLoop() override;
     void SetupVulkanWindow(ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height);
 
     ImGui_ImplVulkanH_Window g_MainWindowData;
     int g_MinImageCount = 2;
     VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
     VkRenderPass imgui_renderpass;
-
+    bool g_SwapChainRebuild = false;
 
 };
 
