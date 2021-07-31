@@ -6,10 +6,10 @@
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
 
-#include "vulkan_renderer/vulkan_renderer.h"
+#include "gui/gui.h"
 
 int main() {
-    VulkanRenderer app;
+    GUI app;
 
     try {
         app.run();

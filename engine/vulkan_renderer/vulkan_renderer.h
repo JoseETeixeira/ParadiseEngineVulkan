@@ -8,10 +8,9 @@
 
 
 #pragma once
+#ifndef VULKAN_RENDERER_H
+#define VULKAN_RENDERER_H
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
 #include <stdio.h>          // printf, fprintf
 #include <stdlib.h>         // abort
 #define GLFW_INCLUDE_NONE
@@ -122,6 +121,8 @@ struct UniformBufferObject {
     alignas(16) glm::mat4 proj;
 };
 
+
+
 class VulkanRenderer {
 public:
     void run() {
@@ -131,7 +132,6 @@ public:
         cleanup();
     }
 
-private:
     void initWindow();
     void initVulkan();
     void mainLoop();
@@ -185,7 +185,7 @@ private:
     void createDescriptorPool();
     void createDescriptorSets();
 
-
+protected:
     GLFWwindow* window;
     VkInstance g_Instance  = VK_NULL_HANDLE;
     VkDebugUtilsMessengerEXT g_debugMessenger  = VK_NULL_HANDLE;
@@ -223,3 +223,5 @@ private:
 
     
 };
+
+#endif
