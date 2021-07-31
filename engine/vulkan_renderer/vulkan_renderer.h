@@ -126,17 +126,10 @@ const std::vector<uint16_t> indices = {
 
 
 
-struct UniformBufferObject
-{
-
-	glm::vec2 iResolution;
-	glm::vec2 iStampResolution;
-	glm::vec2 iMove;
-	float iSize;
-	float iAlpha;
-	float iTransparency;
-	float iTime;
-
+struct UniformBufferObject {
+    alignas(16) glm::mat4 model;
+    alignas(16) glm::mat4 view;
+    alignas(16) glm::mat4 proj;
 };
 
 
