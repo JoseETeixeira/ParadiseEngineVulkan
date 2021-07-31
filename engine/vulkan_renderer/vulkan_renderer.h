@@ -121,7 +121,14 @@ struct UniformBufferObject {
     alignas(16) glm::mat4 proj;
 };
 
-
+static void check_vk_result(VkResult err)
+{
+    if (err == 0)
+        return;
+    fprintf(stderr, "[vulkan] Error: VkResult = %d\n", err);
+    if (err < 0)
+        abort();
+}
 
 class VulkanRenderer {
 public:
@@ -194,7 +201,7 @@ protected:
     VkQueue g_Queue = VK_NULL_HANDLE;
     VkQueue g_PresentQueue = VK_NULL_HANDLE;
     VkSurfaceKHR surface;
-    VkSwapchainKHR g_SwapChain = VK_NULL_HANDLE;
+    VkSwapchainKHR g_SwapChain;
     std::vector<VkImage> swapChainImages;
     VkFormat swapChainImageFormat;
     VkExtent2D swapChainExtent;
@@ -219,6 +226,7 @@ protected:
     std::vector<VkBuffer> g_UniformBuffers;
     std::vector<VkDeviceMemory> g_UniformBuffersMemory;
     VkDescriptorPool g_DescriptorPool;
+    VkDescriptorPool gui_DescriptorPool;
     std::vector<VkDescriptorSet> g_DescriptorSets;
 
     

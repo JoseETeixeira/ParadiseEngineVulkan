@@ -61,8 +61,12 @@ def add_sources(sources, dir):
 
 
 add_sources(sources, 'engine/vulkan_renderer')
+add_sources(sources, 'third_party/imgui')
+add_sources(sources, 'third_party/imgui/backends')
 add_sources(sources, 'engine/gui')
 add_sources(sources, 'engine')
+
+
 
 #------------------------------------------------------------------------------
 if sys.platform == 'win32':
