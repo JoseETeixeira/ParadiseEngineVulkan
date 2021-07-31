@@ -1,138 +1,179 @@
 #include "gui.h"
+int WIDTH, HEIGHT;
+
+void GUI::initImGui(float width, float height) {
+		QueueFamilyIndices Indices = findQueueFamilies(g_PhysicalDevice);
+
+		// Setup Dear ImGui context
+		IMGUI_CHECKVERSION();
+		ImGui::CreateContext();
+		ImGuiIO& io = ImGui::GetIO(); (void)io;
+		//io.Fonts->AddFontFromFileTTF("../../Assets/Fonts/Roboto-Medium.ttf", 16.0f);
+
+		// When viewports are enabled we tweak WindowRounding/WindowBg so platform windows can look identical to regular ones.
+		ImGuiStyle& style = ImGui::GetStyle();
+		if (io.ConfigFlags )
+		{
+			style.WindowRounding = 0.0f;
+			style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+		}
+
+		io.DisplaySize = ImVec2(width, height);
+		io.DisplayFramebufferScale = ImVec2(1.0f, 1.0f);
+
+		// Setup Platform/Renderer bindings
+		ImGui_ImplGlfw_InitForVulkan(window, true);
+		ImGui_ImplVulkan_InitInfo init_info = {};
+		init_info.Instance = g_Instance;
+		init_info.PhysicalDevice = g_PhysicalDevice;
+		init_info.Device = g_Device;
+		init_info.QueueFamily = Indices.graphicsFamily.value();
+		init_info.Queue = g_PresentQueue;
+		init_info.PipelineCache = VK_NULL_HANDLE;
+		init_info.DescriptorPool = g_DescriptorPool;
+		init_info.Allocator = NULL;
+		init_info.MinImageCount = 2;
+		init_info.ImageCount = static_cast<uint32_t>(swapChainImages.size());
+		init_info.CheckVkResultFn = NULL;
+		ImGui_ImplVulkan_Init(&init_info, renderPass);
+
+		// Setup Dear ImGui style
+		ImGui::StyleColorsDark();
+
+		VkCommandBuffer commandBuffer = beginSingleTimeCommands();
+		ImGui_ImplVulkan_CreateFontsTexture(commandBuffer);
+		endSingleTimeCommands(commandBuffer);
+		ImGui_ImplVulkan_DestroyFontUploadObjects();
+	}
 
 
-void GUI::SetupVulkanWindow(ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height){
-    QueueFamilyIndices indices = findQueueFamilies(g_PhysicalDevice);
+void GUI::imGuiSetupWindow() {
+    ImGuiIO& io = ImGui::GetIO();
+    // Start the Dear ImGui frame
+    ImGui_ImplVulkan_NewFrame();
+    ImGui_ImplGlfw_NewFrame();
 
-     wd->Surface = surface;
+    auto WindowSize = ImVec2((float)swapChainExtent.width, (float)swapChainExtent.height);
+    ImGui::SetNextWindowSize(WindowSize, ImGuiCond_::ImGuiCond_FirstUseEver);
+    ImGui::SetNextWindowPos(ImVec2(0, 0), ImGuiCond_::ImGuiCond_FirstUseEver);
+    ImGui::NewFrame();
 
-    // Check for WSI support
-    VkBool32 res;
-    vkGetPhysicalDeviceSurfaceSupportKHR(g_PhysicalDevice, indices.graphicsFamily.value(), wd->Surface, &res);
-    if (res != VK_TRUE)
+    // render your GUI
+    ImGui::Begin("Thr34d5");
+    ImGui::ShowDemoWindow();
+    ImGui::End();
+    // Render dear imgui UI box into our window
+    ImGui::Render();
+
+    // Update and Render additional Platform Windows
+    if (io.ConfigFlags)
     {
-        fprintf(stderr, "Error no WSI support on physical device 0\n");
-        exit(-1);
+        GLFWwindow* backup_current_context = glfwGetCurrentContext();
+        glfwMakeContextCurrent(backup_current_context);
     }
-
-    // Select Surface Format
-    const VkFormat requestSurfaceImageFormat[] = { VK_FORMAT_B8G8R8A8_UNORM, VK_FORMAT_R8G8B8A8_UNORM, VK_FORMAT_B8G8R8_UNORM, VK_FORMAT_R8G8B8_UNORM };
-    const VkColorSpaceKHR requestSurfaceColorSpace = VK_COLORSPACE_SRGB_NONLINEAR_KHR;
-    wd->SurfaceFormat = ImGui_ImplVulkanH_SelectSurfaceFormat(g_PhysicalDevice, wd->Surface, requestSurfaceImageFormat, (size_t)IM_ARRAYSIZE(requestSurfaceImageFormat), requestSurfaceColorSpace);
-
-    // Select Present Mode
-#ifdef IMGUI_UNLIMITED_FRAME_RATE
-    VkPresentModeKHR present_modes[] = { VK_PRESENT_MODE_MAILBOX_KHR, VK_PRESENT_MODE_IMMEDIATE_KHR, VK_PRESENT_MODE_FIFO_KHR };
-#else
-    VkPresentModeKHR present_modes[] = { VK_PRESENT_MODE_FIFO_KHR };
-#endif
-    wd->PresentMode = ImGui_ImplVulkanH_SelectPresentMode(g_PhysicalDevice, wd->Surface, &present_modes[0], IM_ARRAYSIZE(present_modes));
-    //printf("[vulkan] Selected PresentMode = %d\n", wd->PresentMode);
-
-    // Create SwapChain, RenderPass, Framebuffer, etc.
-    IM_ASSERT(g_MinImageCount >= 2);
-    ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance, g_PhysicalDevice, g_Device, wd, indices.graphicsFamily.value(), nullptr, width, height, g_MinImageCount);
 }
 
-void GUI::initImGui(){
-
-    IMGUI_CHECKVERSION();
-    ImGui::CreateContext();
-    ImGuiIO& io = ImGui::GetIO(); (void)io;
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;     // Enable Keyboard Controls
-    //io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable Gamepad Controls
-
-    // Setup Dear ImGui style
-    ImGui::StyleColorsDark();
-    //ImGui::StyleColorsClassic();
-
-    // Setup Platform/Renderer bindings
-    ImGui_ImplGlfw_InitForVulkan(window, true);
-    QueueFamilyIndices indices = findQueueFamilies(g_PhysicalDevice);
-    ImGui_ImplVulkan_InitInfo init_info = {};
-    init_info.Instance = g_Instance;
-    init_info.PhysicalDevice = g_PhysicalDevice;
-    init_info.Device = g_Device;
-    init_info.QueueFamily = indices.graphicsFamily.value();
-    init_info.Queue = g_Queue;
-    init_info.PipelineCache = VK_NULL_HANDLE ;
-    init_info.DescriptorPool = gui_DescriptorPool;
-    init_info.Allocator = VK_NULL_HANDLE;
-    init_info.MinImageCount = g_MinImageCount;
-    init_info.ImageCount = g_MinImageCount;
-    init_info.CheckVkResultFn = check_vk_result;
-
-    SwapChainSupportDetails swapChainSupport = querySwapChainSupport(g_PhysicalDevice);
-
-    VkSurfaceFormatKHR surfaceFormat = chooseSwapSurfaceFormat(swapChainSupport.formats);
-    VkPresentModeKHR presentMode = chooseSwapPresentMode(swapChainSupport.presentModes);
-    VkExtent2D extent = chooseSwapExtent(swapChainSupport.capabilities);
-
-    VkAttachmentDescription attachment = {};
-    attachment.format = surfaceFormat.format;
-    attachment.samples = VK_SAMPLE_COUNT_1_BIT;
-    attachment.loadOp = VK_ATTACHMENT_LOAD_OP_LOAD;
-    attachment.storeOp = VK_ATTACHMENT_STORE_OP_STORE;
-    attachment.stencilLoadOp = VK_ATTACHMENT_LOAD_OP_DONT_CARE;
-    attachment.stencilStoreOp = VK_ATTACHMENT_STORE_OP_DONT_CARE;
-    attachment.initialLayout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-    attachment.finalLayout = VK_IMAGE_LAYOUT_PRESENT_SRC_KHR;
-
-    VkAttachmentReference color_attachment = {};
-    color_attachment.attachment = 0;
-    color_attachment.layout = VK_IMAGE_LAYOUT_COLOR_ATTACHMENT_OPTIMAL;
-
-    VkSubpassDescription subpass = {};
-    subpass.pipelineBindPoint = VK_PIPELINE_BIND_POINT_GRAPHICS;
-    subpass.colorAttachmentCount = 1;
-    subpass.pColorAttachments = &color_attachment;
-
-    VkSubpassDependency dependency = {};
-    dependency.srcSubpass = VK_SUBPASS_EXTERNAL;
-    dependency.dstSubpass = 0;
-    dependency.srcStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.dstStageMask = VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT;
-    dependency.srcAccessMask = 0;  // or VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-    dependency.dstAccessMask = VK_ACCESS_COLOR_ATTACHMENT_WRITE_BIT;
-
-    VkRenderPassCreateInfo info = {};
-    info.sType = VK_STRUCTURE_TYPE_RENDER_PASS_CREATE_INFO;
-    info.attachmentCount = 1;
-    info.pAttachments = &attachment;
-    info.subpassCount = 1;
-    info.pSubpasses = &subpass;
-    info.dependencyCount = 1;
-    info.pDependencies = &dependency;
-    if (vkCreateRenderPass(g_Device, &info, nullptr, &imgui_renderpass) != VK_SUCCESS) {
-        throw std::runtime_error("Could not create Dear ImGui's render pass");
+void GUI::recreateImGuiWindow() {
+    if (!isImGuiWindowCreated)
+    {
+        ImGui_ImplVulkan_Shutdown();
+        ImGui_ImplGlfw_Shutdown();
+        ImGui::DestroyContext();
+        recreateSwapChain();
+        initImGui(float(swapChainExtent.width), float(swapChainExtent.height));
+        imGuiSetupWindow();
+        isImGuiWindowCreated = true;
     }
+}
 
-    ImGui_ImplVulkan_Init(&init_info, imgui_renderpass);
-
-    VkCommandBuffer command_buffer = beginSingleTimeCommands();
-    ImGui_ImplVulkan_CreateFontsTexture(command_buffer);
-    endSingleTimeCommands(command_buffer);
-
-
- }
 
  void GUI::mainLoop(){
     QueueFamilyIndices indices = findQueueFamilies(g_PhysicalDevice);
     while (!glfwWindowShouldClose(window)) {
         glfwPollEvents();
-        if (g_SwapChainRebuild)
-        {
-            g_SwapChainRebuild = false;
-            ImGui_ImplVulkan_SetMinImageCount(g_MinImageCount);
-            ImGui_ImplVulkanH_CreateOrResizeWindow(g_Instance,g_PhysicalDevice,g_Device,&g_MainWindowData,indices.graphicsFamily.value(),nullptr,WIDTH,HEIGHT,g_MinImageCount);
-            g_MainWindowData.FrameIndex = 0;
+        if (!isImGuiWindowCreated) {
+            imGuiSetupWindow();
+            isImGuiWindowCreated = true;
         }
-        ImGui_ImplVulkan_NewFrame();
-        ImGui_ImplGlfw_NewFrame();
-        ImGui::NewFrame();
-        ImGui::ShowDemoWindow();
-        ImGui::Render();
+        createCommandBuffers();
         drawFrame();
     }
     vkDeviceWaitIdle(g_Device);
+    ImGui_ImplVulkan_Shutdown();
+    ImGui_ImplGlfw_Shutdown();
+    ImGui::DestroyContext();
+
 }
+
+void GUI::drawFrame() {
+
+		glfwGetFramebufferSize(window, &WIDTH, &HEIGHT);
+
+		vkWaitForFences(g_Device, 1, &inFlightFences[currentFrame], VK_TRUE, UINT64_MAX);
+
+		VkResult result = vkAcquireNextImageKHR(g_Device, g_SwapChain, UINT64_MAX, imageAvailableSemaphores[currentFrame], VK_NULL_HANDLE, &imageIndex);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR) {
+			recreateSwapChain();
+			recreateImGuiWindow();
+			return;
+		}
+		else if (result != VK_SUCCESS && result != VK_SUBOPTIMAL_KHR) {
+			throw std::runtime_error("failed to acquire swap chain image!");
+		}
+
+		updateUniformBuffer();
+
+		if (imagesInFlight[imageIndex] != VK_NULL_HANDLE) {
+			vkWaitForFences(g_Device, 1, &imagesInFlight[imageIndex], VK_TRUE, UINT64_MAX);
+			//updateVideoFrame();
+		}
+		imagesInFlight[imageIndex] = inFlightFences[currentFrame];
+
+		VkSubmitInfo submitInfo = {};
+		submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
+
+		VkSemaphore waitSemaphores[] = { imageAvailableSemaphores[currentFrame] };
+		VkPipelineStageFlags waitStages[] = { VK_PIPELINE_STAGE_COLOR_ATTACHMENT_OUTPUT_BIT };
+		submitInfo.waitSemaphoreCount = 1;
+		submitInfo.pWaitSemaphores = waitSemaphores;
+		submitInfo.pWaitDstStageMask = waitStages;
+
+		submitInfo.commandBufferCount = 1;
+		submitInfo.pCommandBuffers = &commandBuffers[imageIndex];
+
+		VkSemaphore signalSemaphores[] = { renderFinishedSemaphores[currentFrame] };
+		submitInfo.signalSemaphoreCount = 1;
+		submitInfo.pSignalSemaphores = signalSemaphores;
+
+		vkResetFences(g_Device, 1, &inFlightFences[currentFrame]);
+
+		if (vkQueueSubmit(g_Queue, 1, &submitInfo, inFlightFences[currentFrame]) != VK_SUCCESS) {
+			throw std::runtime_error("failed to submit draw command buffer!");
+		}
+
+		VkPresentInfoKHR presentInfo = {};
+		presentInfo.sType = VK_STRUCTURE_TYPE_PRESENT_INFO_KHR;
+
+		presentInfo.waitSemaphoreCount = 1;
+		presentInfo.pWaitSemaphores = signalSemaphores;
+
+		VkSwapchainKHR swapChains[] = { g_SwapChain };
+		presentInfo.swapchainCount = 1;
+		presentInfo.pSwapchains = swapChains;
+
+		presentInfo.pImageIndices = &imageIndex;
+
+		result = vkQueuePresentKHR(g_PresentQueue, &presentInfo);
+
+		if (result == VK_ERROR_OUT_OF_DATE_KHR || result == VK_SUBOPTIMAL_KHR || framebufferResized) {
+			framebufferResized = false;
+			recreateSwapChain();
+			recreateImGuiWindow();
+		}
+		else if (result != VK_SUCCESS) {
+			throw std::runtime_error("failed to present swap chain image!");
+		}
+
+		currentFrame = (currentFrame + 1) % MAX_FRAMES_IN_FLIGHT;
+	}

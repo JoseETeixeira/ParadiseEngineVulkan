@@ -16,7 +16,6 @@
 
 
 
-
 class GUI : public VulkanRenderer{
 
 public:
@@ -25,22 +24,25 @@ public:
     void run() {
         initWindow();
         initVulkan();
-        initImGui();
+        initImGui(float(swapChainExtent.width), float(swapChainExtent.height));
         mainLoop();
         cleanup();
     }
 
 
 private:
-    void initImGui();
+    void initImGui(float width, float height);
     void mainLoop() override;
-    void SetupVulkanWindow(ImGui_ImplVulkanH_Window* wd, VkSurfaceKHR surface, int width, int height);
+    void imGuiSetupWindow();
+    void recreateImGuiWindow();
+    void drawFrame() override;
 
     ImGui_ImplVulkanH_Window g_MainWindowData;
     int g_MinImageCount = 2;
     VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
     VkRenderPass imgui_renderpass;
     bool g_SwapChainRebuild = false;
+  
 
 };
 

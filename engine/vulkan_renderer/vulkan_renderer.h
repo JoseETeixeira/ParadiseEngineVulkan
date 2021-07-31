@@ -45,9 +45,9 @@
 #include "imgui_impl_vulkan.h"
 
 
-const uint32_t WIDTH = 800;
-const uint32_t HEIGHT = 600;
+
 const int MAX_FRAMES_IN_FLIGHT = 2;
+const int NUMBER_OF_IMAGES = 2;
 
 const std::vector<const char*> validationLayers = {
     "VK_LAYER_KHRONOS_validation"
@@ -123,11 +123,22 @@ const std::vector<uint16_t> indices = {
     0, 1, 2, 2, 3, 0
 };
 
-struct UniformBufferObject {
-    alignas(16) glm::mat4 model;
-    alignas(16) glm::mat4 view;
-    alignas(16) glm::mat4 proj;
+
+
+
+struct UniformBufferObject
+{
+
+	glm::vec2 iResolution;
+	glm::vec2 iStampResolution;
+	glm::vec2 iMove;
+	float iSize;
+	float iAlpha;
+	float iTransparency;
+	float iTime;
+
 };
+
 
 static void check_vk_result(VkResult err)
 {
@@ -184,7 +195,7 @@ public:
     void createFramebuffers();
     void createCommandPool();
     void createCommandBuffers();
-    void drawFrame();
+    virtual void drawFrame();
     void createSyncObjects();
     void recreateSwapChain();
     void cleanupSwapChain();
@@ -196,7 +207,7 @@ public:
     void createIndexBuffer();
     void createDescriptorSetLayout();
     void createUniformBuffers();
-    void updateUniformBuffer(uint32_t currentImage);
+    void updateUniformBuffer();
     void createDescriptorPool();
     void createDescriptorSets();
     void createTextureImage();
@@ -235,6 +246,7 @@ protected:
     std::vector<VkFence> inFlightFences;
     std::vector<VkFence> imagesInFlight;
     size_t currentFrame = 0;
+    uint32_t imageIndex = 0;
     bool framebufferResized = false;
     VkBuffer g_VertexBuffer;
     VkDeviceMemory g_VertexBufferMemory;
@@ -243,12 +255,21 @@ protected:
     std::vector<VkBuffer> g_UniformBuffers;
     std::vector<VkDeviceMemory> g_UniformBuffersMemory;
     VkDescriptorPool g_DescriptorPool;
-    VkDescriptorPool gui_DescriptorPool;
     std::vector<VkDescriptorSet> g_DescriptorSets;
     VkImage textureImage;
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;
     VkSampler textureSampler;
+    VkCommandPool imGuiCommandPool;
+    std::vector<VkCommandBuffer> imGuiCommandBuffers;
+      // ImGui.
+	bool isImGuiWindowCreated = false;
+	bool flip = false;
+	bool changeImage = false;
+	bool writeImage = false;
+	bool showOpenCV = false;
+	float sizeMultiplier = 5.0f, alpha = 0.1f, xTrans = 0.0f, yTrans = 0.0f, transparency = 0.0f, resize = 1.0f;
+	std::string tempOutImageName;
 
     
 };

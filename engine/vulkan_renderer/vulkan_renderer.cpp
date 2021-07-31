@@ -14,13 +14,17 @@
 #include <stb_image.h>
 
 
+double deltaTime = 0.0, lastFrame = 0.0;
+int g_width = 1920;
+int g_height = 1280;
+
 void VulkanRenderer::initWindow(){
     glfwInit();
     //Because GLFW was originally designed to create an OpenGL context, we need to tell it to not create an OpenGL context with a subsequent call:
     glfwWindowHint(GLFW_CLIENT_API, GLFW_NO_API);
 
     //The first three parameters specify the width, height and title of the window. The fourth parameter allows you to optionally specify a monitor to open the window on and the last parameter is only relevant to OpenGL.
-    window = glfwCreateWindow(WIDTH, HEIGHT, "Paradise Engine", nullptr, nullptr);
+    window = glfwCreateWindow(g_width, g_height, "Paradise Engine", nullptr, nullptr);
     glfwSetWindowUserPointer(window, this);
     glfwSetFramebufferSizeCallback(window, framebufferResizeCallback);
 
@@ -165,62 +169,54 @@ void VulkanRenderer::endSingleTimeCommands(VkCommandBuffer commandBuffer) {
 
 void VulkanRenderer::createDescriptorPool(){
 
-    VkDescriptorPoolSize poolSize{};
-    poolSize.type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
-    poolSize.descriptorCount = static_cast<uint32_t>(swapChainImages.size());
-    VkDescriptorPoolCreateInfo poolInfo{};
+
+    std::array<VkDescriptorPoolSize, 3> poolSizes = {};
+    poolSizes[0].type = VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER;
+    poolSizes[0].descriptorCount = static_cast<uint32_t>(swapChainImages.size());
+    poolSizes[1].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[1].descriptorCount = static_cast<uint32_t>(swapChainImages.size()) * 2;
+    /*poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[2].descriptorCount = static_cast<uint32_t>(swapChainImages.size());*/
+    // This Descriptor Pool is Used by ImGui
+    poolSizes[2].type = VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER;
+    poolSizes[2].descriptorCount = static_cast<uint32_t>(swapChainImages.size());
+
+    VkDescriptorPoolCreateInfo poolInfo = {};
     poolInfo.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-    poolInfo.poolSizeCount = 1;
-    poolInfo.pPoolSizes = &poolSize;
-    poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size());
+    poolInfo.poolSizeCount = static_cast<uint32_t>(poolSizes.size());
+    poolInfo.pPoolSizes = poolSizes.data();
+    poolInfo.maxSets = static_cast<uint32_t>(swapChainImages.size()) + 1;
+
     if (vkCreateDescriptorPool(g_Device, &poolInfo, nullptr, &g_DescriptorPool) != VK_SUCCESS) {
-        throw std::runtime_error("Failed to create descriptor pool!");
+        throw std::runtime_error("failed to create descriptor pool!");
     }
 
-    VkResult err;
-       // Create GUI Descriptor Pool
-    {
-        VkDescriptorPoolSize pool_sizes[] =
-        {
-            { VK_DESCRIPTOR_TYPE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_COMBINED_IMAGE_SAMPLER, 1000 },
-            { VK_DESCRIPTOR_TYPE_SAMPLED_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_IMAGE, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_TEXEL_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER, 1000 },
-            { VK_DESCRIPTOR_TYPE_UNIFORM_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_STORAGE_BUFFER_DYNAMIC, 1000 },
-            { VK_DESCRIPTOR_TYPE_INPUT_ATTACHMENT, 1000 }
-        };
-        VkDescriptorPoolCreateInfo pool_info = {};
-        pool_info.sType = VK_STRUCTURE_TYPE_DESCRIPTOR_POOL_CREATE_INFO;
-        pool_info.flags = VK_DESCRIPTOR_POOL_CREATE_FREE_DESCRIPTOR_SET_BIT;
-        pool_info.maxSets = 1000 * IM_ARRAYSIZE(pool_sizes);
-        pool_info.poolSizeCount = (uint32_t)IM_ARRAYSIZE(pool_sizes);
-        pool_info.pPoolSizes = pool_sizes;
-        err = vkCreateDescriptorPool(g_Device, &pool_info, nullptr, &gui_DescriptorPool);
-        check_vk_result(err);
-    }
 
 }
 
-void VulkanRenderer::updateUniformBuffer(uint32_t currentImage){
-    static auto startTime = std::chrono::high_resolution_clock::now();
+void VulkanRenderer::updateUniformBuffer() {
+		static auto startTime = std::chrono::high_resolution_clock::now();
+        float time;
+		auto currentTime = std::chrono::high_resolution_clock::now();
+		time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
 
-    auto currentTime = std::chrono::high_resolution_clock::now();
-    float time = std::chrono::duration<float, std::chrono::seconds::period>(currentTime - startTime).count();
-    UniformBufferObject ubo{};
-    ubo.model = glm::rotate(glm::mat4(1.0f), time * glm::radians(90.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.view = glm::lookAt(glm::vec3(2.0f, 2.0f, 2.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-    ubo.proj = glm::perspective(glm::radians(45.0f), swapChainExtent.width / (float) swapChainExtent.height, 0.1f, 10.0f);
-    ubo.proj[1][1] *= -1;
-    void* data;
-    vkMapMemory(g_Device, g_UniformBuffersMemory[currentImage], 0, sizeof(ubo), 0, &data);
-        memcpy(data, &ubo, sizeof(ubo));
-    vkUnmapMemory(g_Device, g_UniformBuffersMemory[currentImage]);
+		deltaTime = time - lastFrame;
+		lastFrame = time;
 
+		//if (writeImage || glfwGetKey(window, GLFW_KEY_ENTER) == GLFW_PRESS) {
+		UniformBufferObject ubo = {};
+		ubo.iResolution = glm::vec2(g_width, g_height);
+		//ubo.iStampResolution = glm::vec2(videoWidth, videoHeight);
+		ubo.iMove = glm::vec2(xTrans, yTrans);
+		ubo.iSize = sizeMultiplier;
+		ubo.iAlpha = alpha;
+		ubo.iTransparency = transparency;
+		ubo.iTime = time;
+
+		void* data;
+		vkMapMemory(g_Device, g_UniformBuffersMemory[imageIndex], 0, sizeof(ubo), 0, &data);
+		memcpy(data, &ubo, sizeof(ubo));
+		vkUnmapMemory(g_Device, g_UniformBuffersMemory[imageIndex]);
 }
 
 void VulkanRenderer::createUniformBuffers(){
@@ -603,6 +599,12 @@ void VulkanRenderer::createCommandBuffers(){
         vkCmdBindDescriptorSets(commandBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &g_DescriptorSets[i], 0, nullptr);
 
         vkCmdDrawIndexed(commandBuffers[i], static_cast<uint32_t>(indices.size()), 1, 0, 0, 0);
+        // Bind Dear Imgui pipeline to draw UI elements inside UI box
+        if (isImGuiWindowCreated)
+        {
+            ImGui_ImplVulkan_RenderDrawData(ImGui::GetDrawData(), commandBuffers[i]);
+        }
+
 
         vkCmdEndRenderPass(commandBuffers[i]);
 
@@ -613,6 +615,7 @@ void VulkanRenderer::createCommandBuffers(){
 
     }
 
+    isImGuiWindowCreated = false;
     
 
 
@@ -1030,7 +1033,7 @@ void VulkanRenderer::drawFrame() {
     // Mark the image as now being in use by this frame
     imagesInFlight[imageIndex] = inFlightFences[currentFrame];
 
-    updateUniformBuffer(imageIndex);
+    updateUniformBuffer();
 
     VkSubmitInfo submitInfo{};
     submitInfo.sType = VK_STRUCTURE_TYPE_SUBMIT_INFO;
