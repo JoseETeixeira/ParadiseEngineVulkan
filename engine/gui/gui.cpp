@@ -59,18 +59,17 @@ void GUI::imGuiSetupWindow() {
     ImGui::NewFrame();
 
     // render your GUI
-    ImGui::Begin("Thr34d5");
+    ImGui::Begin("Editor");
     ImGui::ShowDemoWindow();
     ImGui::End();
     // Render dear imgui UI box into our window
     ImGui::Render();
 
     // Update and Render additional Platform Windows
-    if (io.ConfigFlags)
-    {
-        GLFWwindow* backup_current_context = glfwGetCurrentContext();
-        glfwMakeContextCurrent(backup_current_context);
-    }
+
+    GLFWwindow* backup_current_context = glfwGetCurrentContext();
+    glfwMakeContextCurrent(backup_current_context);
+
 }
 
 void GUI::recreateImGuiWindow() {
