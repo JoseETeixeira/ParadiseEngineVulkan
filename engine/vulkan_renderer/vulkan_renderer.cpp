@@ -465,6 +465,7 @@ void VulkanRenderer::createDescriptorSets() {
     if (vkAllocateDescriptorSets(g_Device, &allocInfo, g_DescriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
+    TextureIDs.resize(swapChainImages.size());
 
     for (size_t i = 0; i < swapChainImages.size(); i++) {
         VkDescriptorBufferInfo bufferInfo{};
@@ -482,6 +483,7 @@ void VulkanRenderer::createDescriptorSets() {
         descriptorWrite.pBufferInfo = &bufferInfo;
 
         vkUpdateDescriptorSets(g_Device, 1, &descriptorWrite, 0, nullptr);
+        TextureIDs[i] = (ImTextureID)g_DescriptorSets[i];
     }
 }
 
@@ -804,8 +806,14 @@ void VulkanRenderer::createGraphicsPipeline(){
     multisampling.rasterizationSamples = VK_SAMPLE_COUNT_1_BIT;
 
     VkPipelineColorBlendAttachmentState colorBlendAttachment{};
+    colorBlendAttachment.blendEnable = VK_TRUE;
+    colorBlendAttachment.srcColorBlendFactor = VK_BLEND_FACTOR_SRC_ALPHA;
+    colorBlendAttachment.dstColorBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlendAttachment.colorBlendOp = VK_BLEND_OP_ADD;
+    colorBlendAttachment.srcAlphaBlendFactor = VK_BLEND_FACTOR_ONE_MINUS_SRC_ALPHA;
+    colorBlendAttachment.dstAlphaBlendFactor = VK_BLEND_FACTOR_ZERO;
+    colorBlendAttachment.alphaBlendOp = VK_BLEND_OP_ADD;
     colorBlendAttachment.colorWriteMask = VK_COLOR_COMPONENT_R_BIT | VK_COLOR_COMPONENT_G_BIT | VK_COLOR_COMPONENT_B_BIT | VK_COLOR_COMPONENT_A_BIT;
-    colorBlendAttachment.blendEnable = VK_FALSE;
 
     VkPipelineColorBlendStateCreateInfo colorBlending{};
     colorBlending.sType = VK_STRUCTURE_TYPE_PIPELINE_COLOR_BLEND_STATE_CREATE_INFO;

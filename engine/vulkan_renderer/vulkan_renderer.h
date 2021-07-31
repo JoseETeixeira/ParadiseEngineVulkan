@@ -212,6 +212,7 @@ public:
     void createTextureImageView();
     VkImageView createImageView(VkImage image, VkFormat format);
     void createTextureSampler();
+    ImTextureID AddTexture(VkImageLayout ImageLayout, VkImageView ImageView, VkSampler Sampler);
 
 protected:
     GLFWwindow* window;
@@ -253,16 +254,14 @@ protected:
     VkDeviceMemory textureImageMemory;
     VkImageView textureImageView;
     VkSampler textureSampler;
-    VkCommandPool imGuiCommandPool;
-    std::vector<VkCommandBuffer> imGuiCommandBuffers;
       // ImGui.
 	bool isImGuiWindowCreated = false;
 	bool flip = false;
 	bool changeImage = false;
 	bool writeImage = false;
-	bool showOpenCV = false;
 	float sizeMultiplier = 5.0f, alpha = 0.1f, xTrans = 0.0f, yTrans = 0.0f, transparency = 0.0f, resize = 1.0f;
 	std::string tempOutImageName;
+    std::vector<ImTextureID> TextureIDs;
 
     
 };
