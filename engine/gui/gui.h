@@ -13,11 +13,7 @@
 
 #include "../vulkan_renderer/vulkan_renderer.h"
 
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_vulkan.h"
 
-#define IMGUI_UNLIMITED_FRAME_RATE
 
 
 

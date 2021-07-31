@@ -37,8 +37,13 @@
 #include <chrono>
 #include <array>
 
-#define STB_IMAGE_IMPLEMENTATION
-#include <stb_image.h>
+
+
+#define IMGUI_UNLIMITED_FRAME_RATE
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_vulkan.h"
+
 
 const uint32_t WIDTH = 800;
 const uint32_t HEIGHT = 600;
@@ -194,6 +199,15 @@ public:
     void updateUniformBuffer(uint32_t currentImage);
     void createDescriptorPool();
     void createDescriptorSets();
+    void createTextureImage();
+    void createImage(uint32_t width, uint32_t height, VkFormat format, VkImageTiling tiling, VkImageUsageFlags usage, VkMemoryPropertyFlags properties, VkImage& image, VkDeviceMemory& imageMemory);
+    VkCommandBuffer beginSingleTimeCommands();
+    void endSingleTimeCommands(VkCommandBuffer commandBuffer);
+    void transitionImageLayout(VkImage image, VkFormat format, VkImageLayout oldLayout, VkImageLayout newLayout);
+    void copyBufferToImage(VkBuffer buffer, VkImage image, uint32_t width, uint32_t height);
+    void createTextureImageView();
+    VkImageView createImageView(VkImage image, VkFormat format);
+    void createTextureSampler();
 
 protected:
     GLFWwindow* window;
@@ -231,6 +245,10 @@ protected:
     VkDescriptorPool g_DescriptorPool;
     VkDescriptorPool gui_DescriptorPool;
     std::vector<VkDescriptorSet> g_DescriptorSets;
+    VkImage textureImage;
+    VkDeviceMemory textureImageMemory;
+    VkImageView textureImageView;
+    VkSampler textureSampler;
 
     
 };

@@ -59,14 +59,11 @@ def add_sources(sources, dir):
 		if f.endswith('.cpp') or f.endswith('.c'):
 			sources.append(dir + '/' + f)
 
-
-add_sources(sources, 'engine/vulkan_renderer')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/imgui/backends')
+add_sources(sources, 'engine/vulkan_renderer')
 add_sources(sources, 'engine/gui')
 add_sources(sources, 'engine')
-
-
 
 #------------------------------------------------------------------------------
 if sys.platform == 'win32':
