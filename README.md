@@ -4,6 +4,8 @@
 
 ParadiseEngine is an open source under development game engine based on Vulkan for both Windows and Linux
 
+![Blocky screenshot](doc/main.png)
+
 ## CLONING
 
 ```bash

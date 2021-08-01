@@ -483,7 +483,7 @@ void VulkanRenderer::createDescriptorSets() {
         descriptorWrite.pBufferInfo = &bufferInfo;
 
         vkUpdateDescriptorSets(g_Device, 1, &descriptorWrite, 0, nullptr);
-        TextureIDs[i] = (ImTextureID)g_DescriptorSets[i];
+        TextureIDs[i] = (ImTextureID)g_UniformBuffersMemory[i];
     }
 }
 

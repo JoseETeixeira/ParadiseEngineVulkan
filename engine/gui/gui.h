@@ -36,6 +36,7 @@ private:
     void imGuiSetupWindow();
     void recreateImGuiWindow();
     void drawFrame() override;
+    void draw_callback(const ImDrawList* parent_list);
 
     ImGui_ImplVulkanH_Window g_MainWindowData;
     int g_MinImageCount = 2;
