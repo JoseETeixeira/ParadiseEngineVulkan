@@ -74,6 +74,16 @@
         "fstream": "cpp",
         "mutex": "cpp",
         "thread": "cpp",
-        "cinttypes": "cpp"
+        "cinttypes": "cpp",
+        "future": "cpp",
+        "any": "cpp",
+        "codecvt": "cpp",
+        "filesystem": "cpp",
+        "resumable": "cpp",
+        "forward_list": "cpp",
+        "queue": "cpp",
+        "xthread": "cpp",
+        "unordered_set": "cpp",
+        "valarray": "cpp"
     }
 }

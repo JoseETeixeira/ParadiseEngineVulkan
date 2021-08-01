@@ -48,13 +48,14 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/glm',
 'third_party/tinygltf',
 'third_party/glm',
+'third_party/ktx/include',
+'third_party/ktx/lib',
+'third_party/ktx/other_include',
 'third_party/stb',
 'third_party/imgui'
 'third_party/imgui/backends',
 '.'])
-cpp17.SharedLibrary('vulkan_device',Glob('engine/vulkan_device/*.cpp'))
-cpp17.SharedLibrary('vulkan_tools',Glob('engine/vulkan_tools/*.cpp'))
-cpp17.SharedLibrary('vulkan_buffer',Glob('engine/vulkan_buffer/*.cpp'))
+
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
 cpp17.SharedLibrary('imgui_impl_vulkan',Glob('third_party/imgui/backends/imgui_impl_vulkan.cpp','third_party/imgui/backends/imgui_impl_glfw.cpp'))
 
@@ -75,7 +76,9 @@ add_sources(sources, 'engine/vulkan_debug')
 add_sources(sources, 'engine/vulkan_gltf_model')
 add_sources(sources, 'engine/vulkan_swap_chain')
 add_sources(sources, 'engine/vulkan_ui_overlay')
+add_sources(sources, 'engine/vulkan_texture')
 add_sources(sources, 'third_party/imgui')
+add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'engine')
 
 

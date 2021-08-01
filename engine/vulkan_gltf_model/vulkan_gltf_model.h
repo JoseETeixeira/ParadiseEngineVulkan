@@ -16,6 +16,9 @@
 #include "vulkan/vulkan.h"
 #include "../vulkan_device/vulkan_device.h"
 
+#include "../../third_party/ktx/include/ktx.h"
+#include "../../third_party/ktx/include/ktxvulkan.h"
+
 #define GLM_FORCE_RADIANS
 #define GLM_FORCE_DEPTH_ZERO_TO_ONE
 #include <glm/glm.hpp>
