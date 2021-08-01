@@ -64,10 +64,9 @@ def add_sources(sources, dir):
 add_sources(sources, 'engine/vulkan_device')
 add_sources(sources, 'engine/vulkan_tools')
 add_sources(sources, 'engine/vulkan_buffer')
+add_sources(sources, 'engine/vulkan_debug')
 
 add_sources(sources, 'third_party/imgui')
-add_sources(sources, 'engine/vulkan_renderer')
-add_sources(sources, 'engine/gui')
 add_sources(sources, 'engine')
 
 
