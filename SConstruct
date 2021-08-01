@@ -9,12 +9,28 @@ vulkan_sdk_dir = "C:/VulkanSDK/1.2.182.0"
 
 if sys.platform == 'win32':
     cpp17 = Environment(
+        CPPDEFINES=['WIN32',
+        '_WINDOWS',
+        'VK_USE_PLATFORM_WIN32_KHR',
+        'NOMINMAX',
+        '_USE_MATH_DEFINES',
+        '_CRT_SECURE_NO_WARNINGS'],
         CCFLAGS=['/std:c++17', '-Wall', '-O2', '-g'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi')
 
     cpp17.Append(LIBS = [
         "vulkan-1",
-        "glfw3dll"
+        "glfw3dll",
+        "kernel32",
+        "user32",
+        "gdi32",
+        "winspool",
+        "shell32",
+        "ole32",
+        "oleaut32",
+        "uuid",
+        "comdlg32",
+        "advapi32" 
     ])
 
     cpp17.Append(CPPDEFINES = [
@@ -77,8 +93,10 @@ add_sources(sources, 'engine/vulkan_gltf_model')
 add_sources(sources, 'engine/vulkan_swap_chain')
 add_sources(sources, 'engine/vulkan_ui_overlay')
 add_sources(sources, 'engine/vulkan_texture')
+add_sources(sources, 'engine/vulkan_example_base')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/ktx/lib')
+add_sources(sources, 'third_party/ktx/include')
 add_sources(sources, 'engine')
 
 

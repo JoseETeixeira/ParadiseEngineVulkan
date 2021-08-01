@@ -11,9 +11,21 @@
 #include "vulkan_swap_chain.h"
 
 /** @brief Creates the platform specific surface abstraction of the native platform window used for presentation */	
-
+#if defined(VK_USE_PLATFORM_WIN32_KHR)
+void VulkanSwapChain::initSurface(void* platformHandle, void* platformWindow)
+#elif defined(VK_USE_PLATFORM_ANDROID_KHR)
+void VulkanSwapChain::initSurface(ANativeWindow* window)
+#elif defined(VK_USE_PLATFORM_DIRECTFB_EXT)
+void VulkanSwapChain::initSurface(IDirectFB* dfb, IDirectFBSurface* window)
+#elif defined(VK_USE_PLATFORM_WAYLAND_KHR)
+void VulkanSwapChain::initSurface(wl_display *display, wl_surface *window)
+#elif defined(VK_USE_PLATFORM_XCB_KHR)
+void VulkanSwapChain::initSurface(xcb_connection_t* connection, xcb_window_t window)
+#elif (defined(VK_USE_PLATFORM_IOS_MVK) || defined(VK_USE_PLATFORM_MACOS_MVK))
+void VulkanSwapChain::initSurface(void* view)
+#elif (defined(_DIRECT2DISPLAY) || defined(VK_USE_PLATFORM_HEADLESS_EXT))
 void VulkanSwapChain::initSurface(uint32_t width, uint32_t height)
-
+#endif
 {
 	VkResult err = VK_SUCCESS;
 
@@ -63,7 +75,7 @@ void VulkanSwapChain::initSurface(uint32_t width, uint32_t height)
 	surfaceCreateInfo.connection = connection;
 	surfaceCreateInfo.window = window;
 	err = vkCreateXcbSurfaceKHR(instance, &surfaceCreateInfo, nullptr, &surface);
-#else
+#elif defined(VK_USE_PLATFORM_HEADLESS_EXT)
 	VkHeadlessSurfaceCreateInfoEXT surfaceCreateInfo = {};
 	surfaceCreateInfo.sType = VK_STRUCTURE_TYPE_HEADLESS_SURFACE_CREATE_INFO_EXT;
 	PFN_vkCreateHeadlessSurfaceEXT fpCreateHeadlessSurfaceEXT = (PFN_vkCreateHeadlessSurfaceEXT)vkGetInstanceProcAddr(instance, "vkCreateHeadlessSurfaceEXT");
@@ -71,8 +83,8 @@ void VulkanSwapChain::initSurface(uint32_t width, uint32_t height)
 		vks::tools::exitFatal("Could not fetch function pointer for the headless extension!", -1);
 	}
 	err = fpCreateHeadlessSurfaceEXT(instance, &surfaceCreateInfo, nullptr, &surface);
-
 #endif
+
 	if (err != VK_SUCCESS) {
 		vks::tools::exitFatal("Could not create surface!", err);
 	}

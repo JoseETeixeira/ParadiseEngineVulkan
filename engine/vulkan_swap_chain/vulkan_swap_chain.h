@@ -15,13 +15,21 @@
 #include <assert.h>
 #include <stdio.h>
 #include <vector>
+#if defined (_WIN32)
+#include " ../../third_party/vulkan/vulkan.h"
+#elif defined(__linux__)
+    #include " ../../third_party/vulkan/vulkan_xcb.h"
+#elif defined(__ANDROID__)
+    #include " ../../third_party/vulkan/vulkan_android.h"
+#endif
 
-#include <vulkan/vulkan.h>
 #include "../vulkan_tools/vulkan_tools.h"
 
 #ifdef __ANDROID__
 #include "VulkanAndroid.h"
 #endif
+
+
 
 typedef struct _SwapChainBuffers {
 	VkImage image;
@@ -71,8 +79,6 @@ public:
 #if defined(_DIRECT2DISPLAY)
 	void createDirect2DisplaySurface(uint32_t width, uint32_t height);
 #endif
-#else
-    void initSurface(uint32_t width, uint32_t height);
 #endif
 	void connect(VkInstance instance, VkPhysicalDevice physicalDevice, VkDevice device);
 	void create(uint32_t* width, uint32_t* height, bool vsync = false);
