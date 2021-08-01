@@ -44,7 +44,14 @@ else:
     ])
 
 
-cpp17.Append(CPPPATH=['third_party/glfw/include','third_party/glm','third_party/stb','third_party/imgui','third_party/imgui/backends','.'])
+cpp17.Append(CPPPATH=['third_party/glfw/include',
+'third_party/glm',
+'third_party/tinygltf',
+'third_party/glm',
+'third_party/stb',
+'third_party/imgui'
+'third_party/imgui/backends',
+'.'])
 cpp17.SharedLibrary('vulkan_device',Glob('engine/vulkan_device/*.cpp'))
 cpp17.SharedLibrary('vulkan_tools',Glob('engine/vulkan_tools/*.cpp'))
 cpp17.SharedLibrary('vulkan_buffer',Glob('engine/vulkan_buffer/*.cpp'))
@@ -65,12 +72,11 @@ add_sources(sources, 'engine/vulkan_device')
 add_sources(sources, 'engine/vulkan_tools')
 add_sources(sources, 'engine/vulkan_buffer')
 add_sources(sources, 'engine/vulkan_debug')
-
+add_sources(sources, 'engine/vulkan_gltf_model')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'engine')
 
 
-sources.append(['third_party/imgui/backends/imgui_impl_vulkan.cpp','third_party/imgui/backends/imgui_impl_glfw.cpp'])
 #------------------------------------------------------------------------------
 if sys.platform == 'win32':
     program = cpp17.Program(target=(output_folder + project_name), source=sources)
