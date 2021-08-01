@@ -12,7 +12,8 @@
 #define GUI_H
 
 #include "../vulkan_renderer/vulkan_renderer.h"
-
+#include "../vulkan_buffer/vulkan_buffer.h"
+#include "../vulkan_device/vulkan_device.h"
 
 
 
@@ -43,6 +44,13 @@ private:
     VkPipelineCache g_PipelineCache = VK_NULL_HANDLE;
     VkRenderPass imgui_renderpass;
     bool g_SwapChainRebuild = false;
+    int32_t vertexCount = 0;
+    int32_t indexCount = 0;
+    vks::Buffer vertexBuffer;
+    vks::Buffer indexBuffer;
+    vks::VulkanDevice *device;
+    
+
   
 
 };

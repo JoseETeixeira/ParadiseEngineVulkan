@@ -465,7 +465,6 @@ void VulkanRenderer::createDescriptorSets() {
     if (vkAllocateDescriptorSets(g_Device, &allocInfo, g_DescriptorSets.data()) != VK_SUCCESS) {
         throw std::runtime_error("failed to allocate descriptor sets!");
     }
-    TextureIDs.resize(swapChainImages.size());
 
     for (size_t i = 0; i < swapChainImages.size(); i++) {
         VkDescriptorBufferInfo bufferInfo{};
@@ -483,7 +482,6 @@ void VulkanRenderer::createDescriptorSets() {
         descriptorWrite.pBufferInfo = &bufferInfo;
 
         vkUpdateDescriptorSets(g_Device, 1, &descriptorWrite, 0, nullptr);
-        TextureIDs[i] = (ImTextureID)g_UniformBuffersMemory[i];
     }
 }
 

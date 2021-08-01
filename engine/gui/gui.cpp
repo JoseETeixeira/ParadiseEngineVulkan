@@ -61,7 +61,7 @@ void GUI::imGuiSetupWindow() {
     // render your GUI
     ImGui::Begin("Editor");
     
-    ImGui::Image(TextureIDs[0],ImVec2( 200.f,200.f ));
+    //ImGui::Image(TextureIDs[0],ImVec2( 200.f,200.f ));
     ImGui::End();
     bool show_demo_window = true;
     bool show_another_window = true;
@@ -127,6 +127,8 @@ void GUI::recreateImGuiWindow() {
     ImGui::DestroyContext();
 
 }
+
+
 
 void GUI::drawFrame() {
 

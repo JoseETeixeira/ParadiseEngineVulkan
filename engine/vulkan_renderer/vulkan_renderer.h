@@ -46,6 +46,8 @@
 
 
 
+
+
 const int MAX_FRAMES_IN_FLIGHT = 2;
 const int NUMBER_OF_IMAGES = 2;
 
@@ -261,7 +263,7 @@ protected:
 	bool writeImage = false;
 	float sizeMultiplier = 5.0f, alpha = 0.1f, xTrans = 0.0f, yTrans = 0.0f, transparency = 0.0f, resize = 1.0f;
 	std::string tempOutImageName;
-    std::vector<ImTextureID> TextureIDs;
+
 
     
 };
