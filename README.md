@@ -11,10 +11,6 @@ ParadiseEngine is an open source under development game engine based on Vulkan f
 ```bash
 git clone --recursive https://github.com/JoseETeixeira/ParadiseEngineVulkan.git
 ```
-Delete everything from `third_party/imgui/backends` EXCEPT FOR:
-
-- imgui_impl_glfw.h/.cpp
-- imgui_impl_vulkan.h/.cpp
 
 ## Building - WINDOWS
 
