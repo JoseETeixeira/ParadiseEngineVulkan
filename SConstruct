@@ -73,6 +73,7 @@ add_sources(sources, 'engine/vulkan_tools')
 add_sources(sources, 'engine/vulkan_buffer')
 add_sources(sources, 'engine/vulkan_debug')
 add_sources(sources, 'engine/vulkan_gltf_model')
+add_sources(sources, 'engine/vulkan_swap_chain')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'engine')
 
