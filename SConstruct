@@ -47,7 +47,7 @@ else:
 cpp17.Append(CPPPATH=['third_party/glfw/include','third_party/glm','third_party/stb','third_party/imgui','third_party/imgui/backends','.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
-cpp17.SharedLibrary('imgui_impl_vulkan',Glob('third_party/imgui/backends/*.cpp'))
+cpp17.SharedLibrary('imgui_impl_vulkan',Glob('third_party/imgui/backends/imgui_impl_vulkan.cpp','third_party/imgui/backends/imgui_impl_glfw.cpp'))
 
 #------------------------------------------------------------------------------
 
@@ -60,11 +60,12 @@ def add_sources(sources, dir):
 			sources.append(dir + '/' + f)
 
 add_sources(sources, 'third_party/imgui')
-add_sources(sources, 'third_party/imgui/backends')
 add_sources(sources, 'engine/vulkan_renderer')
 add_sources(sources, 'engine/gui')
 add_sources(sources, 'engine')
 
+
+sources.append(['third_party/imgui/backends/imgui_impl_vulkan.cpp','third_party/imgui/backends/imgui_impl_glfw.cpp'])
 #------------------------------------------------------------------------------
 if sys.platform == 'win32':
     program = cpp17.Program(target=(output_folder + project_name), source=sources)
