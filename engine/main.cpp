@@ -494,7 +494,7 @@ public:
 
 	VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	{
-		title = "Vulkan Example - ImGui";
+		title = "ParadiseEngine";
 		camera.type = Camera::CameraType::lookat;
 		camera.setPosition(glm::vec3(0.0f, 0.0f, -4.8f));
 		camera.setRotation(glm::vec3(4.5f, -380.0f, 0.0f));
@@ -764,18 +764,18 @@ int  main(HINSTANCE hInstance, HINSTANCE, LPSTR, int)
 }
 
 #else
-VulkanExample *vulkanExample;																		\
-static void handleEvent()                                											\
-{																									\
-}																									\
-int main(const int argc, const char *argv[])													    \
-{																									\
-	for (size_t i = 0; i < argc; i++) { VulkanExample::args.push_back(argv[i]); };  				\
-	vulkanExample = new VulkanExample();															\
-	vulkanExample->initVulkan();																	\
-	vulkanExample->prepare();																		\
-	vulkanExample->renderLoop();																	\
-	delete(vulkanExample);																			\
-	return 0;																						\
+VulkanExample *vulkanExample;																		
+static void handleEvent()                                											
+{																									
+}																									
+int main(const int argc, const char *argv[])													    
+{																									
+	for (size_t i = 0; i < argc; i++) { VulkanExample::args.push_back(argv[i]); };  				
+	vulkanExample = new VulkanExample();															
+	vulkanExample->initVulkan();																	
+	vulkanExample->prepare();																		
+	vulkanExample->renderLoop();																	
+	delete(vulkanExample);																			
+	return 0;																						
 }
 #endif
