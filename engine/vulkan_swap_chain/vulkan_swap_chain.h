@@ -18,7 +18,7 @@
 #if defined (_WIN32)
 #include " ../../third_party/vulkan/vulkan.h"
 #elif defined(__linux__)
-    #include " ../../third_party/vulkan/vulkan_xcb.h"
+
 #elif defined(__ANDROID__)
     #include " ../../third_party/vulkan/vulkan_android.h"
 #endif
