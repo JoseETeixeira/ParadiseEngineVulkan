@@ -51,7 +51,7 @@ else:
     # dependencies: libglfw3-dev (>= 3.2.1)
 
     cpp17 = Environment(
-         CPPDEFINES=[
+        CPPDEFINES=[
         '__linux__',
         '_DIRECT2DISPLAY',
         'NOMINMAX',
