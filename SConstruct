@@ -52,17 +52,19 @@ else:
 
     cpp17 = Environment(
         CPPDEFINES=[
+        'LINUX',
+        'USE_D2D_WSI',
         '__linux__',
-        '_DIRECT2DISPLAY',
         'NOMINMAX',
         '_USE_MATH_DEFINES',
         '_CRT_SECURE_NO_WARNINGS'],
-        CCFLAGS=['-std=c++17', '-Wall', '-O2', '-g'],
-        LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi')
+        CCFLAGS=['-std=c++17', '-Wall', '-O2', '-g','-DVK_USE_PLATFORM_XCB_KHR'],
+        LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi' )
     
     cpp17.Append(LIBS = [
         "vulkan",
-        "glfw"
+        "glfw",
+        "xcb"
     ])
 
 
@@ -77,6 +79,7 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/vulkan',
 'third_party/imgui'
 'third_party/imgui/backends',
+'/usr/include/xcb/include',
 '.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))

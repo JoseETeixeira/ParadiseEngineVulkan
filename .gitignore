@@ -2,4 +2,5 @@
 *.obj
 *.exe
 build/*
-data/*
+data/models*
+data/textures*
