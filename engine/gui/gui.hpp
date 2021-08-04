@@ -5,9 +5,12 @@
 *
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
+#define GLFW_INCLUDE_VULKAN
+#include <GLFW/glfw3.h>
 
 #pragma once
 #include "../../third_party/imgui/imgui.h"
+#include "../imgui_impl_vulkan/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
 #ifndef GUI_H
 #define GUI_H
@@ -23,6 +26,11 @@ struct UISettings {
 	float frameTimeMin = 9999.0f, frameTimeMax = 0.0f;
 	float lightTimer = 0.0f;
 } uiSettings;
+
+struct callbackData {
+	VkCommandBuffer buffer;
+	VkPipeline pipeline;
+}cbdata;
 
 // ----------------------------------------------------------------------------
 // ImGUI class
@@ -46,7 +54,11 @@ private:
 	VkDescriptorSet descriptorSet;
 	vks::VulkanDevice *device;
 	VulkanExampleBase *example;
+	int g_width;
+	int g_height;
+  
 public:
+	VkCommandBuffer buffer = VK_NULL_HANDLE;
 	// UI params are set via push constants
 	struct PushConstBlock {
 		glm::vec2 scale;
@@ -79,6 +91,9 @@ public:
 	// Initialize styles, keys, etc.
 	void init(float width, float height)
 	{
+		g_width = width;
+		g_height = height;
+		ImGui::CreateContext();
 		// Color scheme
 		ImGuiStyle& style = ImGui::GetStyle();
 		style.Colors[ImGuiCol_TitleBg] = ImVec4(1.0f, 0.0f, 0.0f, 0.6f);
@@ -321,6 +336,7 @@ public:
 	// Starts a new imGui frame and sets up windows and ui elements
 	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
 	{
+		
 		ImGui::NewFrame();
 
 		// Init imGui windows and elements
@@ -358,12 +374,30 @@ public:
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
 
+        ImGui::SetNextWindowSize(ImVec2(g_width, g_height));
+		ImGui::Begin("Editor Window");
+
+		
+
+		ImGui::Image((ImTextureID) fontView,ImVec2(g_width, g_height));
+
+		ImGui::End();
+
+
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
 		ImGui::ShowDemoWindow();
 
 		// Render to generate draw buffers
 		ImGui::Render();
 	}
+
+	static void draw_callback(const ImDrawList* parent_list, const ImDrawCmd* cmd)
+{
+    printf("hello!\n");
+	// Render commands
+	
+   
+}
 
 	// Update vertex and index buffer containing the imGui elements when required
 	void updateBuffers()

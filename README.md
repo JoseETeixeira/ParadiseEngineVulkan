@@ -55,6 +55,7 @@ scons -Q
 - https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization
 - https://www.reddit.com/r/vulkan/comments/fe40bw/vulkan_image_imgui_integration/
 - https://github.com/SaschaWillems/Vulkan-glTF-PBR
+- https://stackoverflow.com/questions/61263284/having-a-problem-getting-imgui-to-work-with-vulkan
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 

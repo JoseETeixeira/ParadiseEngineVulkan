@@ -79,6 +79,7 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/vulkan',
 'third_party/imgui'
 'third_party/imgui/backends',
+'engine/imgui_impl_vulkan',
 '/usr/include/xcb/include',
 '.'])
 
@@ -95,6 +96,7 @@ def add_sources(sources, dir):
 		if f.endswith('.cpp') or f.endswith('.c'):
 			sources.append(dir + '/' + f)
 
+add_sources(sources, 'engine/imgui_impl_vulkan')
 add_sources(sources, 'engine/vulkan_device')
 add_sources(sources, 'engine/vulkan_tools')
 add_sources(sources, 'engine/vulkan_buffer')
