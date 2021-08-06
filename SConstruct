@@ -10,6 +10,7 @@ vulkan_sdk_dir = "C:/VulkanSDK/1.2.182.0"
 if sys.platform == 'win32':
     cpp17 = Environment(
         CPPDEFINES=['WIN32',
+        '_WIN32',
         '_WINDOWS',
         'VK_USE_PLATFORM_WIN32_KHR',
         'NOMINMAX',
@@ -31,7 +32,8 @@ if sys.platform == 'win32':
         "uuid",
         "comdlg32",
         "advapi32",
-        "lz4"
+        "lz4",
+        "xxhash"
     ])
 
     cpp17.Append(CPPDEFINES = [
@@ -39,6 +41,7 @@ if sys.platform == 'win32':
     ])
 
     cpp17.Append(LIBPATH = [
+        "third_party/lz4",
 		"third_party/glfw/lib-vc2019",
 		os.path.join(vulkan_sdk_dir, "Lib")
 	])
@@ -82,8 +85,7 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/imgui'
 'third_party/imgui/backends',
 'third_party/json',
-'engine/imgui_impl_vulkan',
-'/usr/include/xcb/include',
+'engine/imgui_impl_vulkan'
 '.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
@@ -114,7 +116,6 @@ add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'third_party/ktx/include')
 add_sources(sources, 'engine/asset_loader')
 add_sources(sources, 'engine')
-
 
 #------------------------------------------------------------------------------
 if sys.platform == 'win32':

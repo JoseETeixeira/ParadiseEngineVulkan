@@ -16,11 +16,11 @@
 #include <stdio.h>
 #include <vector>
 #if defined (_WIN32)
-#include " ../../third_party/vulkan/vulkan.h"
+#include "../../third_party/vulkan/vulkan.h"
 #elif defined(__linux__)
 
 #elif defined(__ANDROID__)
-    #include " ../../third_party/vulkan/vulkan_android.h"
+    #include "../../third_party/vulkan/vulkan_android.h"
 #endif
 
 #include "../vulkan_tools/vulkan_tools.h"

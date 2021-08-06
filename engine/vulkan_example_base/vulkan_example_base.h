@@ -9,7 +9,7 @@
 #pragma once
 
 #ifdef _WIN32
-#pragma comment(linker, "/subsystem:console")
+//#pragma comment(linker, "/subsystem:console")
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
