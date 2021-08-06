@@ -30,7 +30,8 @@ if sys.platform == 'win32':
         "oleaut32",
         "uuid",
         "comdlg32",
-        "advapi32" 
+        "advapi32",
+        "lz4"
     ])
 
     cpp17.Append(CPPDEFINES = [
@@ -64,7 +65,8 @@ else:
     cpp17.Append(LIBS = [
         "vulkan",
         "glfw",
-        "xcb"
+        "xcb",
+        "lz4"
     ])
 
 
@@ -79,6 +81,7 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/vulkan',
 'third_party/imgui'
 'third_party/imgui/backends',
+'third_party/json',
 'engine/imgui_impl_vulkan',
 '/usr/include/xcb/include',
 '.'])
@@ -109,6 +112,7 @@ add_sources(sources, 'engine/vulkan_example_base')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'third_party/ktx/include')
+add_sources(sources, 'engine/asset_loader')
 add_sources(sources, 'engine')
 
 

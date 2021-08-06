@@ -14,6 +14,8 @@ cd ParadiseEngineVulkan
 python download_assets.py
 ```
 
+- Install LZ4 for your platform https://github.com/lz4/lz4
+
 ## Building - WINDOWS
 
 - Install VulkanSDK
@@ -78,6 +80,8 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 
 ## TODO:
 - Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
+
+- Asset system https://vkguide.dev/docs/extra-chapter/asset_system/
 
 ## DEBUGGING:
 
