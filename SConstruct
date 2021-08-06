@@ -16,7 +16,7 @@ if sys.platform == 'win32':
         'NOMINMAX',
         '_USE_MATH_DEFINES',
         '_CRT_SECURE_NO_WARNINGS'],
-        CCFLAGS=['/std:c++17', '-Wall', '-O2', '-g'],
+        CCFLAGS=['/std:c++latest', '-Wall', '-O2', '-g'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi')
 
     cpp17.Append(LIBS = [
@@ -62,7 +62,7 @@ else:
         'NOMINMAX',
         '_USE_MATH_DEFINES',
         '_CRT_SECURE_NO_WARNINGS'],
-        CCFLAGS=['-std=c++17', '-Wall', '-O2', '-g','-DVK_USE_PLATFORM_XCB_KHR'],
+        CCFLAGS=['-std=c++latest', '-Wall', '-O2', '-g','-DVK_USE_PLATFORM_XCB_KHR'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi' )
     
     cpp17.Append(LIBS = [
@@ -85,6 +85,7 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/imgui'
 'third_party/imgui/backends',
 'third_party/json',
+'third_party/lz4',
 'engine/imgui_impl_vulkan'
 '.'])
 
@@ -114,7 +115,9 @@ add_sources(sources, 'engine/vulkan_example_base')
 add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'third_party/ktx/include')
+add_sources(sources, 'third_party/lz4')
 add_sources(sources, 'engine/asset_loader')
+add_sources(sources, 'engine/material_asset')
 add_sources(sources, 'engine')
 
 #------------------------------------------------------------------------------

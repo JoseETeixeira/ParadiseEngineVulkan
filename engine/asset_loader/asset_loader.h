@@ -1,4 +1,4 @@
-
+#pragma once
 #ifndef ASSET_LOADER_H
 #define ASSET_LOADER_H
 #include <string>
