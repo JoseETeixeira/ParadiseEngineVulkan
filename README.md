@@ -58,6 +58,7 @@ scons -Q
 - https://www.reddit.com/r/vulkan/comments/fe40bw/vulkan_image_imgui_integration/
 - https://github.com/SaschaWillems/Vulkan-glTF-PBR
 - https://stackoverflow.com/questions/61263284/having-a-problem-getting-imgui-to-work-with-vulkan
+- https://github.com/thepaperpilot/V-ECS
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
@@ -82,6 +83,9 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 - Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
 
 - Asset system https://vkguide.dev/docs/extra-chapter/asset_system/
+https://github.com/vblanco20-1/vulkan-guide/tree/engine/assetlib
+
+- Entity Component system
 
 ## DEBUGGING:
 
