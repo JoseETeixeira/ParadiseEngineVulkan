@@ -58,6 +58,7 @@ private:
 	int g_height;
   
 public:
+	VkImageView renderView = VK_NULL_HANDLE;
 	VkCommandBuffer buffer = VK_NULL_HANDLE;
 	// UI params are set via push constants
 	struct PushConstBlock {
@@ -374,14 +375,6 @@ public:
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
 
-        ImGui::SetNextWindowSize(ImVec2(g_width, g_height));
-		ImGui::Begin("Editor Window");
-
-		
-
-		ImGui::Image((ImTextureID) fontView,ImVec2(g_width, g_height));
-
-		ImGui::End();
 
 
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
