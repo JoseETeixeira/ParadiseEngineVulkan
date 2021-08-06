@@ -85,7 +85,9 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 - Asset system https://vkguide.dev/docs/extra-chapter/asset_system/
 https://github.com/vblanco20-1/vulkan-guide/tree/engine/assetlib
 
-- Entity Component system
+- Entity Component system https://github.com/skypjack/entt
+
+- Job system https://github.com/hlavacs/ViennaGameJobSystem
 
 ## DEBUGGING:
 
