@@ -17,6 +17,7 @@
 
 // Options and values to display/toggle from the UI
 struct UISettings {
+	bool wireframe = false;
 	bool displayModels = true;
 	bool displayLogos = true;
 	bool displayBackground = true;
@@ -369,6 +370,8 @@ public:
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 		ImGui::Begin("Example settings");
 		ImGui::Checkbox("Render models", &uiSettings.displayModels);
+		ImGui::Checkbox("Wireframe", &uiSettings.wireframe);
+
 		ImGui::Checkbox("Display logos", &uiSettings.displayLogos);
 		ImGui::Checkbox("Display background", &uiSettings.displayBackground);
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
@@ -445,6 +448,7 @@ public:
 	// Draw current imGui frame into a command buffer
 	void drawFrame(VkCommandBuffer commandBuffer)
 	{
+	
 		ImGuiIO& io = ImGui::GetIO();
 
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
