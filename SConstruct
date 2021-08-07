@@ -119,6 +119,7 @@ add_sources(sources, 'third_party/lz4')
 add_sources(sources, 'engine/asset_loader')
 add_sources(sources, 'engine/material_asset')
 add_sources(sources, 'engine/mesh_asset')
+add_sources(sources, 'engine/prefab_asset')
 add_sources(sources, 'engine')
 
 #------------------------------------------------------------------------------
