@@ -378,5 +378,9 @@ public:
 			drawNode(commandBuffer, pipelineLayout, node);
 		}
 	}
-
+	
+	//rotate node
+	void rotate_node(uint32_t index, float degrees){
+		
+	}
 };

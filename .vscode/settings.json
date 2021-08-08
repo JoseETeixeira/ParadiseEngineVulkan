@@ -85,5 +85,6 @@
         "xthread": "cpp",
         "unordered_set": "cpp",
         "valarray": "cpp"
-    }
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }

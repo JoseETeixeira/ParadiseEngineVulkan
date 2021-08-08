@@ -86,7 +86,8 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/imgui/backends',
 'third_party/json',
 'third_party/lz4',
-'engine/imgui_impl_vulkan'
+'engine/imgui_impl_vulkan',
+'engine/ecs'
 '.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
