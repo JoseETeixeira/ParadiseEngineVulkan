@@ -1191,46 +1191,48 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		}
 
-		if (camera.type == Camera::firstperson)
+	
+		switch (wParam)
 		{
-			switch (wParam)
-			{
-			case KEY_W:
-				camera.keys.up = true;
-				break;
-			case KEY_S:
-				camera.keys.down = true;
-				break;
-			case KEY_A:
-				camera.keys.left = true;
-				break;
-			case KEY_D:
-				camera.keys.right = true;
-				break;
-			}
+		case KEY_W:
+			mButtons.set(static_cast<std::size_t>(InputButtons::W));
+			break;
+		case KEY_S:
+			mButtons.set(static_cast<std::size_t>(InputButtons::S));
+			break;
+		case KEY_A:
+			mButtons.set(static_cast<std::size_t>(InputButtons::A));
+			break;
+		case KEY_D:
+			mButtons.set(static_cast<std::size_t>(InputButtons::D));
+			break;
 		}
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 
 		keyPressed((uint32_t)wParam);
 		break;
 	case WM_KEYUP:
-		if (camera.type == Camera::firstperson)
+
+		switch (wParam)
 		{
-			switch (wParam)
-			{
-			case KEY_W:
-				camera.keys.up = false;
-				break;
-			case KEY_S:
-				camera.keys.down = false;
-				break;
-			case KEY_A:
-				camera.keys.left = false;
-				break;
-			case KEY_D:
-				camera.keys.right = false;
-				break;
-			}
+		case KEY_W:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::W));
+			break;
+		case KEY_S:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::S));
+			break;
+		case KEY_A:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::A));
+			break;
+		case KEY_D:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::D));
+			break;
 		}
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_LBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));

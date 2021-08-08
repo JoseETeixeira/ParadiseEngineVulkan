@@ -56,6 +56,7 @@
 #include <string>
 #include <numeric>
 #include <array>
+#include <bitset>
 
 #include "../../third_party/vulkan/vulkan.h"
 
@@ -68,9 +69,13 @@
 #include "../vulkan_device/vulkan_device.h"
 #include "../vulkan_texture/vulkan_texture.h"
 
+#include "../ecs/Coordinator.hpp"
+
 #include "../VulkanInitializers.hpp"
-#include "../camera.hpp"
 #include "../benchmark.hpp"
+
+extern Coordinator gCoordinator;
+
 
 class CommandLineParser
 {
@@ -112,6 +117,7 @@ private:
 	void createCommandBuffers();
 	void destroyCommandBuffers();
 	std::string shaderDir = "glsl";
+	std::bitset<8> mButtons;
 protected:
 	// Returns the path to the root of the glsl or hlsl shader directory.
 	std::string getShadersPath() const;

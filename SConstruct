@@ -87,7 +87,9 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/json',
 'third_party/lz4',
 'engine/imgui_impl_vulkan',
-'engine/ecs'
+'engine/ecs',
+'engine/ecs/components',
+'engine/ecs/systems'
 '.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
@@ -116,6 +118,7 @@ add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'third_party/ktx/include')
 add_sources(sources, 'third_party/lz4')
+add_sources(sources, 'engine/ecs/systems')
 add_sources(sources, 'engine')
 
 #------------------------------------------------------------------------------
