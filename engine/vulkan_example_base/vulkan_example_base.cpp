@@ -1236,35 +1236,78 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		break;
 	case WM_LBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.left = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
+
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
+		gCoordinator.SendEvent(event);
+
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_RBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.right = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
+
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
+		gCoordinator.SendEvent(event);
+
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_MBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.middle = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
+		
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
+		gCoordinator.SendEvent(event);
+
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_LBUTTONUP:
-		mouseButtons.left = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_RBUTTONUP:
-		mouseButtons.right = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_MBUTTONUP:
-		mouseButtons.middle = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_MOUSEWHEEL:
 	{
 		short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		camera.translate(glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f));
+		Event event(Events::Window::INPUT);
+		event.SetParam<float>(Events::Window::Input::MOUSEWHEEL, (float)wheelDelta);
+		gCoordinator.SendEvent(event);
+
 		viewUpdated = true;
 		break;
 	}
 	case WM_MOUSEMOVE:
 	{
-		handleMouseMove(LOWORD(lParam), HIWORD(lParam));
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEX, LOWORD(lParam));
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEY, HIWORD(lParam));
+		gCoordinator.SendEvent(event);
+	
 		break;
 	}
 	case WM_SIZE:
@@ -1274,6 +1317,10 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			{
 				destWidth = LOWORD(lParam);
 				destHeight = HIWORD(lParam);
+				Event event(Events::Window::RESIZED);
+				event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+				event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+				gCoordinator.SendEvent(event);
 				windowResize();
 			}
 		}

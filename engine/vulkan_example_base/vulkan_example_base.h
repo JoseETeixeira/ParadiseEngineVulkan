@@ -117,7 +117,7 @@ private:
 	void createCommandBuffers();
 	void destroyCommandBuffers();
 	std::string shaderDir = "glsl";
-	std::bitset<8> mButtons;
+	
 protected:
 	// Returns the path to the root of the glsl or hlsl shader directory.
 	std::string getShadersPath() const;
@@ -185,6 +185,8 @@ public:
 	bool resized = false;
 	uint32_t width = 1280;
 	uint32_t height = 720;
+	std::bitset<8> mButtons;
+	std::bitset<8> mouseButtons;
 
 	vks::UIOverlay UIOverlay;
 	CommandLineParser commandLineParser;
