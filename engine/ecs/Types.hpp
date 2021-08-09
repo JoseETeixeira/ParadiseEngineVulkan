@@ -54,6 +54,8 @@ const EventId INPUT = "Events::Window::INPUT"_hash;
 
 namespace Events::Window::Input {
 const ParamId INPUT = "Events::Window::Input::INPUT"_hash;
+const ParamId MOUSEBTN = "Events::Window::Input::MOUSEBTN"_hash;
+const ParamId MOUSEWHEEL = "Events::Window::Input::MOUSEWHEEL"_hash;
 }
 
 namespace Events::Window::Resized {
