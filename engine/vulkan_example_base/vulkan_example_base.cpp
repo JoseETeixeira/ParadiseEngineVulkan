@@ -1304,8 +1304,8 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 	case WM_MOUSEMOVE:
 	{
 		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<float>(Events::Window::MouseMoved::MOUSEX, LOWORD(lParam));
-		event.SetParam<float>(Events::Window::MouseMoved::MOUSEY, HIWORD(lParam));
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, LOWORD(lParam));
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, HIWORD(lParam));
 		gCoordinator.SendEvent(event);
 	
 		break;
@@ -1321,7 +1321,7 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 				event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
 				event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
 				gCoordinator.SendEvent(event);
-				windowResize();
+				//windowResize();
 			}
 		}
 		break;
@@ -2407,7 +2407,7 @@ void VulkanExampleBase::initxcbConnection()
 	screen = iter.data;
 }
 
-void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
+void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux keys
 {
 	switch (event->response_type & 0x7f)
 	{
@@ -2420,30 +2420,63 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 	case XCB_MOTION_NOTIFY:
 	{
 		xcb_motion_notify_event_t *motion = (xcb_motion_notify_event_t *)event;
-		handleMouseMove((int32_t)motion->event_x, (int32_t)motion->event_y);
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, (int32_t)motion->event_x);
+		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, (int32_t)motion->event_y);
+		gCoordinator.SendEvent(event);
 		break;
 	}
 	break;
 	case XCB_BUTTON_PRESS:
 	{
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
-		if (press->detail == XCB_BUTTON_INDEX_1)
-			mouseButtons.left = true;
-		if (press->detail == XCB_BUTTON_INDEX_2)
-			mouseButtons.middle = true;
-		if (press->detail == XCB_BUTTON_INDEX_3)
-			mouseButtons.right = true;
+		if (press->detail == XCB_BUTTON_INDEX_1){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_2){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_3){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
 	}
 	break;
 	case XCB_BUTTON_RELEASE:
 	{
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
-		if (press->detail == XCB_BUTTON_INDEX_1)
-			mouseButtons.left = false;
-		if (press->detail == XCB_BUTTON_INDEX_2)
-			mouseButtons.middle = false;
-		if (press->detail == XCB_BUTTON_INDEX_3)
-			mouseButtons.right = false;
+		if (press->detail == XCB_BUTTON_INDEX_1){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_2){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_3){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
+
+			Event event(Events::Window::INPUT);
+			event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
 	}
 	break;
 	case XCB_KEY_PRESS:
@@ -2452,16 +2485,16 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 		switch (keyEvent->detail)
 		{
 			case KEY_W:
-				camera.keys.up = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::W));
 				break;
 			case KEY_S:
-				camera.keys.down = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::S));
 				break;
 			case KEY_A:
-				camera.keys.left = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::A));
 				break;
 			case KEY_D:
-				camera.keys.right = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::D));
 				break;
 			case KEY_P:
 				paused = !paused;
@@ -2471,7 +2504,11 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 					settings.overlay = !settings.overlay;
 				}
 				break;
+			
 		}
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 	}
 	break;
 	case XCB_KEY_RELEASE:
@@ -2480,22 +2517,24 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 		switch (keyEvent->detail)
 		{
 			case KEY_W:
-				camera.keys.up = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::W));
 				break;
 			case KEY_S:
-				camera.keys.down = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::S));
 				break;
 			case KEY_A:
-				camera.keys.left = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::A));
 				break;
 			case KEY_D:
-				camera.keys.right = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::D));
 				break;
 			case KEY_ESCAPE:
 				quit = true;
 				break;
 		}
-		keyPressed(keyEvent->detail);
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 	}
 	break;
 	case XCB_DESTROY_NOTIFY:
@@ -2510,7 +2549,10 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 				destHeight = cfgEvent->height;
 				if ((destWidth > 0) && (destHeight > 0))
 				{
-					windowResize();
+					Event event(Events::Window::RESIZED);
+					event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+					event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+					gCoordinator.SendEvent(event);
 				}
 		}
 	}
