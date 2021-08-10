@@ -2447,10 +2447,8 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 	case XCB_MOTION_NOTIFY:
 	{
 		xcb_motion_notify_event_t *motion = (xcb_motion_notify_event_t *)event;
-		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, (int32_t)motion->event_x);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, (int32_t)motion->event_y);
-		gCoordinator.SendEvent(event);
+		handleMouseMove((int32_t)motion->event_x, (int32_t)motion->event_y);
+		
 		break;
 	}
 	break;
@@ -2596,7 +2594,15 @@ void VulkanExampleBase::viewChanged() {}
 
 void VulkanExampleBase::keyPressed(uint32_t) {}
 
-void VulkanExampleBase::mouseMoved(double x, double y, bool & handled) {}
+void VulkanExampleBase::mouseMoved(double x, double y, bool & handled) {
+	if(!handled){
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEX, (float)x);
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEY, (float)y);
+		gCoordinator.SendEvent(event);
+	}
+	
+}
 
 void VulkanExampleBase::buildCommandBuffers() {}
 
@@ -2812,7 +2818,7 @@ void VulkanExampleBase::windowResize()
 	// Notify derived class
 	windowResized();
 	viewChanged();
-	
+
 	Event event(Events::Window::RESIZED);
 	event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
 	event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
@@ -2854,6 +2860,8 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
+
+	
 }
 
 void VulkanExampleBase::windowResized() {}

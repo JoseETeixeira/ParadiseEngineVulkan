@@ -477,11 +477,7 @@ public:
 		updateUniformBuffers();
 	}
 
-	virtual void mouseMoved(double x, double y, bool &handled)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		handled = io.WantCaptureMouse;
-	}
+	
 
 	void Update(float dt){
 		cameraControlSystem->Update(dt);
