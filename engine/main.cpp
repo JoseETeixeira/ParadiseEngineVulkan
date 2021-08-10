@@ -26,6 +26,8 @@
 #include "gui/gui.hpp"
 #include "ecs/Coordinator.hpp"
 
+#include "ecs/systems/CameraControlSystem.hpp"
+
 #include "ecs/math/Mat44.hpp"
 
 #define ENABLE_VALIDATION false
@@ -63,6 +65,7 @@ public:
 	VkPipelineLayout pipelineLayout;
 	VkDescriptorSet descriptorSet;
 	//end nodes
+	std::shared_ptr<CameraControlSystem> cameraControlSystem;
 
 
 
@@ -90,6 +93,16 @@ public:
 			Camera{
 				.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
 			});
+
+		cameraControlSystem = gCoordinator.RegisterSystem<CameraControlSystem>();
+		{
+			Signature signature;
+			signature.set(gCoordinator.GetComponentType<Camera>());
+			signature.set(gCoordinator.GetComponentType<Transform>());
+			gCoordinator.SetSystemSignature<CameraControlSystem>(signature);
+		}
+
+		cameraControlSystem->Init();
 
 	}
 
@@ -471,7 +484,7 @@ public:
 	}
 
 	void Update(float dt){
-
+		cameraControlSystem->Update(dt);
 	}
 
 };
