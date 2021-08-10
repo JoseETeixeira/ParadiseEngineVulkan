@@ -52,8 +52,8 @@ public:
 	struct ShaderData {
 		vks::Buffer buffer;
 		struct Values {
-			Mat44 projection;
-			Mat44 model;
+			glm::vec4  projection;
+			glm::vec4  model;
 			glm::vec4 lightPos = glm::vec4(5.0f, 5.0f, -5.0f, 1.0f);
 		} values;
 	} shaderData;
@@ -296,8 +296,11 @@ public:
 	void updateUniformBuffers()
 	{
 		auto& cam = gCoordinator.GetComponent<Camera>(camera);
-		//shaderData.values.projection = cam.projectionTransform;
 		//shaderData.values.model = cam.projectionTransform;
+		shaderData.values.projection = glm::vec4(( cam.projectionTransform.m[0][0]) + ( cam.projectionTransform.m[0][1]) + (  cam.projectionTransform.m[0][2]) + ( cam.projectionTransform.m[0][3]),
+			(cam.projectionTransform.m[1][0]) + ( cam.projectionTransform.m[1][1]) + ( cam.projectionTransform.m[1][2]) + ( cam.projectionTransform.m[1][3]),
+			( cam.projectionTransform.m[2][0]) + ( cam.projectionTransform.m[2][1]) + (cam.projectionTransform.m[2][2]) + ( cam.projectionTransform.m[2][3]),
+			( cam.projectionTransform.m[3][0]) + (cam.projectionTransform.m[3][1]) + ( cam.projectionTransform.m[3][2]) + ( cam.projectionTransform.m[3][3]));
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 	}
 
