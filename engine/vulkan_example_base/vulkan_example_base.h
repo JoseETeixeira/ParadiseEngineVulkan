@@ -74,7 +74,9 @@
 #include "../VulkanInitializers.hpp"
 #include "../benchmark.hpp"
 
-extern Coordinator gCoordinator;
+class Event;
+
+
 
 
 class CommandLineParser
@@ -97,7 +99,7 @@ public:
 	int32_t getValueAsInt(std::string name, int32_t defaultValue);
 };
 
-class VulkanExampleBase
+class VulkanExampleBase : public System
 {
 private:
 	std::string getWindowTitle();
@@ -222,8 +224,10 @@ public:
 	float timerSpeed = 0.25f;
 	bool paused = false;
 
-	Camera camera;
+	Entity camera;
 	glm::vec2 mousePos;
+
+	virtual void Update(float dt);
 
 	std::string title = "Vulkan Example";
 	std::string name = "vulkanExample";
@@ -240,11 +244,6 @@ public:
 		glm::vec2 axisRight = glm::vec2(0.0f);
 	} gamePadState;
 
-	struct {
-		bool left = false;
-		bool right = false;
-		bool middle = false;
-	} mouseButtons;
 
 	// OS specific
 #if defined(_WIN32)

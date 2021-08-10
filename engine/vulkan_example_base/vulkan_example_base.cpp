@@ -15,6 +15,12 @@
 #include <CoreVideo/CVDisplayLink.h>
 #endif
 
+#include "../ecs/components/Camera.hpp"
+#include "../ecs/components/Transform.hpp"
+#include "../ecs/Coordinator.hpp"
+
+extern Coordinator gCoordinator;
+
 std::vector<const char*> VulkanExampleBase::args;
 
 VkResult VulkanExampleBase::createInstance(bool enableValidation)
@@ -145,6 +151,10 @@ std::string VulkanExampleBase::getWindowTitle()
 	return windowTitle;
 }
 
+void VulkanExampleBase::Update(float dt){
+	
+}
+
 void VulkanExampleBase::createCommandBuffers()
 {
 	// Create one command buffer for each swap chain image and reuse for rendering
@@ -178,6 +188,7 @@ void VulkanExampleBase::createPipelineCache()
 
 void VulkanExampleBase::prepare()
 {
+	
 	if (vulkanDevice->enableDebugMarkers) {
 		vks::debugmarker::setup(device);
 	}
@@ -201,6 +212,21 @@ void VulkanExampleBase::prepare()
 		UIOverlay.prepareResources();
 		UIOverlay.preparePipeline(pipelineCache, renderPass);
 	}
+
+	
+	camera = gCoordinator.CreateEntity();
+
+	gCoordinator.AddComponent(
+		camera,
+		Transform{
+			.position = Vec3(0.0f, 0.0f, 500.0f)
+		});
+
+	gCoordinator.AddComponent(
+		camera,
+		Camera{
+			.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
+		});
 }
 
 VkPipelineShaderStageCreateInfo VulkanExampleBase::loadShader(std::string fileName, VkShaderStageFlagBits stage)
@@ -233,11 +259,10 @@ void VulkanExampleBase::nextFrame()
 	auto tEnd = std::chrono::high_resolution_clock::now();
 	auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
 	frameTimer = (float)tDiff / 1000.0f;
-	camera.update(frameTimer);
-	if (camera.moving())
-	{
-		viewUpdated = true;
-	}
+	Update(frameTimer);
+	
+	viewUpdated = true;
+	
 	// Convert to clamped timer value
 	if (!paused)
 	{
@@ -556,11 +581,10 @@ void VulkanExampleBase::renderLoop()
 		auto tEnd = std::chrono::high_resolution_clock::now();
 		auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
 		frameTimer = tDiff / 1000.0f;
-		camera.update(frameTimer);
-		if (camera.moving())
-		{
-			viewUpdated = true;
-		}
+		Update(frameTimer);
+		
+		viewUpdated = true;
+		
 		// Convert to clamped timer value
 		if (!paused)
 		{
@@ -640,8 +664,8 @@ void VulkanExampleBase::updateOverlay()
 	io.DeltaTime = frameTimer;
 
 	io.MousePos = ImVec2(mousePos.x, mousePos.y);
-	io.MouseDown[0] = mouseButtons.left;
-	io.MouseDown[1] = mouseButtons.right;
+	io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
+	io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
 
 	ImGui::NewFrame();
 
@@ -897,6 +921,9 @@ VulkanExampleBase::~VulkanExampleBase()
 
 bool VulkanExampleBase::initVulkan()
 {
+
+	
+
 	VkResult err;
 
 	// Vulkan instance
@@ -2777,7 +2804,8 @@ void VulkanExampleBase::windowResize()
 	vkDeviceWaitIdle(device);
 
 	if ((width > 0.0f) && (height > 0.0f)) {
-		camera.updateAspectRatio((float)width / (float)height);
+		auto& cam = gCoordinator.GetComponent<Camera>(camera);
+		cam.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, (float)width, (float)height);
 	}
 
 	// Notify derived class
@@ -2805,16 +2833,18 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 		return;
 	}
 
-	if (mouseButtons.left) {
-		camera.rotate(glm::vec3(dy * camera.rotationSpeed, -dx * camera.rotationSpeed, 0.0f));
+	auto& transform = gCoordinator.GetComponent<Transform>(camera);
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
+		
+		transform.rotation *= Vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
 		viewUpdated = true;
 	}
-	if (mouseButtons.right) {
-		camera.translate(glm::vec3(-0.0f, 0.0f, dy * .005f));
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
+		transform.position *= Vec3(-0.0f, 0.0f, dy * .005f);
 		viewUpdated = true;
 	}
-	if (mouseButtons.middle) {
-		camera.translate(glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f));
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
+		transform.position *= Vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);

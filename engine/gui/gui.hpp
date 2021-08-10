@@ -5,15 +5,27 @@
 *
 * This code is licensed under the MIT license (MIT) (http://opensource.org/licenses/MIT)
 */
+
+
+#pragma once
+
+#ifndef GUI_H
+#define GUI_H
+
 #define GLFW_INCLUDE_VULKAN
 #include <GLFW/glfw3.h>
 
-#pragma once
 #include "../../third_party/imgui/imgui.h"
 #include "../imgui_impl_vulkan/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
-#ifndef GUI_H
-#define GUI_H
+
+#include "../ecs/components/Camera.hpp"
+#include "../ecs/components/Transform.hpp"
+#include "../ecs/Coordinator.hpp"
+
+
+extern Coordinator gCoordinator;
+
 
 // Options and values to display/toggle from the UI
 struct UISettings {
@@ -361,11 +373,12 @@ public:
 			}
 		}
 
+		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
 
 		ImGui::Text("Camera");
-		ImGui::InputFloat3("position", &example->camera.position.x);
-		ImGui::InputFloat3("rotation", &example->camera.rotation.x);
+		ImGui::InputFloat3("position", &transform.position.x);
+		ImGui::InputFloat3("rotation", &transform.rotation.x);
 
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 		ImGui::Begin("Example settings");

@@ -19,10 +19,18 @@
 
 #include "vulkan_gltf_model/vulkan_gltf_model.h"
 
+#include "ecs/components/Camera.hpp"
+#include "ecs/components/Transform.hpp"
+
 #include "vulkan_example_base/vulkan_example_base.h"
 #include "gui/gui.hpp"
+#include "ecs/Coordinator.hpp"
+
+#include "ecs/math/Mat44.hpp"
 
 #define ENABLE_VALIDATION false
+
+Coordinator gCoordinator;
 
 // ----------------------------------------------------------------------------
 // VulkanExample
@@ -42,8 +50,8 @@ public:
 	struct ShaderData {
 		vks::Buffer buffer;
 		struct Values {
-			glm::mat4 projection;
-			glm::mat4 model;
+			Mat44 projection;
+			Mat44 model;
 			glm::vec4 lightPos = glm::vec4(5.0f, 5.0f, -5.0f, 1.0f);
 		} values;
 	} shaderData;
@@ -64,10 +72,25 @@ public:
 	VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	{
 		title = "Paradise Engine";
-		camera.type = Camera::CameraType::lookat;
-		camera.setPosition(glm::vec3(0.0f, 0.0f, -4.8f));
-		camera.setRotation(glm::vec3(180.0f, -380.0f, 0.0f));
-		camera.setPerspective(45.0f, (float)width / (float)height, 0.1f, 256.0f);
+		gCoordinator.Init();
+
+		gCoordinator.RegisterComponent<Camera>();
+		gCoordinator.RegisterComponent<Transform>();
+
+		camera = gCoordinator.CreateEntity();
+
+		gCoordinator.AddComponent(
+			camera,
+			Transform{
+				.position = Vec3(0.0f, 0.0f, 500.0f)
+			});
+
+		gCoordinator.AddComponent(
+			camera,
+			Camera{
+				.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
+			});
+
 	}
 
 	~VulkanExample()
@@ -259,8 +282,9 @@ public:
 
 	void updateUniformBuffers()
 	{
-		shaderData.values.projection = camera.matrices.perspective;
-		shaderData.values.model = camera.matrices.view;
+		auto& cam = gCoordinator.GetComponent<Camera>(camera);
+		//shaderData.values.projection = cam.projectionTransform;
+		//shaderData.values.model = cam.projectionTransform;
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 	}
 
@@ -399,6 +423,7 @@ public:
 
 	void prepare()
 	{
+		
 		VulkanExampleBase::prepare();
 
 		loadAssets();
@@ -425,8 +450,8 @@ public:
 		io.DeltaTime = frameTimer;
 
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = mouseButtons.left;
-		io.MouseDown[1] = mouseButtons.right;
+		io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
+		io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
 
 		draw();
 
@@ -443,6 +468,10 @@ public:
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		handled = io.WantCaptureMouse;
+	}
+
+	void Update(float dt){
+
 	}
 
 };
