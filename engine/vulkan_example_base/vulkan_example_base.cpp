@@ -1192,6 +1192,12 @@ HWND VulkanExampleBase::setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
 
 void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	Event event(Events::Window::INPUT);
+	Event resize(Events::Window::RESIZED);
+	
+	Event mouseButtonPressEvent(Events::Window::MOUSECLICKED);
+	Event mouseWheelEvent(Events::Window::MOUSEWHEEL);
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:
@@ -1234,11 +1240,11 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			mButtons.set(static_cast<std::size_t>(InputButtons::D));
 			break;
 		}
-		Event event(Events::Window::INPUT);
+
+		
+
 		event.SetParam(Events::Window::Input::INPUT, mButtons);
 		gCoordinator.SendEvent(event);
-
-		keyPressed((uint32_t)wParam);
 		break;
 	case WM_KEYUP:
 
@@ -1257,83 +1263,72 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			mButtons.reset(static_cast<std::size_t>(InputButtons::D));
 			break;
 		}
-		Event event(Events::Window::INPUT);
+
+		
 		event.SetParam(Events::Window::Input::INPUT, mButtons);
 		gCoordinator.SendEvent(event);
 		break;
 	case WM_LBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+		mouseBtns.left = true;
 		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
 
-		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
-		gCoordinator.SendEvent(event);
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
 
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
 		break;
 	case WM_RBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+		mouseBtns.right = true;
 		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
 
-		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
-		gCoordinator.SendEvent(event);
-
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+		
 		break;
 	case WM_MBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
+		mouseBtns.middle = true;
 		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
-		
-		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, mousePos.x);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, mousePos.y);
-		gCoordinator.SendEvent(event);
 
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+
+		
 		break;
 	case WM_LBUTTONUP:
 		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
+		mouseBtns.left = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
 		break;
 	case WM_RBUTTONUP:
 		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
+		mouseBtns.right = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
 		break;
 	case WM_MBUTTONUP:
 		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
-		Event event(Events::Window::INPUT);
-		event.SetParam(Events::Window::Input::MOUSEBTN, mouseButtons);
-		gCoordinator.SendEvent(event);
+		mouseBtns.middle = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+		
 		break;
 	case WM_MOUSEWHEEL:
 	{
 		short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		Event event(Events::Window::INPUT);
-		event.SetParam<float>(Events::Window::Input::MOUSEWHEEL, (float)wheelDelta);
-		gCoordinator.SendEvent(event);
+	
+		mouseWheelEvent.SetParam<float>(Events::Window::MouseWheel::MOUSEWHEEL, (float)wheelDelta);
+		gCoordinator.SendEvent(mouseWheelEvent);
 
 		viewUpdated = true;
 		break;
 	}
 	case WM_MOUSEMOVE:
 	{
-		Event event(Events::Window::MOUSEMOVED);
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEX, LOWORD(lParam));
-		event.SetParam<int32_t>(Events::Window::MouseMoved::MOUSEY, HIWORD(lParam));
-		gCoordinator.SendEvent(event);
+		handleMouseMove(LOWORD(lParam), HIWORD(lParam));
+		
 	
 		break;
 	}
@@ -1344,11 +1339,11 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			{
 				destWidth = LOWORD(lParam);
 				destHeight = HIWORD(lParam);
-				Event event(Events::Window::RESIZED);
-				event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
-				event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
-				gCoordinator.SendEvent(event);
-				//windowResize();
+				
+				resize.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+				resize.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+				gCoordinator.SendEvent(resize);
+				windowResize();
 			}
 		}
 		break;
@@ -1366,6 +1361,8 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		resizing = false;
 		break;
 	}
+
+	
 }
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
 int32_t VulkanExampleBase::handleAppInput(struct android_app* app, AInputEvent* event)
