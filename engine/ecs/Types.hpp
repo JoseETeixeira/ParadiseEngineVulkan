@@ -61,13 +61,22 @@ const EventId QUIT = "Events::Window::QUIT"_hash;
 const EventId RESIZED = "Events::Window::RESIZED"_hash;
 const EventId INPUT = "Events::Window::INPUT"_hash;
 const EventId MOUSEMOVED = "Events::Window::MOUSEMOVED"_hash;
+const EventId MOUSECLICKED = "Events::Window::MOUSECLICKED"_hash;
+const EventId MOUSEWHEEL = "Events::Window::MOUSEWHEEL"_hash;
 }
 
 namespace Events::Window::Input {
 const ParamId INPUT = "Events::Window::Input::INPUT"_hash;
-const ParamId MOUSEBTN = "Events::Window::Input::MOUSEBTN"_hash;
-const ParamId MOUSEWHEEL = "Events::Window::Input::MOUSEWHEEL"_hash;
 
+}
+
+
+namespace Events::Window::MouseClicked {
+const ParamId MOUSEBTN = "Events::Window::MouseClicked::MOUSEBTN"_hash;
+}
+
+namespace Events::Window::MouseWheel {
+const ParamId MOUSEWHEEL = "Events::Window::MouseWheel::MOUSEWHEEL"_hash;
 }
 
 namespace Events::Window::MouseMoved {
