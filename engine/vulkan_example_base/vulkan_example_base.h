@@ -189,6 +189,11 @@ public:
 	uint32_t height = 720;
 	std::bitset<8> mButtons;
 	std::bitset<8> mouseButtons;
+	struct {
+		bool left = false;
+		bool right = false;
+		bool middle = false;
+	} mouseBtns;
 
 	vks::UIOverlay UIOverlay;
 	CommandLineParser commandLineParser;

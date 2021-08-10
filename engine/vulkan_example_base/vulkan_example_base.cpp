@@ -2457,6 +2457,7 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
 		if (press->detail == XCB_BUTTON_INDEX_1){
 			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
+			mouseBtns.left = true;
 
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
@@ -2464,6 +2465,7 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 		}
 		if (press->detail == XCB_BUTTON_INDEX_2){
 			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
+			mouseBtns.middle = true;
 
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
@@ -2471,7 +2473,7 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 		}
 		if (press->detail == XCB_BUTTON_INDEX_3){
 			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
-
+			mouseBtns.right = true;
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
 			gCoordinator.SendEvent(event);
@@ -2483,21 +2485,21 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
 		if (press->detail == XCB_BUTTON_INDEX_1){
 			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
-
+			mouseBtns.left = false;
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
 			gCoordinator.SendEvent(event);
 		}
 		if (press->detail == XCB_BUTTON_INDEX_2){
 			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
-
+			mouseBtns.middle = false;
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
 			gCoordinator.SendEvent(event);
 		}
 		if (press->detail == XCB_BUTTON_INDEX_3){
 			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
-
+			mouseBtns.right = false;
 			Event event(Events::Window::MOUSECLICKED);
 			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
 			gCoordinator.SendEvent(event);

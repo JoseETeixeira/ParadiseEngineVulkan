@@ -463,8 +463,8 @@ public:
 		io.DeltaTime = frameTimer;
 
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
-		io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
+		io.MouseDown[0] = mouseBtns.left;
+		io.MouseDown[1] = mouseBtns.right;
 
 		draw();
 
