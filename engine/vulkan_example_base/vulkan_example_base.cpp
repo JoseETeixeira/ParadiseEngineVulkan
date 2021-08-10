@@ -2576,10 +2576,8 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux k
 				destHeight = cfgEvent->height;
 				if ((destWidth > 0) && (destHeight > 0))
 				{
-					Event event(Events::Window::RESIZED);
-					event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
-					event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
-					gCoordinator.SendEvent(event);
+					windowResize();
+					
 				}
 		}
 	}
@@ -2764,6 +2762,9 @@ void VulkanExampleBase::getEnabledFeatures() {}
 
 void VulkanExampleBase::windowResize()
 {
+
+	
+
 	if (!prepared)
 	{
 		return;
@@ -2811,6 +2812,11 @@ void VulkanExampleBase::windowResize()
 	// Notify derived class
 	windowResized();
 	viewChanged();
+	
+	Event event(Events::Window::RESIZED);
+	event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+	event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+	gCoordinator.SendEvent(event);
 
 	prepared = true;
 }
