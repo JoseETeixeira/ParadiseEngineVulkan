@@ -18,7 +18,7 @@ void CameraControlSystem::Update(float dt)
 	{
 		auto& transform = gCoordinator.GetComponent<Transform>(entity);
 
-		float speed = 20.0f;
+		float speed = 1.0f;
 
 
 		if (mButtons.test(static_cast<std::size_t>(InputButtons::W)))
