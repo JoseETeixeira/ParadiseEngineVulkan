@@ -52,8 +52,8 @@ public:
 	struct ShaderData {
 		vks::Buffer buffer;
 		struct Values {
-			glm::vec4  projection;
-			glm::vec4  model;
+			glm::mat4   projection;
+			glm::mat4  model;
 			glm::vec4 lightPos = glm::vec4(5.0f, 5.0f, -5.0f, 1.0f);
 		} values;
 	} shaderData;
@@ -91,7 +91,7 @@ public:
 		gCoordinator.AddComponent(
 			camera,
 			Camera{
-				.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
+				.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, width, height)
 			});
 
 		cameraControlSystem = gCoordinator.RegisterSystem<CameraControlSystem>();
@@ -293,14 +293,43 @@ public:
 		updateUniformBuffers();
 	}
 
+	glm::mat4 updateViewMatrix()
+	{
+		auto& transform = gCoordinator.GetComponent<Transform>(camera);
+		glm::mat4 view;
+		glm::mat4 rotM = glm::mat4(1.0f);
+		glm::mat4 transM;
+
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.x * ( -1.0f )), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
+	
+		translation.y *= -1.0f;
+		
+		transM = glm::translate(glm::mat4(1.0f), translation);
+
+		//if (type == CameraType::firstperson)
+		//{
+			view = rotM * transM;
+		//}
+		//else
+		//{
+			//view = transM * rotM;
+		//}
+
+		return view;
+
+	
+	};
+
 	void updateUniformBuffers()
 	{
 		auto& cam = gCoordinator.GetComponent<Camera>(camera);
-		//shaderData.values.model = cam.projectionTransform;
-		shaderData.values.projection = glm::vec4(( cam.projectionTransform.m[0][0]) + ( cam.projectionTransform.m[0][1]) + (  cam.projectionTransform.m[0][2]) + ( cam.projectionTransform.m[0][3]),
-			(cam.projectionTransform.m[1][0]) + ( cam.projectionTransform.m[1][1]) + ( cam.projectionTransform.m[1][2]) + ( cam.projectionTransform.m[1][3]),
-			( cam.projectionTransform.m[2][0]) + ( cam.projectionTransform.m[2][1]) + (cam.projectionTransform.m[2][2]) + ( cam.projectionTransform.m[2][3]),
-			( cam.projectionTransform.m[3][0]) + (cam.projectionTransform.m[3][1]) + ( cam.projectionTransform.m[3][2]) + ( cam.projectionTransform.m[3][3]));
+		
+		shaderData.values.model = updateViewMatrix();
+		shaderData.values.projection =  glm::perspective(glm::radians(45.0f), float(width)/float(height), 0.1f, 256.0f);
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 	}
 
