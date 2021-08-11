@@ -19,10 +19,20 @@
 
 #include "vulkan_gltf_model/vulkan_gltf_model.h"
 
+#include "ecs/components/Camera.hpp"
+#include "ecs/components/Transform.hpp"
+
 #include "vulkan_example_base/vulkan_example_base.h"
 #include "gui/gui.hpp"
+#include "ecs/Coordinator.hpp"
+
+#include "ecs/systems/CameraControlSystem.hpp"
+
+#include "ecs/math/Mat44.hpp"
 
 #define ENABLE_VALIDATION false
+
+Coordinator gCoordinator;
 
 // ----------------------------------------------------------------------------
 // VulkanExample
@@ -42,8 +52,8 @@ public:
 	struct ShaderData {
 		vks::Buffer buffer;
 		struct Values {
-			glm::mat4 projection;
-			glm::mat4 model;
+			glm::mat4   projection;
+			glm::mat4  model;
 			glm::vec4 lightPos = glm::vec4(5.0f, 5.0f, -5.0f, 1.0f);
 		} values;
 	} shaderData;
@@ -55,6 +65,7 @@ public:
 	VkPipelineLayout pipelineLayout;
 	VkDescriptorSet descriptorSet;
 	//end nodes
+	std::shared_ptr<CameraControlSystem> cameraControlSystem;
 
 
 
@@ -64,10 +75,35 @@ public:
 	VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	{
 		title = "Paradise Engine";
-		camera.type = Camera::CameraType::lookat;
-		camera.setPosition(glm::vec3(0.0f, 0.0f, -4.8f));
-		camera.setRotation(glm::vec3(180.0f, -380.0f, 0.0f));
-		camera.setPerspective(45.0f, (float)width / (float)height, 0.1f, 256.0f);
+		gCoordinator.Init();
+
+		gCoordinator.RegisterComponent<Camera>();
+		gCoordinator.RegisterComponent<Transform>();
+
+		camera = gCoordinator.CreateEntity();
+
+		gCoordinator.AddComponent(
+			camera,
+			Transform{
+				.position = Vec3(0.0f, 0.0f, 500.0f)
+			});
+
+		gCoordinator.AddComponent(
+			camera,
+			Camera{
+				.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, width, height)
+			});
+
+		cameraControlSystem = gCoordinator.RegisterSystem<CameraControlSystem>();
+		{
+			Signature signature;
+			signature.set(gCoordinator.GetComponentType<Camera>());
+			signature.set(gCoordinator.GetComponentType<Transform>());
+			gCoordinator.SetSystemSignature<CameraControlSystem>(signature);
+		}
+
+		cameraControlSystem->Init();
+
 	}
 
 	~VulkanExample()
@@ -257,10 +293,43 @@ public:
 		updateUniformBuffers();
 	}
 
+	glm::mat4 updateViewMatrix()
+	{
+		auto& transform = gCoordinator.GetComponent<Transform>(camera);
+		glm::mat4 view;
+		glm::mat4 rotM = glm::mat4(1.0f);
+		glm::mat4 transM;
+
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.x * ( -1.0f )), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+		glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
+	
+		translation.y *= -1.0f;
+		
+		transM = glm::translate(glm::mat4(1.0f), translation);
+
+		//if (type == CameraType::firstperson)
+		//{
+			view = rotM * transM;
+		//}
+		//else
+		//{
+			//view = transM * rotM;
+		//}
+
+		return view;
+
+	
+	};
+
 	void updateUniformBuffers()
 	{
-		shaderData.values.projection = camera.matrices.perspective;
-		shaderData.values.model = camera.matrices.view;
+		auto& cam = gCoordinator.GetComponent<Camera>(camera);
+		
+		shaderData.values.model = updateViewMatrix();
+		shaderData.values.projection =  glm::perspective(glm::radians(45.0f), float(width)/float(height), 0.1f, 256.0f);
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 	}
 
@@ -399,6 +468,7 @@ public:
 
 	void prepare()
 	{
+		
 		VulkanExampleBase::prepare();
 
 		loadAssets();
@@ -425,8 +495,8 @@ public:
 		io.DeltaTime = frameTimer;
 
 		io.MousePos = ImVec2(mousePos.x, mousePos.y);
-		io.MouseDown[0] = mouseButtons.left;
-		io.MouseDown[1] = mouseButtons.right;
+		io.MouseDown[0] = mouseBtns.left;
+		io.MouseDown[1] = mouseBtns.right;
 
 		draw();
 
@@ -439,10 +509,10 @@ public:
 		updateUniformBuffers();
 	}
 
-	virtual void mouseMoved(double x, double y, bool &handled)
-	{
-		ImGuiIO& io = ImGui::GetIO();
-		handled = io.WantCaptureMouse;
+	
+
+	void Update(float dt){
+		cameraControlSystem->Update(dt);
 	}
 
 };

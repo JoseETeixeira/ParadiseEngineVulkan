@@ -62,7 +62,7 @@ else:
         'NOMINMAX',
         '_USE_MATH_DEFINES',
         '_CRT_SECURE_NO_WARNINGS'],
-        CCFLAGS=['-std=c++latest', '-Wall', '-O2', '-g','-DVK_USE_PLATFORM_XCB_KHR'],
+        CCFLAGS=['-std=c++2a', '-Wall', '-O2', '-g','-DVK_USE_PLATFORM_XCB_KHR'],
         LDFLAGS = '-lglfw -lvulkan -ldl -lpthread -lX11 -lXxf86vm -lXrandr -lXi' )
     
     cpp17.Append(LIBS = [
@@ -87,7 +87,10 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/json',
 'third_party/lz4',
 'engine/imgui_impl_vulkan',
-'engine/ecs'
+'engine/ecs',
+'engine/ecs/math',
+'engine/ecs/components',
+'engine/ecs/systems'
 '.'])
 
 cpp17.SharedLibrary('imgui',Glob('third_party/imgui/*.cpp'))
@@ -116,6 +119,7 @@ add_sources(sources, 'third_party/imgui')
 add_sources(sources, 'third_party/ktx/lib')
 add_sources(sources, 'third_party/ktx/include')
 add_sources(sources, 'third_party/lz4')
+add_sources(sources, 'engine/ecs/systems')
 add_sources(sources, 'engine')
 
 #------------------------------------------------------------------------------

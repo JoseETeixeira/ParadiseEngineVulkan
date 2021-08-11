@@ -15,6 +15,12 @@
 #include <CoreVideo/CVDisplayLink.h>
 #endif
 
+#include "../ecs/components/Camera.hpp"
+#include "../ecs/components/Transform.hpp"
+#include "../ecs/Coordinator.hpp"
+
+extern Coordinator gCoordinator;
+
 std::vector<const char*> VulkanExampleBase::args;
 
 VkResult VulkanExampleBase::createInstance(bool enableValidation)
@@ -145,6 +151,10 @@ std::string VulkanExampleBase::getWindowTitle()
 	return windowTitle;
 }
 
+void VulkanExampleBase::Update(float dt){
+	
+}
+
 void VulkanExampleBase::createCommandBuffers()
 {
 	// Create one command buffer for each swap chain image and reuse for rendering
@@ -178,6 +188,7 @@ void VulkanExampleBase::createPipelineCache()
 
 void VulkanExampleBase::prepare()
 {
+	
 	if (vulkanDevice->enableDebugMarkers) {
 		vks::debugmarker::setup(device);
 	}
@@ -201,6 +212,21 @@ void VulkanExampleBase::prepare()
 		UIOverlay.prepareResources();
 		UIOverlay.preparePipeline(pipelineCache, renderPass);
 	}
+
+	
+	camera = gCoordinator.CreateEntity();
+
+	gCoordinator.AddComponent(
+		camera,
+		Transform{
+			.position = Vec3(0.0f, 0.0f, 500.0f)
+		});
+
+	gCoordinator.AddComponent(
+		camera,
+		Camera{
+			.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
+		});
 }
 
 VkPipelineShaderStageCreateInfo VulkanExampleBase::loadShader(std::string fileName, VkShaderStageFlagBits stage)
@@ -233,11 +259,10 @@ void VulkanExampleBase::nextFrame()
 	auto tEnd = std::chrono::high_resolution_clock::now();
 	auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
 	frameTimer = (float)tDiff / 1000.0f;
-	camera.update(frameTimer);
-	if (camera.moving())
-	{
-		viewUpdated = true;
-	}
+	Update(frameTimer);
+	
+	viewUpdated = true;
+	
 	// Convert to clamped timer value
 	if (!paused)
 	{
@@ -556,11 +581,10 @@ void VulkanExampleBase::renderLoop()
 		auto tEnd = std::chrono::high_resolution_clock::now();
 		auto tDiff = std::chrono::duration<double, std::milli>(tEnd - tStart).count();
 		frameTimer = tDiff / 1000.0f;
-		camera.update(frameTimer);
-		if (camera.moving())
-		{
-			viewUpdated = true;
-		}
+		Update(frameTimer);
+		
+		viewUpdated = true;
+		
 		// Convert to clamped timer value
 		if (!paused)
 		{
@@ -640,8 +664,8 @@ void VulkanExampleBase::updateOverlay()
 	io.DeltaTime = frameTimer;
 
 	io.MousePos = ImVec2(mousePos.x, mousePos.y);
-	io.MouseDown[0] = mouseButtons.left;
-	io.MouseDown[1] = mouseButtons.right;
+	io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
+	io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
 
 	ImGui::NewFrame();
 
@@ -897,6 +921,9 @@ VulkanExampleBase::~VulkanExampleBase()
 
 bool VulkanExampleBase::initVulkan()
 {
+
+	
+
 	VkResult err;
 
 	// Vulkan instance
@@ -1165,6 +1192,12 @@ HWND VulkanExampleBase::setupWindow(HINSTANCE hinstance, WNDPROC wndproc)
 
 void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
+	Event event(Events::Window::INPUT);
+	Event resize(Events::Window::RESIZED);
+	
+	Event mouseButtonPressEvent(Events::Window::MOUSECLICKED);
+	Event mouseWheelEvent(Events::Window::MOUSEWHEEL);
+
 	switch (uMsg)
 	{
 	case WM_CLOSE:
@@ -1191,78 +1224,112 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			break;
 		}
 
-		if (camera.type == Camera::firstperson)
+	
+		switch (wParam)
 		{
-			switch (wParam)
-			{
-			case KEY_W:
-				camera.keys.up = true;
-				break;
-			case KEY_S:
-				camera.keys.down = true;
-				break;
-			case KEY_A:
-				camera.keys.left = true;
-				break;
-			case KEY_D:
-				camera.keys.right = true;
-				break;
-			}
+		case KEY_W:
+			mButtons.set(static_cast<std::size_t>(InputButtons::W));
+			break;
+		case KEY_S:
+			mButtons.set(static_cast<std::size_t>(InputButtons::S));
+			break;
+		case KEY_A:
+			mButtons.set(static_cast<std::size_t>(InputButtons::A));
+			break;
+		case KEY_D:
+			mButtons.set(static_cast<std::size_t>(InputButtons::D));
+			break;
 		}
 
-		keyPressed((uint32_t)wParam);
+		
+
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_KEYUP:
-		if (camera.type == Camera::firstperson)
+
+		switch (wParam)
 		{
-			switch (wParam)
-			{
-			case KEY_W:
-				camera.keys.up = false;
-				break;
-			case KEY_S:
-				camera.keys.down = false;
-				break;
-			case KEY_A:
-				camera.keys.left = false;
-				break;
-			case KEY_D:
-				camera.keys.right = false;
-				break;
-			}
+		case KEY_W:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::W));
+			break;
+		case KEY_S:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::S));
+			break;
+		case KEY_A:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::A));
+			break;
+		case KEY_D:
+			mButtons.reset(static_cast<std::size_t>(InputButtons::D));
+			break;
 		}
+
+		
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 		break;
 	case WM_LBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.left = true;
+		mouseBtns.left = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
+
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+
 		break;
 	case WM_RBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.right = true;
+		mouseBtns.right = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
+
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+		
 		break;
 	case WM_MBUTTONDOWN:
 		mousePos = glm::vec2((float)LOWORD(lParam), (float)HIWORD(lParam));
-		mouseButtons.middle = true;
+		mouseBtns.middle = true;
+		mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
+
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+
+		
 		break;
 	case WM_LBUTTONUP:
-		mouseButtons.left = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
+		mouseBtns.left = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
 		break;
 	case WM_RBUTTONUP:
-		mouseButtons.right = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
+		mouseBtns.right = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
 		break;
 	case WM_MBUTTONUP:
-		mouseButtons.middle = false;
+		mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
+		mouseBtns.middle = false;
+		mouseButtonPressEvent.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+		gCoordinator.SendEvent(mouseButtonPressEvent);
+		
 		break;
 	case WM_MOUSEWHEEL:
 	{
 		short wheelDelta = GET_WHEEL_DELTA_WPARAM(wParam);
-		camera.translate(glm::vec3(0.0f, 0.0f, (float)wheelDelta * 0.005f));
+	
+		mouseWheelEvent.SetParam<float>(Events::Window::MouseWheel::MOUSEWHEEL, (float)wheelDelta);
+		gCoordinator.SendEvent(mouseWheelEvent);
+
 		viewUpdated = true;
 		break;
 	}
 	case WM_MOUSEMOVE:
 	{
 		handleMouseMove(LOWORD(lParam), HIWORD(lParam));
+		
+	
 		break;
 	}
 	case WM_SIZE:
@@ -1272,6 +1339,10 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 			{
 				destWidth = LOWORD(lParam);
 				destHeight = HIWORD(lParam);
+				
+				resize.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+				resize.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+				gCoordinator.SendEvent(resize);
 				windowResize();
 			}
 		}
@@ -1290,6 +1361,8 @@ void VulkanExampleBase::handleMessages(HWND hWnd, UINT uMsg, WPARAM wParam, LPAR
 		resizing = false;
 		break;
 	}
+
+	
 }
 #elif defined(VK_USE_PLATFORM_ANDROID_KHR)
 int32_t VulkanExampleBase::handleAppInput(struct android_app* app, AInputEvent* event)
@@ -2358,7 +2431,7 @@ void VulkanExampleBase::initxcbConnection()
 	screen = iter.data;
 }
 
-void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
+void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event) // linux keys
 {
 	switch (event->response_type & 0x7f)
 	{
@@ -2372,29 +2445,62 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 	{
 		xcb_motion_notify_event_t *motion = (xcb_motion_notify_event_t *)event;
 		handleMouseMove((int32_t)motion->event_x, (int32_t)motion->event_y);
+		
 		break;
 	}
 	break;
 	case XCB_BUTTON_PRESS:
 	{
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
-		if (press->detail == XCB_BUTTON_INDEX_1)
-			mouseButtons.left = true;
-		if (press->detail == XCB_BUTTON_INDEX_2)
-			mouseButtons.middle = true;
-		if (press->detail == XCB_BUTTON_INDEX_3)
-			mouseButtons.right = true;
+		if (press->detail == XCB_BUTTON_INDEX_1){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Left));
+			mouseBtns.left = true;
+
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_2){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Middle));
+			mouseBtns.middle = true;
+
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_3){
+			mouseButtons.set(static_cast<std::size_t>(MouseButtons::Right));
+			mouseBtns.right = true;
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
 	}
 	break;
 	case XCB_BUTTON_RELEASE:
 	{
 		xcb_button_press_event_t *press = (xcb_button_press_event_t *)event;
-		if (press->detail == XCB_BUTTON_INDEX_1)
-			mouseButtons.left = false;
-		if (press->detail == XCB_BUTTON_INDEX_2)
-			mouseButtons.middle = false;
-		if (press->detail == XCB_BUTTON_INDEX_3)
-			mouseButtons.right = false;
+		if (press->detail == XCB_BUTTON_INDEX_1){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Left));
+			mouseBtns.left = false;
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_2){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Middle));
+			mouseBtns.middle = false;
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
+		if (press->detail == XCB_BUTTON_INDEX_3){
+			mouseButtons.reset(static_cast<std::size_t>(MouseButtons::Right));
+			mouseBtns.right = false;
+			Event event(Events::Window::MOUSECLICKED);
+			event.SetParam(Events::Window::MouseClicked::MOUSEBTN, mouseButtons);
+			gCoordinator.SendEvent(event);
+		}
 	}
 	break;
 	case XCB_KEY_PRESS:
@@ -2403,16 +2509,16 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 		switch (keyEvent->detail)
 		{
 			case KEY_W:
-				camera.keys.up = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::W));
 				break;
 			case KEY_S:
-				camera.keys.down = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::S));
 				break;
 			case KEY_A:
-				camera.keys.left = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::A));
 				break;
 			case KEY_D:
-				camera.keys.right = true;
+				mButtons.set(static_cast<std::size_t>(InputButtons::D));
 				break;
 			case KEY_P:
 				paused = !paused;
@@ -2422,7 +2528,11 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 					settings.overlay = !settings.overlay;
 				}
 				break;
+			
 		}
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 	}
 	break;
 	case XCB_KEY_RELEASE:
@@ -2431,22 +2541,24 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 		switch (keyEvent->detail)
 		{
 			case KEY_W:
-				camera.keys.up = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::W));
 				break;
 			case KEY_S:
-				camera.keys.down = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::S));
 				break;
 			case KEY_A:
-				camera.keys.left = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::A));
 				break;
 			case KEY_D:
-				camera.keys.right = false;
+				mButtons.reset(static_cast<std::size_t>(InputButtons::D));
 				break;
 			case KEY_ESCAPE:
 				quit = true;
 				break;
 		}
-		keyPressed(keyEvent->detail);
+		Event event(Events::Window::INPUT);
+		event.SetParam(Events::Window::Input::INPUT, mButtons);
+		gCoordinator.SendEvent(event);
 	}
 	break;
 	case XCB_DESTROY_NOTIFY:
@@ -2462,6 +2574,7 @@ void VulkanExampleBase::handleEvent(const xcb_generic_event_t *event)
 				if ((destWidth > 0) && (destHeight > 0))
 				{
 					windowResize();
+					
 				}
 		}
 	}
@@ -2480,7 +2593,15 @@ void VulkanExampleBase::viewChanged() {}
 
 void VulkanExampleBase::keyPressed(uint32_t) {}
 
-void VulkanExampleBase::mouseMoved(double x, double y, bool & handled) {}
+void VulkanExampleBase::mouseMoved(double x, double y, bool & handled) {
+	if(!handled){
+		Event event(Events::Window::MOUSEMOVED);
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEX, (float)x);
+		event.SetParam<float>(Events::Window::MouseMoved::MOUSEY, (float)y);
+		gCoordinator.SendEvent(event);
+	}
+	
+}
 
 void VulkanExampleBase::buildCommandBuffers() {}
 
@@ -2646,6 +2767,9 @@ void VulkanExampleBase::getEnabledFeatures() {}
 
 void VulkanExampleBase::windowResize()
 {
+
+	
+
 	if (!prepared)
 	{
 		return;
@@ -2686,12 +2810,18 @@ void VulkanExampleBase::windowResize()
 	vkDeviceWaitIdle(device);
 
 	if ((width > 0.0f) && (height > 0.0f)) {
-		camera.updateAspectRatio((float)width / (float)height);
+		auto& cam = gCoordinator.GetComponent<Camera>(camera);
+		cam.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, (float)width, (float)height);
 	}
 
 	// Notify derived class
 	windowResized();
 	viewChanged();
+
+	Event event(Events::Window::RESIZED);
+	event.SetParam<float>(Events::Window::Resized::WIDTH, destWidth);
+	event.SetParam<float>(Events::Window::Resized::HEIGHT, destHeight);
+	gCoordinator.SendEvent(event);
 
 	prepared = true;
 }
@@ -2714,19 +2844,23 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 		return;
 	}
 
-	if (mouseButtons.left) {
-		camera.rotate(glm::vec3(dy * camera.rotationSpeed, -dx * camera.rotationSpeed, 0.0f));
+	auto& transform = gCoordinator.GetComponent<Transform>(camera);
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
+		
+		transform.rotation *= Vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
 		viewUpdated = true;
 	}
-	if (mouseButtons.right) {
-		camera.translate(glm::vec3(-0.0f, 0.0f, dy * .005f));
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
+		transform.position *= Vec3(-0.0f, 0.0f, dy * .005f);
 		viewUpdated = true;
 	}
-	if (mouseButtons.middle) {
-		camera.translate(glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f));
+	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
+		transform.position *= Vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
+
+	
 }
 
 void VulkanExampleBase::windowResized() {}
