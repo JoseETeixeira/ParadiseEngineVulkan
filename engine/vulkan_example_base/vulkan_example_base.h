@@ -120,7 +120,7 @@ private:
 	void destroyCommandBuffers();
 	std::string shaderDir = "glsl";
 	
-protected:
+public:
 	// Returns the path to the root of the glsl or hlsl shader directory.
 	std::string getShadersPath() const;
 

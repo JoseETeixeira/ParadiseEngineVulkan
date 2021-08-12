@@ -219,7 +219,7 @@ void VulkanExampleBase::prepare()
 	gCoordinator.AddComponent(
 		camera,
 		Transform{
-			.position = Vec3(0.0f, 0.0f, 500.0f)
+			.position = Vec3(0.0f, 0.0f, 1.0f)
 		});
 
 	gCoordinator.AddComponent(

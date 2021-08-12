@@ -80,7 +80,6 @@ cpp17.Append(CPPPATH=['third_party/glfw/include',
 'third_party/ktx/include',
 'third_party/ktx/lib',
 'third_party/ktx/other_include',
-'third_party/stb',
 'third_party/vulkan',
 'third_party/imgui'
 'third_party/imgui/backends',
@@ -113,6 +112,7 @@ add_sources(sources, 'engine/vulkan_buffer')
 add_sources(sources, 'engine/vulkan_debug')
 add_sources(sources, 'engine/vulkan_swap_chain')
 add_sources(sources, 'engine/vulkan_ui_overlay')
+add_sources(sources, 'engine/vulkan_gltf_model')
 add_sources(sources, 'engine/vulkan_texture')
 add_sources(sources, 'engine/vulkan_example_base')
 add_sources(sources, 'third_party/imgui')
