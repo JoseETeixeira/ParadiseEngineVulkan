@@ -138,8 +138,7 @@ public:
 
 		draw();
 
-		if (uiSettings.animateLight)
-			meshSystem->updateUniformBuffers();
+		meshSystem->updateUniformBuffers();
 	}
 
 	virtual void viewChanged()
