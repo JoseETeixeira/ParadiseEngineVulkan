@@ -9,7 +9,7 @@
 #pragma once
 
 #ifdef _WIN32
-#pragma comment(linker, "/subsystem:console")
+//#pragma comment(linker, "/subsystem:console")
 #include <windows.h>
 #include <fcntl.h>
 #include <io.h>
@@ -56,6 +56,7 @@
 #include <string>
 #include <numeric>
 #include <array>
+#include <bitset>
 
 #include "../../third_party/vulkan/vulkan.h"
 
@@ -68,9 +69,15 @@
 #include "../vulkan_device/vulkan_device.h"
 #include "../vulkan_texture/vulkan_texture.h"
 
+#include "../ecs/Coordinator.hpp"
+
 #include "../VulkanInitializers.hpp"
-#include "../camera.hpp"
 #include "../benchmark.hpp"
+
+class Event;
+
+
+
 
 class CommandLineParser
 {
@@ -92,7 +99,7 @@ public:
 	int32_t getValueAsInt(std::string name, int32_t defaultValue);
 };
 
-class VulkanExampleBase
+class VulkanExampleBase : public System
 {
 private:
 	std::string getWindowTitle();
@@ -112,7 +119,8 @@ private:
 	void createCommandBuffers();
 	void destroyCommandBuffers();
 	std::string shaderDir = "glsl";
-protected:
+	
+public:
 	// Returns the path to the root of the glsl or hlsl shader directory.
 	std::string getShadersPath() const;
 
@@ -179,6 +187,13 @@ public:
 	bool resized = false;
 	uint32_t width = 1280;
 	uint32_t height = 720;
+	std::bitset<8> mButtons;
+	std::bitset<8> mouseButtons;
+	struct {
+		bool left = false;
+		bool right = false;
+		bool middle = false;
+	} mouseBtns;
 
 	vks::UIOverlay UIOverlay;
 	CommandLineParser commandLineParser;
@@ -214,8 +229,10 @@ public:
 	float timerSpeed = 0.25f;
 	bool paused = false;
 
-	Camera camera;
+	Entity camera;
 	glm::vec2 mousePos;
+
+	virtual void Update(float dt);
 
 	std::string title = "Vulkan Example";
 	std::string name = "vulkanExample";
@@ -232,11 +249,6 @@ public:
 		glm::vec2 axisRight = glm::vec2(0.0f);
 	} gamePadState;
 
-	struct {
-		bool left = false;
-		bool right = false;
-		bool middle = false;
-	} mouseButtons;
 
 	// OS specific
 #if defined(_WIN32)

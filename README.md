@@ -14,6 +14,8 @@ cd ParadiseEngineVulkan
 python download_assets.py
 ```
 
+- Install LZ4 for your platform https://github.com/lz4/lz4
+
 ## Building - WINDOWS
 
 - Install VulkanSDK
@@ -55,6 +57,9 @@ scons -Q
 - https://en.wikipedia.org/wiki/Resource_acquisition_is_initialization
 - https://www.reddit.com/r/vulkan/comments/fe40bw/vulkan_image_imgui_integration/
 - https://github.com/SaschaWillems/Vulkan-glTF-PBR
+- https://stackoverflow.com/questions/61263284/having-a-problem-getting-imgui-to-work-with-vulkan
+- https://github.com/thepaperpilot/V-ECS
+- https://mr-vasifabdullayev.medium.com/multiple-object-rendering-in-vulkan-3d07aa583cec
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
@@ -77,6 +82,10 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 
 ## TODO:
 - Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
+
+- Entity Component system https://github.com/skypjack/entt
+
+- Job system https://github.com/hlavacs/ViennaGameJobSystem
 
 ## DEBUGGING:
 

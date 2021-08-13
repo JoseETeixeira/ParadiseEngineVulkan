@@ -84,6 +84,8 @@
         "queue": "cpp",
         "xthread": "cpp",
         "unordered_set": "cpp",
-        "valarray": "cpp"
-    }
+        "valarray": "cpp",
+        "bitset": "cpp"
+    },
+    "C_Cpp.errorSquiggles": "Disabled"
 }
