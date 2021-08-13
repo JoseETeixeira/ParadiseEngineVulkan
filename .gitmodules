@@ -10,3 +10,6 @@
 [submodule "third_party/vulkan_hpp"]
 	path = third_party/vulkan_hpp
 	url = https://github.com/KhronosGroup/Vulkan-Hpp.git
+[submodule "third_party/luajit"]
+	path = third_party/luajit
+	url = https://luajit.org/git/luajit.git
