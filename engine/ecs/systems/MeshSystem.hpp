@@ -129,8 +129,7 @@ public:
         vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
         // Bind scene matrices descriptor to set 0
         vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
-        //vkCmdBindPipeline(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
-        vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.solid);
+        vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
         if (uiSettings.displayModels) {
 			Transform transform = gCoordinator.GetComponent<Transform>(mesh);
             glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);

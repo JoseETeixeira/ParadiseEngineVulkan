@@ -45,12 +45,12 @@ void CameraControlSystem::Update(float dt)
 
 		if (mButtons.test(static_cast<std::size_t>(InputButtons::A)))
 		{
-			transform.position.x -= (dt * speed);
+			transform.position.x += (dt * speed);
 		}
 
 		else if (mButtons.test(static_cast<std::size_t>(InputButtons::D)))
 		{
-			transform.position.x += (dt * speed);
+			transform.position.x -= (dt * speed);
 		}
 	}
 }
