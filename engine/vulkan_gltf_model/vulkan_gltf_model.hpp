@@ -42,6 +42,8 @@
 #include <android/asset_manager.h>
 #endif
 
+#include "../ecs/components/Transform.hpp"
+
 // Contains everything required to render a glTF model in Vulkan
 // This class is heavily simplified (compared to glTF's feature set) but retains the basic glTF structure
 class VulkanglTFModel
@@ -323,11 +325,27 @@ public:
 			nodes.push_back(node);
 		}
 	};
-	void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node){
+	void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node, Transform transform){
 		if (node.mesh.primitives.size() > 0) {
 			// Pass the node's matrix via push constants
 			// Traverse the node hierarchy to the top-most parent to get the final matrix of the current node
-			glm::mat4 nodeMatrix = node.matrix;
+			glm::mat4 rotM = glm::mat4(1.0f);
+			glm::mat4 transM;
+
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+			glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
+		
+		
+			
+			transM = glm::translate(glm::mat4(1.0f), translation);
+
+			//if (type == CameraType::firstperson)
+			//{
+			glm::mat4 nodeMatrix = rotM * transM;
+
 			VulkanglTFModel::Node* currentParent = node.parent;
 			while (currentParent) {
 				nodeMatrix = currentParent->matrix * nodeMatrix;
@@ -346,17 +364,17 @@ public:
 			}
 		}
 		for (auto& child : node.children) {
-			drawNode(commandBuffer, pipelineLayout, child);
+			drawNode(commandBuffer, pipelineLayout, child,transform);
 		}
 	};
-	void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout){
+	void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, Transform transform){
 		// All vertices and indices are stored in single buffers, so we only need to bind once
 		VkDeviceSize offsets[1] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertices.buffer, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 		// Render all nodes at top-level
 		for (auto& node : nodes) {
-			drawNode(commandBuffer, pipelineLayout, node);
+			drawNode(commandBuffer, pipelineLayout, node,transform);
 		}
 	};
 	void rotate_node(uint32_t index, float degrees){};

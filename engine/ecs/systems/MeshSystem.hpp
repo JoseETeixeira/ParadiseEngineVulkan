@@ -43,17 +43,20 @@ public:
 	VkDescriptorSet descriptorSet;
 	VkDevice device;
 
-	void Init(VulkanExampleBase *ex){
+	Entity mesh;
+
+	void Init(VulkanExampleBase *ex, std::string path){
 		example = ex;
 		mesh = gCoordinator.CreateEntity();
 
 		gCoordinator.AddComponent(
 			mesh,
 			Transform{
-				.position = Vec3(0.0f, 0.0f, 1.0f)
+				.position = Vec3(0.0f, 0.0f, 0.0f),
+				.rotation = Vec3(0.0f, 0.0f, -180.0f)
 			});
 
-		loadAssets();
+		loadglTFFile(path);
 		prepareUniformBuffers();
 		setupDescriptors();
 		preparePipelines();
@@ -66,7 +69,10 @@ public:
 	};
 
 	void Update(float dt){
-	
+
+		
+
+		
 	};
 
 	void Clean(){
@@ -126,7 +132,8 @@ public:
         //vkCmdBindPipeline(drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
         vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.solid);
         if (uiSettings.displayModels) {
-            glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout);
+			Transform transform = gCoordinator.GetComponent<Transform>(mesh);
+            glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
         }
         
         example->drawUI(example->drawCmdBuffers[i]);
@@ -292,9 +299,7 @@ private:
 	
 	};
 
-	void loadAssets(){
-		loadglTFFile(getAssetPath() + "models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
-	};
+
 	void loadglTFFile(std::string filename){
 		tinygltf::Model glTFInput;
 		tinygltf::TinyGLTF gltfContext;
@@ -404,7 +409,7 @@ private:
 		vkFreeMemory(example->device, indexStaging.memory, nullptr);
 	};
 
-    Entity mesh;
+   
 
     
 
