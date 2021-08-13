@@ -2845,17 +2845,17 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 	}
 
 	auto& transform = gCoordinator.GetComponent<Transform>(camera);
-	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
+	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
 		
-		transform.rotation *= Vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
+		transform.rotation += Vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
 		viewUpdated = true;
 	}
-	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
-		transform.position *= Vec3(-0.0f, 0.0f, dy * .005f);
+	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
+		transform.position += Vec3(-0.0f, 0.0f, dy * .005f);
 		viewUpdated = true;
 	}
-	if (mButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
-		transform.position *= Vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
+	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
+		transform.position += Vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
