@@ -7,3 +7,7 @@ data/textures*
 *.log
 *.cmake
 *.Makefile
+CMakeFiles/*
+engine/CMakeFiles/*
+entry/CMakeFiles/*
+*.zip

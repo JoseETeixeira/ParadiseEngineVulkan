@@ -116,7 +116,7 @@ public:
 		VulkanExampleBase::prepare();
 
 		//TODO(eduardo) init all meshSystems 
-		meshSystem->Init(this,getAssetPath() + "models/Warrior.gltf");
+		meshSystem->Init(this,getAssetPath() + "models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
 
 		prepared = true;
 	}
