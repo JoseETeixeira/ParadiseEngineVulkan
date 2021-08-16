@@ -144,6 +144,7 @@ public:
         exit(1);
     }
 
+	
     /*
      * Ok, now here we go: We pass data to the lua script on the stack.
      * That is, we first have to prepare Lua's virtual stack the way we
