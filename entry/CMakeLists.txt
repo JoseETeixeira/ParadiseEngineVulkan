@@ -47,9 +47,16 @@ function(buildExample EXAMPLE_NAME)
 		endif()
 	endif()
 
+	find_package(Lua51 REQUIRED)
+
+	include_directories(../third_party/luajit/src ${LUA_INCLUDE_DIR})
+
+	
+
 	if(RESOURCE_INSTALL_DIR)
-		install(TARGETS "Paradise Engine"+${EXAMPLE_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+		install(TARGETS ${EXAMPLE_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 	endif()
+	target_link_libraries(${EXAMPLE_NAME} ${LUA_LIBRARIES})
 endfunction(buildExample)
 
 # Build all examples
