@@ -11,3 +11,5 @@ CMakeFiles/*
 engine/CMakeFiles/*
 entry/CMakeFiles/*
 *.zip
+*.cmake
+*.log
