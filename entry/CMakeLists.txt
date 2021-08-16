@@ -48,7 +48,7 @@ function(buildExample EXAMPLE_NAME)
 	endif()
 
 	if(RESOURCE_INSTALL_DIR)
-		install(TARGETS ${EXAMPLE_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
+		install(TARGETS "Paradise Engine"+${EXAMPLE_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})
 	endif()
 endfunction(buildExample)
 

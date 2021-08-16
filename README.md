@@ -19,10 +19,10 @@ python download_assets.py
 ## Building - WINDOWS
 
 - Install VulkanSDK
-- Set the `vulkan_sdk_dir` parameter on the root directory `SConstruct` file to where you installed Vulkan
-- Install SCons
+- Install CMAKE
 ```bash
-scons -Q
+cmake . 
+make
 ```
 
 - If the process fails, you may need to install Visual Studio 2019
@@ -44,8 +44,8 @@ glslc: error: no input files
 ```
 
 ```bash
-sudo apt-get install -y scons
-scons -Q
+cmake . 
+make
 ```
 
 

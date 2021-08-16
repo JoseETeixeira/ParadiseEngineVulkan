@@ -6,7 +6,7 @@ data/models*
 data/textures*
 *.log
 *.cmake
-*.Makefile
+Makefile
 CMakeFiles/*
 engine/CMakeFiles/*
 entry/CMakeFiles/*
