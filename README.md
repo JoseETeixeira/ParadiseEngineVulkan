@@ -62,6 +62,7 @@ make
 - https://stackoverflow.com/questions/61263284/having-a-problem-getting-imgui-to-work-with-vulkan
 - https://github.com/thepaperpilot/V-ECS
 - https://mr-vasifabdullayev.medium.com/multiple-object-rendering-in-vulkan-3d07aa583cec
+- http://docplayer.com.br/119226668-Tutorial-geracao-de-binder-para-lua-tutorial.html (TOLUA++ (PORTUGUESE))
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
