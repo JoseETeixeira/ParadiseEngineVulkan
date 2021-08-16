@@ -11,7 +11,7 @@ ParadiseEngine is an open source under development game engine based on Vulkan f
 ```bash
 git clone --recursive https://github.com/JoseETeixeira/ParadiseEngineVulkan.git
 cd ParadiseEngineVulkan
-python download_assets.py
+python3 download_assets.py
 ```
 
 - Install LZ4 for your platform https://github.com/lz4/lz4
