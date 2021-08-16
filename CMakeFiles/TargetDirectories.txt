@@ -5,3 +5,4 @@
 /media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/engine/CMakeFiles/base.dir
 /media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/entry/CMakeFiles/rebuild_cache.dir
 /media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/entry/CMakeFiles/edit_cache.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/entry/CMakeFiles/editor.dir
