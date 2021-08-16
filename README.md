@@ -20,6 +20,7 @@ python3 download_assets.py
 
 - Install VulkanSDK
 - Install CMAKE
+- Install Lua for windows from the root directory
 ```bash
 cmake . 
 make
@@ -34,6 +35,7 @@ sudo apt install libvulkan-dev
 sudo apt install vulkan-validationlayers-dev spirv-tools
 sudo apt install libglfw3-dev
 sudo apt install libglm-dev
+sudo apt-get install lua5.1
 ```
 
 Shader Compiler

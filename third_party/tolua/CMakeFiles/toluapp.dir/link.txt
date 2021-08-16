@@ -1,0 +1,1 @@
+/usr/bin/cc   -rdynamic CMakeFiles/toluapp.dir/src/bin/tolua.c.o CMakeFiles/toluapp.dir/src/bin/toluabind.c.o  -o toluapp  -Wl,-rpath,/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua: libtoluapp.so -llua5.1 -lm 

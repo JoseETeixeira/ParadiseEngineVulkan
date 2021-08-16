@@ -12,11 +12,11 @@ int main ()
 {
 	int  tolua_tmodule_open (lua_State*);
 
-	lua_State* L = luaL_newstate();
-	luaL_openlibs(L);
+	lua_State* L = lua_open();
+	luaopen_base(L);
 	tolua_tmodule_open(L);
 
-	luaL_dofile(L,"tmodule.lua");
+	lua_dofile(L,"tmodule.lua");
 
 	lua_close(L);
 	return 0;

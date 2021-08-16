@@ -2,6 +2,7 @@
 #define tfunction_h
 
 #include <stdio.h>
+#include <string.h>
 
 typedef enum {
  FIRST = 1,
@@ -10,6 +11,7 @@ typedef enum {
 
 class Point
 {          
+	char m_s[64];
  float m_x;
 	float m_y;
 
@@ -52,6 +54,10 @@ public:
 	{
 		*this = *p;
 	}
+	void setname (const char* s)
+	{
+		strncpy(m_s,s,63);
+	}
 
 	void get (float* x, float* y) const
 	{
@@ -76,6 +82,10 @@ public:
 	const Point* getconst () const
 	{
 		return this;
+	}
+	const char* getname () const
+	{
+		return m_s;
 	}
 
 	Point operator+ (const Point& p) const
@@ -109,12 +119,7 @@ public:
 		return m_x==p.m_x && m_y==p.m_y;
 	}
 
-  int size () const
-  {
-    return 2;
-  }
-
-  float operator[] (int i) const
+ float operator[] (int i) const
 	{
 		return (i==0) ? m_x : m_y;
 	}

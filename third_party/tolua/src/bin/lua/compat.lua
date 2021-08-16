@@ -13,6 +13,7 @@
 -- tonumber
 -- tostring
 -- type
+-- unpack
 
 -------------------------------------------------------------------
 -- collectgarbage
@@ -21,6 +22,8 @@
 -- globals
 
 -- call   -> protect(f, err)
+-- loadfile
+-- loadstring
 
 -- rawget
 -- rawset
@@ -37,24 +40,15 @@ function do_ (f, err)
   end
 end
 
-function dostring(s) return do_(load(s)) end
+function dostring(s) return do_(loadstring(s)) end
+-- function dofile(s) return do_(loadfile(s)) end
 
 -------------------------------------------------------------------
 -- Table library
 local tab = table
-foreach = function(t,f)
-  for k,v in pairs(t) do
-    f(k,v)
-  end
-end
-foreachi = function(t,f)
-  for i,v in ipairs(t) do
-    f(i,v)
-  end
-end
-getn = function(t)
-  return #t
-end
+foreach = tab.foreach
+foreachi = tab.foreachi
+getn = tab.getn
 tinsert = tab.insert
 tremove = tab.remove
 sort = tab.sort
@@ -183,19 +177,17 @@ end
 
 function read (...)
   local f = _INPUT
-  local arg = {...}
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:read(table.unpack(arg))
+  return f:read(unpack(arg))
 end
 
 function write (...)
   local f = _OUTPUT
-  local arg = {...}
   if rawtype(arg[1]) == 'userdata' then
     f = tab.remove(arg, 1)
   end
-  return f:write(table.unpack(arg))
+  return f:write(unpack(arg))
 end
 

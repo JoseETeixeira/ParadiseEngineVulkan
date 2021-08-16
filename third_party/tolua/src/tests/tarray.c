@@ -18,7 +18,7 @@ Array* parray = &array;
 int main (void)
 {
 	int  tolua_tarray_open (lua_State*);
-	lua_State* L = luaL_newstate();
+	lua_State* L = lua_open();
 	int i;
 
 	for (i=0; i<10; ++i)
@@ -34,10 +34,10 @@ int main (void)
 		array.pp[i] = pp[i];
 	}
 
-	luaL_openlibs(L);
+	luaopen_base(L);
 	tolua_tarray_open(L);
 
-	luaL_dofile(L,"tarray.lua");
+	lua_dofile(L,"tarray.lua");
 
 	lua_close(L);
 	return 0;

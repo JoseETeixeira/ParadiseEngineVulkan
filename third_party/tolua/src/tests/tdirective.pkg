@@ -6,10 +6,10 @@ $extern int a;
 
 $int main (void)
 ${
-$ lua_State* L = luaL_newstate();
+$ lua_State* L = lua_open();
 $	luaopen_base(L);
 $ tolua_tdirective_open(L);
-$	luaL_dofile(L,"tdirective.lua");
+$	lua_dofile(L,"tdirective.lua");
 $	lua_close(L);
 $ return 0;
 $}

@@ -1,5 +1,3 @@
-dofile("myassert.lua")
-
 for i=1,10 do
  assert(a[i]==i)
 end

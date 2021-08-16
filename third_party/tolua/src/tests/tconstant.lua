@@ -1,5 +1,3 @@
-dofile("myassert.lua")
-
 assert(FIRST==M.FIRST)
 assert(FIRST==A.FIRST)
 assert(SECOND==M.SECOND)

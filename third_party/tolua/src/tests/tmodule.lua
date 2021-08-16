@@ -1,5 +1,3 @@
-dofile("myassert.lua")
-
 -- test valid access
 assert(A.a==1)
 assert(A.B.b==2)

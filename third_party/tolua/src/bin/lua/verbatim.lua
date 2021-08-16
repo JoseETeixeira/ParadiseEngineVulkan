@@ -2,12 +2,12 @@
 -- Written by Waldemar Celes
 -- TeCGraf/PUC-Rio
 -- Jul 1998
--- $Id: verbatim.lua,v 1.3 2009/11/24 16:45:15 fabraham Exp $
+-- $Id: verbatim.lua,v 1.3 2000/01/24 20:41:16 celes Exp $
 
 -- This code is free software; you can redistribute it and/or modify it.
 -- The software provided hereunder is on an "as is" basis, and
 -- the author has no obligation to provide maintenance, support, updates,
--- enhancements, or modifications. 
+-- enhancements, or modifications.
 
 
 
@@ -38,12 +38,12 @@ function classVerbatim:supcode ()
 end
 
 -- register code
-function classVerbatim:register ()
+function classVerbatim:register (pre)
  if strfind(self.cond,'r') then
   write(self.line)
  end
 end
- 
+
 
 -- Print method
 function classVerbatim:print (ident,close)
@@ -63,7 +63,9 @@ end
 -- Constructor
 -- Expects a string representing the text line
 function Verbatim (l,cond)
- if strsub(l,1,1) == '$' then
+ if strsub(l,1,1) == "'" then
+  l = strsub(l,2)
+ elseif strsub(l,1,1) == '$' then
   cond = 'sr'       -- generates in both suport and register fragments
   l = strsub(l,2)
  end

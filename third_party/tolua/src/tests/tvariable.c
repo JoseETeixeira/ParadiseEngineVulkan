@@ -27,7 +27,7 @@ B* mb;
 int main (void)
 {
 	int  tolua_tvariable_open (lua_State*);
-	lua_State* L = luaL_newstate();
+	lua_State* L = lua_open();
 
 	B bb = {a,NULL};
 	B bbb = {ma,&bb};
@@ -35,10 +35,10 @@ int main (void)
 	mb = &bbb;
 
 
-	luaL_openlibs(L);
+	luaopen_base(L);
 	tolua_tvariable_open(L);
 
-	luaL_dofile(L,"tvariable.lua");
+	lua_dofile(L,"tvariable.lua");
 
 	lua_close(L);
 	return 0;
