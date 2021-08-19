@@ -63,6 +63,9 @@ make
 - https://github.com/thepaperpilot/V-ECS
 - https://mr-vasifabdullayev.medium.com/multiple-object-rendering-in-vulkan-3d07aa583cec
 - http://docplayer.com.br/119226668-Tutorial-geracao-de-binder-para-lua-tutorial.html (TOLUA++ (PORTUGUESE))
+- http://vinniefalco.github.io/LuaBridge/Manual.html#s2
+- https://github.com/vinniefalco/LuaBridge
+- https://github.com/jeremyong/Selene
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
