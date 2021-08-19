@@ -66,6 +66,7 @@ make
 - http://vinniefalco.github.io/LuaBridge/Manual.html#s2
 - https://github.com/vinniefalco/LuaBridge
 - https://github.com/jeremyong/Selene
+- http://lua-users.org/wiki/CppBindingWithLunar
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
