@@ -33,7 +33,14 @@
 
 #include "../../engine/ecs/systems/MeshSystem.hpp"
 
-#include "../third_party/luajit/src/lua.hpp"
+extern "C"{
+	#include "../../Lua542/include/lua.h"
+	#include "../../Lua542/include/lauxlib.h"
+	#include "../../Lua542/include/lualib.h"
+}
+
+
+
 #include <stdlib.h>
 #include <stdio.h>
 

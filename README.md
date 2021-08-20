@@ -67,6 +67,7 @@ make
 - https://github.com/vinniefalco/LuaBridge
 - https://github.com/jeremyong/Selene
 - http://lua-users.org/wiki/CppBindingWithLunar
+- IK RIG - https://github.com/TheComet/ik/wiki/Tutorial-2.0
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 

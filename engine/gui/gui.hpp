@@ -13,7 +13,7 @@
 #define GUI_H
 
 #define GLFW_INCLUDE_VULKAN
-#include <GLFW/glfw3.h>
+#include <glfw3.h>
 
 #include "../../third_party/imgui/imgui.h"
 #include "../imgui_impl_vulkan/imgui_impl_vulkan.h"

@@ -2,6 +2,7 @@
 
 #include "../math/Mat44.hpp"
 #include <cmath>
+#include <corecrt_math_defines.h>
 
 
 

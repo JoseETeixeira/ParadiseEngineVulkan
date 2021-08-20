@@ -1,3 +1,5 @@
+
+
 function(buildExample EXAMPLE_NAME)
 	SET(EXAMPLE_FOLDER ${CMAKE_CURRENT_SOURCE_DIR}/${EXAMPLE_NAME})
 	message(STATUS "Generating project file for example in ${EXAMPLE_FOLDER}")
@@ -30,7 +32,7 @@ function(buildExample EXAMPLE_NAME)
 	# Add optional readme / tutorial
 	file(GLOB README_FILES "${EXAMPLE_FOLDER}/*.md")
 	if(WIN32)
-		add_executable(${EXAMPLE_NAME} WIN32 ${MAIN_CPP} ${SOURCE} ${MAIN_HEADER} ${SHADERS_GLSL} ${SHADERS_HLSL} ${README_FILES})
+		add_executable(${EXAMPLE_NAME} WIN32 ${MAIN_CPP} ${SOURCE} ${MAIN_HEADER} ${SHADERS_GLSL} ${SHADERS_HLSL} ${README_FILES} )
 		target_link_libraries(${EXAMPLE_NAME} base ${Vulkan_LIBRARY} ${WINLIBS})
 	else(WIN32)
 		add_executable(${EXAMPLE_NAME} ${MAIN_CPP} ${SOURCE} ${MAIN_HEADER} ${SHADERS_GLSL} ${SHADERS_HLSL} ${README_FILES})
@@ -47,10 +49,13 @@ function(buildExample EXAMPLE_NAME)
 		endif()
 	endif()
 
-	find_package(Lua51 REQUIRED)
 
-	include_directories(../third_party/luajit/src ${LUA_INCLUDE_DIR})
+	if(LINUX)
 
+		find_package(Lua51 REQUIRED)
+
+		include_directories(../third_party/luajit/src ${LUA_INCLUDE_DIR})
+	endif()
 	
 
 	if(RESOURCE_INSTALL_DIR)
