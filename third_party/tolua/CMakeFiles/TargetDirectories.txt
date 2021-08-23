@@ -1,0 +1,10 @@
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/install/strip.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/install/local.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/edit_cache.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/package_source.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/install.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/list_install_components.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/rebuild_cache.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/package.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/toluapp.dir
+/media/lucas/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/third_party/tolua/CMakeFiles/toluapp_lib.dir

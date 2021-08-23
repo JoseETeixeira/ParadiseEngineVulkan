@@ -1,4 +1,33 @@
-file(GLOB BASE_SRC "*.cpp" "*.hpp" "*.h" "../third_party/imgui/*.cpp" "ecs/*.hpp","ecs/components/*.hpp" "ecs/math/*.hpp" "ecs/systems/*.hpp" "ecs/systems/*.cpp" "gui/*.hpp","imgui_impl_vulkan/*.h" "imgui_impl_vulkan/*.cpp" "vulkan_buffer/*.h" "vulkan_buffer/*.cpp" "vulkan_debug/*.h" "vulkan_debug/*.cpp" "vulkan_device/*.h" "vulkan_device/*.cpp" "vulkan_example_base/*.h" "vulkan_example_base/*.cpp" "vulkan_gltf_model/*.hpp" "vulkan_swap_chain/*.h" "vulkan_swap_chain/*.cpp" "vulkan_texture/*.h" "vulkan_texture/*.cpp" "vulkan_tools/*.h" "vulkan_tools/*.cpp" "vulkan_ui_overlay/*.h" "vulkan_ui_overlay/*.cpp")
+file(GLOB BASE_SRC 
+"*.cpp" 
+"*.hpp" 
+"*.h" 
+"../third_party/imgui/*.cpp" 
+"ecs/*.hpp"
+"ecs/components/*.hpp" 
+"ecs/math/*.hpp" 
+"ecs/systems/*.hpp" 
+"ecs/systems/*.cpp" 
+"gui/*.hpp"
+"imgui_impl_vulkan/*.h" 
+"imgui_impl_vulkan/*.cpp" 
+"vulkan_buffer/*.h" 
+"vulkan_buffer/*.cpp" 
+"vulkan_debug/*.h" 
+"vulkan_debug/*.cpp" 
+"vulkan_device/*.h"
+"vulkan_device/*.cpp"
+"vulkan_example_base/*.h" 
+"vulkan_example_base/*.cpp" 
+"vulkan_gltf_model/*.hpp" 
+"vulkan_swap_chain/*.h" 
+"vulkan_swap_chain/*.cpp" 
+"vulkan_texture/*.h" 
+"vulkan_texture/*.cpp" 
+"vulkan_tools/*.h" 
+"vulkan_tools/*.cpp" 
+"vulkan_ui_overlay/*.h" 
+"vulkan_ui_overlay/*.cpp")
 file(GLOB BASE_HEADERS "*.hpp" "*.h")
 
 set(KTX_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/ktx)

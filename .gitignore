@@ -13,3 +13,15 @@ entry/CMakeFiles/*
 *.zip
 *.cmake
 *.log
+*.vcxproj
+*.vcxproj.filters
+*.vcxproj.user
+*.tlog
+*.recipe
+*.log
+*.pdb
+*.ilk
+*.vcxproj.CopyComplete
+*.vcxproj.FileListAbsolute.txt
+.vs/*
+.vs/

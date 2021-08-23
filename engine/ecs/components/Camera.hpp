@@ -3,6 +3,9 @@
 #include "../math/Mat44.hpp"
 #include <cmath>
 
+#if defined(_WIN32)
+	#include <corecrt_math_defines.h>
+#endif
 
 
 

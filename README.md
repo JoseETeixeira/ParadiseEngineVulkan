@@ -20,6 +20,7 @@ python3 download_assets.py
 
 - Install VulkanSDK
 - Install CMAKE
+- Install Lua for windows from the root directory
 ```bash
 cmake . 
 make
@@ -34,6 +35,7 @@ sudo apt install libvulkan-dev
 sudo apt install vulkan-validationlayers-dev spirv-tools
 sudo apt install libglfw3-dev
 sudo apt install libglm-dev
+sudo apt-get install lua5.1
 ```
 
 Shader Compiler
@@ -60,6 +62,12 @@ make
 - https://stackoverflow.com/questions/61263284/having-a-problem-getting-imgui-to-work-with-vulkan
 - https://github.com/thepaperpilot/V-ECS
 - https://mr-vasifabdullayev.medium.com/multiple-object-rendering-in-vulkan-3d07aa583cec
+- http://docplayer.com.br/119226668-Tutorial-geracao-de-binder-para-lua-tutorial.html (TOLUA++ (PORTUGUESE))
+- http://vinniefalco.github.io/LuaBridge/Manual.html#s2
+- https://github.com/vinniefalco/LuaBridge
+- https://github.com/jeremyong/Selene
+- http://lua-users.org/wiki/CppBindingWithLunar
+- IK RIG - https://github.com/TheComet/ik/wiki/Tutorial-2.0
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
