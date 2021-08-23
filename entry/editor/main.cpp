@@ -129,13 +129,20 @@ public:
 		{
 			
 			if(lua_isstring(L, -1)){
+				const char* variable = lua_tostring(L, -2);
 				const char* path = lua_tostring(L, -1);
-				
-				printf("Is string\n");
-				
-				printf("%s = %s\n", lua_tostring(L, -2), path);
 
-				meshSystem->Init(this,getAssetPath() + path);
+				printf("Is string\n");
+			
+				printf("%s = %s\n", variable, path);
+
+				if(strcmp(variable,"mesh") == 0){
+				
+
+					meshSystem->Init(this,getAssetPath() + path);
+				}
+				
+				
 			}
 			else if(lua_isnumber(L, -1)){
 				printf("Is number\n");
