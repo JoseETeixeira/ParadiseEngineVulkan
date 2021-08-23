@@ -54,9 +54,9 @@ function(buildExample EXAMPLE_NAME)
 
 		find_package(Lua51 REQUIRED)
 
-		include_directories(../third_party/luajit/src ${LUA_INCLUDE_DIR})
+		include_directories(../Lua542/include ${LUA_INCLUDE_DIR})
 	endif()
-	
+
 
 	if(RESOURCE_INSTALL_DIR)
 		install(TARGETS ${EXAMPLE_NAME} DESTINATION ${CMAKE_INSTALL_BINDIR})

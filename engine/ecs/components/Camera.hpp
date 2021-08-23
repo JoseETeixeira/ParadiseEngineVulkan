@@ -2,8 +2,10 @@
 
 #include "../math/Mat44.hpp"
 #include <cmath>
-#include <corecrt_math_defines.h>
 
+#if defined(_WIN32)
+	#include <corecrt_math_defines.h>
+#endif
 
 
 
