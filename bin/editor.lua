@@ -2,7 +2,9 @@
 world = {
   meshes = {
     {
-      FlightHelmet = "../data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf"
+      mesh = "models/gltf/FlightHelmet/glTF/FlightHelmet.gltf"
     }
   }
 }
+
+return world

@@ -27,16 +27,17 @@
 
 #include "../../engine/ecs/systems/MeshSystem.hpp"
 
+#include "../lua_bindings/lua_bindings.h"
+
 #ifdef _WIN32
 extern "C"{
-	#include "../../Lua542/include/lua.h"
-	#include "../../Lua542/include/lauxlib.h"
-	#include "../../Lua542/include/lualib.h"
+	#include "../Lua542/include/lua.h"
+	#include "../Lua542/include/lauxlib.h"
+	#include "../Lua542/include/lualib.h"
 }
 #else
-	#include "../../third_party/luajit/src/lua.hpp"
+	#include "../third_party/luajit/src/lua.hpp"
 #endif
-
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -120,18 +121,21 @@ public:
 
 
 
-	void SetupLua(lua_State *L)
-	{
-		
+
+	void setupMeshes(lua_State *L){
 		lua_pushnil(L);
 
 		while(lua_next(L, -2) != 0)
 		{
 			
 			if(lua_isstring(L, -1)){
+				const char* path = lua_tostring(L, -1);
 				
 				printf("Is string\n");
-				printf("%s = %s\n", lua_tostring(L, -2), lua_tostring(L, -1));
+				
+				printf("%s = %s\n", lua_tostring(L, -2), path);
+
+				meshSystem->Init(this,getAssetPath() + path);
 			}
 			else if(lua_isnumber(L, -1)){
 				printf("Is number\n");
@@ -140,20 +144,15 @@ public:
 			
 			else if(lua_istable(L, -1)){
 				printf("Is table\n");
-				SetupLua(L);
+				setupMeshes(L);
 			}
 			
 
 			lua_pop(L, 1);
 		}
 	}
-		
 
-	void prepare()
-	{
-		
-		VulkanExampleBase::prepare();
-		int status, result, i;
+	void setupLua(){
 
 		lua_State *L;
 
@@ -174,13 +173,27 @@ public:
 
 		// Print table contents.
 		lua_getglobal(L, "world");
-		SetupLua(L);
+
+
+		lua_pushstring (L, "meshes");
+		lua_gettable (L, -2);
+		lua_pushnil(L);
+		lua_next(L, -2);
+		setupMeshes(L);
+		lua_pop (L, 1);
+
 
 		lua_close(L);
 
-		//TODO(eduardo) Load everything conditionally from Lua
-		meshSystem->Init(this,getAssetPath() + "models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
+	}
+	
 
+	void prepare()
+	{
+		
+		VulkanExampleBase::prepare();
+		setupLua();
+	
 		prepared = true;
 	}
 
