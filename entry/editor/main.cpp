@@ -15,6 +15,7 @@
 
 #include "../../engine/ecs/components/Camera.hpp"
 #include "../../engine/ecs/components/Transform.hpp"
+#include "../../engine/ecs/components/Renderable.hpp"
 
 #include "../../engine/ecs/Coordinator.hpp"
 
@@ -70,6 +71,7 @@ public:
 
 		gCoordinator.RegisterComponent<Camera>();
 		gCoordinator.RegisterComponent<Transform>();
+		gCoordinator.RegisterComponent<Renderable>();
 
 		cameraControlSystem = gCoordinator.RegisterSystem<CameraControlSystem>();
 		{
@@ -86,6 +88,7 @@ public:
 			Signature signature;
 			signature.set(gCoordinator.GetComponentType<Camera>());
 			signature.set(gCoordinator.GetComponentType<Transform>());
+			signature.set(gCoordinator.GetComponentType<Renderable>());
 			gCoordinator.SetSystemSignature<MeshSystem>(signature);
 		}
 
