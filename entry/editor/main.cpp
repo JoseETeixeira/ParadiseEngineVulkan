@@ -187,8 +187,6 @@ public:
 
 		lua_pushstring (L, "meshes");
 		lua_gettable (L, -2);
-		lua_pushnil(L);
-		lua_next(L, -2);
 		setupMeshes(L);
 		lua_pop (L, 1);
 
