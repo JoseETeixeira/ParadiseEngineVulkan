@@ -124,7 +124,46 @@ public:
 	}
 
 
+	void setupPosition(lua_State *L,Entity mesh){
+		
+		lua_pushnil(L);
 
+		
+		Vec3 position;
+
+		while(lua_next(L, -2) != 0)
+		{
+
+
+			if(lua_isstring(L, -1)){
+				const char* variable = lua_tostring(L, -2);
+
+				if(strcmp(variable,"x") == 0){
+					
+					position.x = lua_tonumber(L,-1);
+					printf("x");
+				}
+
+				if(strcmp(variable,"y") == 0){
+					printf("y");
+					position.y = lua_tonumber(L,-1);
+				}
+
+				if(strcmp(variable,"z") == 0){
+					printf("z");
+					position.z = lua_tonumber(L,-1);
+				}
+							
+			}
+			
+			lua_pop(L, 1);
+		}
+
+		auto &trans = gCoordinator.GetComponent<Transform>(mesh);
+		trans.position = position;
+		printf("(%d,%d,%d",position.x,position.y,position.z);
+
+	}
 
 
 	void setupMeshes(lua_State *L){
@@ -133,7 +172,7 @@ public:
 			mesh,
 			Transform{
 			});
-		Vec3 position;
+		
 		lua_pushnil(L);
 
 		while(lua_next(L, -2) != 0)
@@ -151,21 +190,7 @@ public:
 					
 					meshSystem->addMesh(mesh,getAssetPath() + path);
 				}
-
-				if(strcmp(variable,"x") == 0){
-					
-					position.x = lua_tonumber(L,-1);
-				}
-
-				if(strcmp(variable,"y") == 0){
-					
-					position.y = lua_tonumber(L,-1);
-				}
-
-				if(strcmp(variable,"z") == 0){
-					
-					position.z = lua_tonumber(L,-1);
-				}
+				
 				
 				
 			}
@@ -175,16 +200,17 @@ public:
 			}
 			
 			else if(lua_istable(L, -1)){
+			
 				printf("Is table\n");
-				setupMeshes(L);
+				setupPosition(L,mesh);
+				
 			}
 			
 
 			lua_pop(L, 1);
 		}
 
-		auto &trans = gCoordinator.GetComponent<Transform>(mesh);
-		trans.position = position;
+		
 		
 
 	}
@@ -214,6 +240,9 @@ public:
 
 		lua_pushstring (L, "meshes");
 		lua_gettable (L, -2);
+		lua_pushnil(L);
+		lua_next(L, -2); 
+		//get mesh
 		setupMeshes(L);
 		lua_pop (L, 1);
 
