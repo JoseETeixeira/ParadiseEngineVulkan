@@ -18,6 +18,7 @@
 #include "../../engine/ecs/components/Renderable.hpp"
 
 #include "../../engine/ecs/Coordinator.hpp"
+#include "../../engine/ecs/math/Vec3.hpp"
 
 #include "../../engine/ecs/systems/CameraControlSystem.hpp"
 #include "../../engine/vulkan_example_base/vulkan_example_base.h"
@@ -63,7 +64,6 @@ public:
 
 
 
-
 	VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	{
 		title = "Paradise Engine";
@@ -91,6 +91,8 @@ public:
 			signature.set(gCoordinator.GetComponentType<Renderable>());
 			gCoordinator.SetSystemSignature<MeshSystem>(signature);
 		}
+
+		meshSystem->Init(this);
 
 		
 
@@ -126,6 +128,12 @@ public:
 
 
 	void setupMeshes(lua_State *L){
+		Entity mesh = gCoordinator.CreateEntity();
+		gCoordinator.AddComponent(
+			mesh,
+			Transform{
+			});
+		Vec3 position;
 		lua_pushnil(L);
 
 		while(lua_next(L, -2) != 0)
@@ -140,9 +148,23 @@ public:
 				printf("%s = %s\n", variable, path);
 
 				if(strcmp(variable,"mesh") == 0){
-				
+					
+					meshSystem->addMesh(mesh,getAssetPath() + path);
+				}
 
-					meshSystem->Init(this,getAssetPath() + path);
+				if(strcmp(variable,"x") == 0){
+					
+					position.x = lua_tonumber(L,-1);
+				}
+
+				if(strcmp(variable,"y") == 0){
+					
+					position.y = lua_tonumber(L,-1);
+				}
+
+				if(strcmp(variable,"z") == 0){
+					
+					position.z = lua_tonumber(L,-1);
 				}
 				
 				
@@ -160,6 +182,11 @@ public:
 
 			lua_pop(L, 1);
 		}
+
+		auto &trans = gCoordinator.GetComponent<Transform>(mesh);
+		trans.position = position;
+		
+
 	}
 
 	void setupLua(){
