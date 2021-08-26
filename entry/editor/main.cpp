@@ -162,8 +162,12 @@ public:
 		{
 			std::cout << it->first << ':'<< it->second.cast<std::string>() << std::endl;
 		}
+		Entity mesh = gCoordinator.CreateEntity();
+		gCoordinator.AddComponent(mesh,Transform{});
 
+		
 
+		meshSystem->addMesh(mesh,getAssetPath()+"models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
 		
 		
 
