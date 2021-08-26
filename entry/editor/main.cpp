@@ -191,6 +191,42 @@ public:
 				mesh_transform.position.z = it->second.cast<int>();
 			}
 
+			if(it->first.compare("rx")==0){
+				
+
+				mesh_transform.rotation.x = it->second.cast<int>();
+			}
+
+			if(it->first.compare("ry")==0){
+				
+
+				mesh_transform.rotation.y = it->second.cast<int>();
+			}
+
+			if(it->first.compare("rz")==0){
+				
+		
+				mesh_transform.rotation.z = it->second.cast<int>();
+			}
+
+			if(it->first.compare("sx")==0){
+				
+
+				mesh_transform.scale.x = it->second.cast<int>();
+			}
+
+			if(it->first.compare("sy")==0){
+				
+
+				mesh_transform.scale.y = it->second.cast<int>();
+			}
+
+			if(it->first.compare("sz")==0){
+				
+		
+				mesh_transform.scale.z = it->second.cast<int>();
+			}
+
 
 		}
 		meshSystem->addMesh(mesh,path);

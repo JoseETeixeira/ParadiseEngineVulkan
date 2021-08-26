@@ -130,7 +130,7 @@ public:
 				for(auto& mesh: meshes) {
 					Transform transform = gCoordinator.GetComponent<Transform>(mesh);
 				
-					glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
+					glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout);
 
 					
 				}
