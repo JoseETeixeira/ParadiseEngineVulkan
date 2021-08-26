@@ -156,85 +156,93 @@ public:
 		}
 
 		luabridge::LuaRef t = luabridge::getGlobal(L, "world");
-		std::map<std::string,luabridge::LuaRef> key_value_map = readTable(t);
+
+		luabridge::LuaRef entities = t["entities"];
 
 
-		std::string path;
-		Entity mesh = gCoordinator.CreateEntity();
-		gCoordinator.AddComponent(mesh,Transform{});
-		Transform mesh_transform;
-		for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
+		for (luabridge::Iterator iterator (entities); !iterator.isNil (); ++iterator)
 		{
-			if(it->first.compare("path")==0){
-				
-				
-				path = it->second.cast<std::string>();
-				
-				std::cout <<path;
+			
+			std::map<std::string,luabridge::LuaRef> key_value_map = readTable(entities[iterator.key()]);
+			std::string path;
+			Entity mesh = gCoordinator.CreateEntity();
+			gCoordinator.AddComponent(mesh,Transform{});
+			Transform mesh_transform;
+			for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
+			{
+				if(it->first.compare("path")==0){
+					
+					
+					path = it->second.cast<std::string>();
+					
+					std::cout <<path;
+				}
+
+				if(it->first.compare("px")==0){
+					
+
+					mesh_transform.position.x = it->second.cast<float>();
+				}
+
+				if(it->first.compare("py")==0){
+					
+
+					mesh_transform.position.y = it->second.cast<float>();
+				}
+
+				if(it->first.compare("pz")==0){
+					
+			
+					mesh_transform.position.z = it->second.cast<float>();
+				}
+
+				if(it->first.compare("rx")==0){
+					
+
+					mesh_transform.rotation.x = it->second.cast<float>();
+				}
+
+				if(it->first.compare("ry")==0){
+					
+
+					mesh_transform.rotation.y = it->second.cast<float>();
+				}
+
+				if(it->first.compare("rz")==0){
+					
+			
+					mesh_transform.rotation.z = it->second.cast<float>();
+				}
+
+				if(it->first.compare("sx")==0){
+					
+
+					mesh_transform.scale.x = it->second.cast<float>();
+				}
+
+				if(it->first.compare("sy")==0){
+					
+
+					mesh_transform.scale.y = it->second.cast<float>();
+				}
+
+				if(it->first.compare("sz")==0){
+					
+			
+					mesh_transform.scale.z = it->second.cast<float>();
+				}
+
+
 			}
-
-			if(it->first.compare("px")==0){
-				
-
-				mesh_transform.position.x = it->second.cast<float>();
-			}
-
-			if(it->first.compare("py")==0){
-				
-
-				mesh_transform.position.y = it->second.cast<float>();
-			}
-
-			if(it->first.compare("pz")==0){
-				
-		
-				mesh_transform.position.z = it->second.cast<float>();
-			}
-
-			if(it->first.compare("rx")==0){
-				
-
-				mesh_transform.rotation.x = it->second.cast<float>();
-			}
-
-			if(it->first.compare("ry")==0){
-				
-
-				mesh_transform.rotation.y = it->second.cast<float>();
-			}
-
-			if(it->first.compare("rz")==0){
-				
-		
-				mesh_transform.rotation.z = it->second.cast<float>();
-			}
-
-			if(it->first.compare("sx")==0){
-				
-
-				mesh_transform.scale.x = it->second.cast<float>();
-			}
-
-			if(it->first.compare("sy")==0){
-				
-
-				mesh_transform.scale.y = it->second.cast<float>();
-			}
-
-			if(it->first.compare("sz")==0){
-				
-		
-				mesh_transform.scale.z = it->second.cast<float>();
-			}
-
-
+			meshSystem->addMesh(mesh,path);
+			auto& trans = gCoordinator.GetComponent<Transform>(mesh);
+			trans.position = mesh_transform.position;
+			trans.rotation = mesh_transform.rotation;
+			trans.scale = mesh_transform.scale;
+			
+			// Use  and  here
 		}
-		meshSystem->addMesh(mesh,path);
-		auto& trans = gCoordinator.GetComponent<Transform>(mesh);
-		trans.position = mesh_transform.position;
-		trans.rotation = mesh_transform.rotation;
-		trans.scale = mesh_transform.scale;
-	
+
 	}
 	
 
