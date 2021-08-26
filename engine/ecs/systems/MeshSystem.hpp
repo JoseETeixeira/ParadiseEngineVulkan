@@ -43,18 +43,15 @@ public:
 	VkDescriptorSet descriptorSet;
 	VkDevice device;
 
-	Entity mesh;
+	std::vector<Entity> meshes;
 
-	void Init(VulkanExampleBase *ex, std::string path){
+	void Init(VulkanExampleBase *ex){
 		example = ex;
-		mesh = gCoordinator.CreateEntity();
+		
+	};
 
-		gCoordinator.AddComponent(
-			mesh,
-			Transform{
-				.position = Vec3(0.0f, 0.0f, 0.0f),
-				.rotation = Vec3(0.0f, 0.0f, -180.0f)
-			});
+	void addMesh(Entity mesh,std::string path){
+		meshes.push_back(mesh);
 
 		loadglTFFile(path);
 		prepareUniformBuffers();
@@ -64,9 +61,8 @@ public:
 		prepareImGui();
 
 		buildCommandBuffers();
+	}
 
-		
-	};
 
 	void Update(float dt){
 
@@ -131,8 +127,14 @@ public:
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
 			if (uiSettings.displayModels) {
-				Transform transform = gCoordinator.GetComponent<Transform>(mesh);
-				glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
+				for(auto& mesh: meshes) {
+					Transform transform = gCoordinator.GetComponent<Transform>(mesh);
+				
+					glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
+
+					
+				}
+				
 			}
 			
 			example->drawUI(example->drawCmdBuffers[i]);

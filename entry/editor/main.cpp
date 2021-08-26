@@ -15,8 +15,10 @@
 
 #include "../../engine/ecs/components/Camera.hpp"
 #include "../../engine/ecs/components/Transform.hpp"
+#include "../../engine/ecs/components/Renderable.hpp"
 
 #include "../../engine/ecs/Coordinator.hpp"
+#include "../../engine/ecs/math/Vec3.hpp"
 
 #include "../../engine/ecs/systems/CameraControlSystem.hpp"
 #include "../../engine/vulkan_example_base/vulkan_example_base.h"
@@ -39,9 +41,12 @@ extern "C"{
 	#include "../third_party/luajit/src/lua.hpp"
 #endif
 
+#include "../Lua542/include/LuaBridge/LuaBridge.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <map>
 
 
 
@@ -62,7 +67,6 @@ public:
 
 
 
-
 	VulkanExample() : VulkanExampleBase(ENABLE_VALIDATION)
 	{
 		title = "Paradise Engine";
@@ -70,6 +74,7 @@ public:
 
 		gCoordinator.RegisterComponent<Camera>();
 		gCoordinator.RegisterComponent<Transform>();
+		gCoordinator.RegisterComponent<Renderable>();
 
 		cameraControlSystem = gCoordinator.RegisterSystem<CameraControlSystem>();
 		{
@@ -86,8 +91,11 @@ public:
 			Signature signature;
 			signature.set(gCoordinator.GetComponentType<Camera>());
 			signature.set(gCoordinator.GetComponentType<Transform>());
+			signature.set(gCoordinator.GetComponentType<Renderable>());
 			gCoordinator.SetSystemSignature<MeshSystem>(signature);
 		}
+
+		meshSystem->Init(this);
 
 		
 
@@ -119,57 +127,26 @@ public:
 	}
 
 
-
-
-
-	void setupMeshes(lua_State *L){
-		lua_pushnil(L);
-
-		while(lua_next(L, -2) != 0)
+	std::map<std::string,luabridge::LuaRef> readTable(luabridge::LuaRef t){
+		std::map<std::string,luabridge::LuaRef> key_value_map;
+		for (luabridge::Iterator iterator (t); !iterator.isNil (); ++iterator)
 		{
-			
-			if(lua_isstring(L, -1)){
-				const char* variable = lua_tostring(L, -2);
-				const char* path = lua_tostring(L, -1);
-
-				printf("Is string\n");
-			
-				printf("%s = %s\n", variable, path);
-
-				if(strcmp(variable,"mesh") == 0){
-				
-
-					meshSystem->Init(this,getAssetPath() + path);
-				}
-				
+			if(iterator.value().isTable()){
+				key_value_map.merge(readTable(iterator.value()));
+			}else{
+				key_value_map.emplace(iterator.key(),iterator.value());
 				
 			}
-			else if(lua_isnumber(L, -1)){
-				printf("Is number\n");
-				printf("%s = %d\n", lua_tostring(L, -2), lua_tonumber(L, -1));
-			}
 			
-			else if(lua_istable(L, -1)){
-				printf("Is table\n");
-				setupMeshes(L);
-			}
-			
-
-			lua_pop(L, 1);
+			// Use  and  here
 		}
+		return key_value_map;
 	}
 
 	void setupLua(){
 
-		lua_State *L;
-
-		/*
-		* All Lua contexts are held in this structure. We work with it almost
-		* all the time.
-		*/
-		L = luaL_newstate();
-
-		luaL_openlibs(L); /* Load Lua libraries */
+		lua_State* L = luaL_newstate();
+		luaL_openlibs(L);
 
 		// Load file.
 		if(luaL_loadfile(L, "editor.lua") || lua_pcall(L, 0, 0, 0))
@@ -178,20 +155,86 @@ public:
 			return;
 		}
 
-		// Print table contents.
-		lua_getglobal(L, "world");
+		luabridge::LuaRef t = luabridge::getGlobal(L, "world");
+		std::map<std::string,luabridge::LuaRef> key_value_map = readTable(t);
 
 
-		lua_pushstring (L, "meshes");
-		lua_gettable (L, -2);
-		lua_pushnil(L);
-		lua_next(L, -2);
-		setupMeshes(L);
-		lua_pop (L, 1);
+		std::string path;
+		Entity mesh = gCoordinator.CreateEntity();
+		gCoordinator.AddComponent(mesh,Transform{});
+		Transform mesh_transform;
+		for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
+		{
+			if(it->first.compare("path")==0){
+				
+				
+				path = it->second.cast<std::string>();
+				
+				std::cout <<path;
+			}
+
+			if(it->first.compare("px")==0){
+				
+
+				mesh_transform.position.x = it->second.cast<float>();
+			}
+
+			if(it->first.compare("py")==0){
+				
+
+				mesh_transform.position.y = it->second.cast<float>();
+			}
+
+			if(it->first.compare("pz")==0){
+				
+		
+				mesh_transform.position.z = it->second.cast<float>();
+			}
+
+			if(it->first.compare("rx")==0){
+				
+
+				mesh_transform.rotation.x = it->second.cast<float>();
+			}
+
+			if(it->first.compare("ry")==0){
+				
+
+				mesh_transform.rotation.y = it->second.cast<float>();
+			}
+
+			if(it->first.compare("rz")==0){
+				
+		
+				mesh_transform.rotation.z = it->second.cast<float>();
+			}
+
+			if(it->first.compare("sx")==0){
+				
+
+				mesh_transform.scale.x = it->second.cast<float>();
+			}
+
+			if(it->first.compare("sy")==0){
+				
+
+				mesh_transform.scale.y = it->second.cast<float>();
+			}
+
+			if(it->first.compare("sz")==0){
+				
+		
+				mesh_transform.scale.z = it->second.cast<float>();
+			}
 
 
-		lua_close(L);
-
+		}
+		meshSystem->addMesh(mesh,path);
+		auto& trans = gCoordinator.GetComponent<Transform>(mesh);
+		trans.position = mesh_transform.position;
+		trans.rotation = mesh_transform.rotation;
+		trans.scale = mesh_transform.scale;
+	
 	}
 	
 
