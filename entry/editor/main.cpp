@@ -46,6 +46,7 @@ extern "C"{
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
+#include <map>
 
 
 
@@ -126,7 +127,21 @@ public:
 	}
 
 
-	
+	std::map<std::string,luabridge::LuaRef> readTable(luabridge::LuaRef t){
+		std::map<std::string,luabridge::LuaRef> key_value_map;
+		for (luabridge::Iterator iterator (t); !iterator.isNil (); ++iterator)
+		{
+			if(iterator.value().isTable()){
+				key_value_map.merge(readTable(iterator.value()));
+			}else{
+				key_value_map.emplace(iterator.key(),iterator.value());
+				
+			}
+			
+			// Use  and  here
+		}
+		return key_value_map;
+	}
 
 	void setupLua(){
 
@@ -141,10 +156,16 @@ public:
 		}
 
 		luabridge::LuaRef t = luabridge::getGlobal(L, "world");
+		std::map<std::string,luabridge::LuaRef> key_value_map = readTable(t);
+
+		for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
+		{
+			std::cout << it->first << ':'<< it->second.cast<std::string>() << std::endl;
+		}
 
 
 		
-		std::cout << "path " << t["meshes"]["FlightHelmet"]["path"].cast<std::string>()<< std::endl;
+		
 
 		
 		

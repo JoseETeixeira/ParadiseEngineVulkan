@@ -3,7 +3,7 @@ world = {
   meshes = {
     FlightHelmet = {
       path = "../data/models/gltf/FlightHelmet/glTF/FlightHelmet.gltf",
-      position = {x = 0, y = 0, z = 0}
+      position = {px = 0, py = 0, pz = 0}
     }
   }
 }
