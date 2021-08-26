@@ -158,21 +158,46 @@ public:
 		luabridge::LuaRef t = luabridge::getGlobal(L, "world");
 		std::map<std::string,luabridge::LuaRef> key_value_map = readTable(t);
 
-		for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
-		{
-			std::cout << it->first << ':'<< it->second.cast<std::string>() << std::endl;
-		}
+
+		std::string path;
 		Entity mesh = gCoordinator.CreateEntity();
 		gCoordinator.AddComponent(mesh,Transform{});
+		Transform mesh_transform;
+		for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
+		{
+			if(it->first.compare("path")==0){
+				
+				
+				path = it->second.cast<std::string>();
+				
+				std::cout <<path;
+			}
 
-		
+			if(it->first.compare("px")==0){
+				
 
-		meshSystem->addMesh(mesh,getAssetPath()+"models/gltf/FlightHelmet/glTF/FlightHelmet.gltf");
-		
-		
+				mesh_transform.position.x = it->second.cast<int>();
+			}
 
+			if(it->first.compare("py")==0){
+				
+
+				mesh_transform.position.y = it->second.cast<int>();
+			}
+
+			if(it->first.compare("pz")==0){
+				
 		
-		
+				mesh_transform.position.z = it->second.cast<int>();
+			}
+
+
+		}
+		meshSystem->addMesh(mesh,path);
+		auto& trans = gCoordinator.GetComponent<Transform>(mesh);
+		trans.position = mesh_transform.position;
+		trans.rotation = mesh_transform.rotation;
+		trans.scale = mesh_transform.scale;
 	
 	}
 	
