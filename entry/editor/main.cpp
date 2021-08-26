@@ -41,6 +41,8 @@ extern "C"{
 	#include "../third_party/luajit/src/lua.hpp"
 #endif
 
+#include "../Lua542/include/LuaBridge/LuaBridge.h"
+
 #include <stdlib.h>
 #include <stdio.h>
 #include <string.h>
@@ -124,108 +126,12 @@ public:
 	}
 
 
-	void setupPosition(lua_State *L,Entity mesh){
-		
-		lua_pushnil(L);
-
-		
-		Vec3 position;
-
-		while(lua_next(L, -2) != 0)
-		{
-
-
-			if(lua_isstring(L, -1)){
-				const char* variable = lua_tostring(L, -2);
-
-				if(strcmp(variable,"x") == 0){
-					
-					position.x = lua_tonumber(L,-1);
-					printf("x");
-				}
-
-				if(strcmp(variable,"y") == 0){
-					printf("y");
-					position.y = lua_tonumber(L,-1);
-				}
-
-				if(strcmp(variable,"z") == 0){
-					printf("z");
-					position.z = lua_tonumber(L,-1);
-				}
-							
-			}
-			
-			lua_pop(L, 1);
-		}
-
-		auto &trans = gCoordinator.GetComponent<Transform>(mesh);
-		trans.position = position;
-		printf("(%d,%d,%d",position.x,position.y,position.z);
-
-	}
-
-
-	void setupMeshes(lua_State *L){
-		Entity mesh = gCoordinator.CreateEntity();
-		gCoordinator.AddComponent(
-			mesh,
-			Transform{
-			});
-		
-		lua_pushnil(L);
-
-		while(lua_next(L, -2) != 0)
-		{
-			
-			if(lua_isstring(L, -1)){
-				const char* variable = lua_tostring(L, -2);
-				const char* path = lua_tostring(L, -1);
-
-				printf("Is string\n");
-			
-				printf("%s = %s\n", variable, path);
-
-				if(strcmp(variable,"mesh") == 0){
-					
-					meshSystem->addMesh(mesh,getAssetPath() + path);
-				}
-				
-				
-				
-			}
-			else if(lua_isnumber(L, -1)){
-				printf("Is number\n");
-				printf("%s = %d\n", lua_tostring(L, -2), lua_tonumber(L, -1));
-			}
-			
-			else if(lua_istable(L, -1)){
-			
-				printf("Is table\n");
-				setupPosition(L,mesh);
-				
-			}
-			
-
-			lua_pop(L, 1);
-		}
-
-		
-		
-
-	}
+	
 
 	void setupLua(){
 
-		lua_State *L;
-
-		/*
-		* All Lua contexts are held in this structure. We work with it almost
-		* all the time.
-		*/
-		L = luaL_newstate();
-
-		luaL_openlibs(L); /* Load Lua libraries */
+		lua_State* L = luaL_newstate();
+		luaL_openlibs(L);
 
 		// Load file.
 		if(luaL_loadfile(L, "editor.lua") || lua_pcall(L, 0, 0, 0))
@@ -234,21 +140,15 @@ public:
 			return;
 		}
 
-		// Print table contents.
-		lua_getglobal(L, "world");
+		luabridge::LuaRef t = luabridge::getGlobal(L, "world");
 
 
-		lua_pushstring (L, "meshes");
-		lua_gettable (L, -2);
-		lua_pushnil(L);
-		lua_next(L, -2); 
-		//get mesh
-		setupMeshes(L);
-		lua_pop (L, 1);
+		
+		std::cout << "path " << t["meshes"]["FlightHelmet"]["path"].cast<std::string>()<< std::endl;
 
-
-		lua_close(L);
-
+		
+		
+	
 	}
 	
 
