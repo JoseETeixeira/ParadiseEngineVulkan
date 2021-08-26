@@ -176,55 +176,55 @@ public:
 			if(it->first.compare("px")==0){
 				
 
-				mesh_transform.position.x = it->second.cast<int>();
+				mesh_transform.position.x = it->second.cast<float>();
 			}
 
 			if(it->first.compare("py")==0){
 				
 
-				mesh_transform.position.y = it->second.cast<int>();
+				mesh_transform.position.y = it->second.cast<float>();
 			}
 
 			if(it->first.compare("pz")==0){
 				
 		
-				mesh_transform.position.z = it->second.cast<int>();
+				mesh_transform.position.z = it->second.cast<float>();
 			}
 
 			if(it->first.compare("rx")==0){
 				
 
-				mesh_transform.rotation.x = it->second.cast<int>();
+				mesh_transform.rotation.x = it->second.cast<float>();
 			}
 
 			if(it->first.compare("ry")==0){
 				
 
-				mesh_transform.rotation.y = it->second.cast<int>();
+				mesh_transform.rotation.y = it->second.cast<float>();
 			}
 
 			if(it->first.compare("rz")==0){
 				
 		
-				mesh_transform.rotation.z = it->second.cast<int>();
+				mesh_transform.rotation.z = it->second.cast<float>();
 			}
 
 			if(it->first.compare("sx")==0){
 				
 
-				mesh_transform.scale.x = it->second.cast<int>();
+				mesh_transform.scale.x = it->second.cast<float>();
 			}
 
 			if(it->first.compare("sy")==0){
 				
 
-				mesh_transform.scale.y = it->second.cast<int>();
+				mesh_transform.scale.y = it->second.cast<float>();
 			}
 
 			if(it->first.compare("sz")==0){
 				
 		
-				mesh_transform.scale.z = it->second.cast<int>();
+				mesh_transform.scale.z = it->second.cast<float>();
 			}
 
 
