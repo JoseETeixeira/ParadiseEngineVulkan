@@ -25,3 +25,6 @@ entry/CMakeFiles/*
 *.vcxproj.FileListAbsolute.txt
 .vs/*
 .vs/
+*.sln
+
+CMakeCache.txt
