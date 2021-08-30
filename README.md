@@ -15,6 +15,9 @@ python3 download_assets.py
 ```
 
 - Install LZ4 for your platform https://github.com/lz4/lz4
+- install VulkanSceneGraph https://github.com/vsg-dev/VulkanSceneGraph/blob/master/INSTALL.md
+- Install vsgimgui https://github.com/vsg-dev/vsgimGui/
+- https://github.com/vsg-dev/vsgXchange
 
 ## Building - WINDOWS
 
