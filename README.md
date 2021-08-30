@@ -36,6 +36,7 @@ sudo apt install vulkan-validationlayers-dev spirv-tools
 sudo apt install libglfw3-dev
 sudo apt install libglm-dev
 sudo apt-get install lua5.1
+sudo apt-get install lua5.1-dev
 ```
 
 Shader Compiler
