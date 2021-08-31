@@ -2834,10 +2834,10 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 
 	bool handled = false;
 
-	if (settings.overlay) {
-		ImGuiIO& io = ImGui::GetIO();
-		handled = io.WantCaptureMouse;
-	}
+
+	ImGuiIO& io = ImGui::GetIO();
+	handled = io.WantCaptureMouse;
+
 	mouseMoved((float)x, (float)y, handled);
 
 	if (handled) {

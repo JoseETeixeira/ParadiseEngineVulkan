@@ -74,6 +74,7 @@ private:
 public:
 	ImVec2 vMin;
 	ImVec2 vMax;
+	ImVec2 offset;
 	ImVec2 editor_pos;
 	// UI params are set via push constants
 	struct PushConstBlock {
@@ -390,7 +391,7 @@ public:
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
 
-		ImGui::SetNextWindowSize(ImVec2(example->width, example->height));
+
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoBackground;
 		ImGui::Begin("Editor", NULL, window_flags);
@@ -405,6 +406,12 @@ public:
 			vMin.y += ImGui::GetWindowPos().y;
 			vMax.x += ImGui::GetWindowPos().x;
 			vMax.y += ImGui::GetWindowPos().y;
+
+			offset.x = 0;
+			offset.y = 0;
+
+			offset.x += ImGui::GetWindowPos().x;
+			offset.y += ImGui::GetWindowPos().y;
 
 		}
 

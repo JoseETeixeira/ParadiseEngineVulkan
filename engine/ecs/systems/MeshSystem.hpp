@@ -12,6 +12,8 @@
 
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
+#include <algorithm>
+
 class Event;
 
 extern Coordinator gCoordinator;
@@ -113,8 +115,9 @@ public:
 
 		imGui->updateBuffers();
 
-		const VkViewport viewport = vks::initializers::viewport((float)imGui->vMax.x, (float)imGui->vMax.y, 0.0f, 1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(imGui->vMax.x, imGui->vMax.y, imGui->vMin.x, imGui->vMin.y);
+		const VkViewport viewport = vks::initializers::viewport((float)imGui->vMax.x-imGui->vMin.x, (float)imGui->vMax.x-imGui->vMin.x,0.0f,1.0f);
+		const VkRect2D scissor = vks::initializers::rect2D(imGui->vMax.x-imGui->vMin.x,imGui->vMax.y-imGui->vMin.y,imGui->offset.x, imGui->offset.y);
+		
 
 		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)
 		{
