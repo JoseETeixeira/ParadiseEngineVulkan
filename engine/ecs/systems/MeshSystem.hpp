@@ -8,7 +8,7 @@
 #include "../components/Transform.hpp"
 #include "../components/Camera.hpp"
 #include "../Coordinator.hpp"
-#include "../../../third_party/imgui/backends/imgui_impl_vulkan.h"
+#include "../../../third_party/imgui/examples/imgui_impl_vulkan.h"
 
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 

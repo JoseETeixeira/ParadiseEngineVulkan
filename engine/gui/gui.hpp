@@ -16,7 +16,7 @@
 #include <glfw3.h>
 
 #include "../../third_party/imgui/imgui.h"
-#include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
+#include "../../third_party/imgui/examples/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
 
 #include "../ecs/components/Camera.hpp"
