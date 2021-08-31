@@ -16,7 +16,7 @@
 #include <glfw3.h>
 
 #include "../../third_party/imgui/imgui.h"
-#include "../../third_party/imgui/examples/imgui_impl_vulkan.h"
+#include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
 
 #include "../ecs/components/Camera.hpp"
@@ -76,6 +76,7 @@ public:
 	ImVec2 vMax;
 	ImVec2 offset;
 	ImVec2 editor_pos;
+	ImVec2 editor_size;
 	// UI params are set via push constants
 	struct PushConstBlock {
 		glm::vec2 scale;
@@ -398,6 +399,7 @@ public:
 		
 
 		{
+			editor_size = ImGui::GetWindowSize();
 			editor_pos = ImGui::GetWindowPos();
 			vMin = ImGui::GetWindowContentRegionMin();
 			vMax = ImGui::GetWindowContentRegionMax();
@@ -491,7 +493,7 @@ public:
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-		VkViewport viewport = vks::initializers::viewport(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y, 0.0f, 1.0f);
+		VkViewport viewport = vks::initializers::viewport(0,1,ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y, 0.0f, 1.0f);
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 		// UI scale and translate via push constants

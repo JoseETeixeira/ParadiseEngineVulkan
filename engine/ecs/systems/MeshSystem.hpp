@@ -8,7 +8,7 @@
 #include "../components/Transform.hpp"
 #include "../components/Camera.hpp"
 #include "../Coordinator.hpp"
-#include "../../../third_party/imgui/examples/imgui_impl_vulkan.h"
+#include "../../../third_party/imgui/backends/imgui_impl_vulkan.h"
 
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
@@ -115,8 +115,8 @@ public:
 
 		imGui->updateBuffers();
 
-		const VkViewport viewport = vks::initializers::viewport((float)imGui->vMax.x-imGui->vMin.x, (float)imGui->vMax.x-imGui->vMin.x,0.0f,1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(imGui->vMax.x-imGui->vMin.x,imGui->vMax.y-imGui->vMin.y,imGui->offset.x, imGui->offset.y);
+		const VkViewport viewport = vks::initializers::viewport(imGui->offset.x, imGui->offset.y,(float)imGui->editor_size.x, (float)imGui->editor_size.y,0.0f,1.0f);
+		const VkRect2D scissor = vks::initializers::rect2D(imGui->editor_size.x, imGui->editor_size.y, imGui->offset.x, imGui->offset.y);
 		
 
 		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)
