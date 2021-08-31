@@ -113,8 +113,8 @@ public:
 
 		imGui->updateBuffers();
 
-		const VkViewport viewport = vks::initializers::viewport((float)example->width, (float)example->height, 0.0f, 1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(example->width, example->height, 0, 0);
+		const VkViewport viewport = vks::initializers::viewport((float)imGui->vMax.x, (float)imGui->vMax.y, 0.0f, 1.0f);
+		const VkRect2D scissor = vks::initializers::rect2D(imGui->vMax.x, imGui->vMax.y, imGui->vMin.x, imGui->vMin.y);
 
 		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)
 		{
@@ -126,6 +126,8 @@ public:
 			// Bind scene matrices descriptor to set 0
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
+			
+			
 			if (uiSettings.displayModels) {
 				for(auto& mesh: meshes) {
 					Transform transform = gCoordinator.GetComponent<Transform>(mesh);
@@ -139,8 +141,8 @@ public:
 			
 			example->drawUI(example->drawCmdBuffers[i]);
 			// Render imGui
-		
 			imGui->drawFrame(example->drawCmdBuffers[i]);
+			
 			vkCmdEndRenderPass(example->drawCmdBuffers[i]);
 			VK_CHECK_RESULT(vkEndCommandBuffer(example->drawCmdBuffers[i]));
 		}

@@ -52,6 +52,7 @@ class ImGUI {
 private:
 	// Vulkan resources for rendering the UI
 	VkSampler sampler;
+	
 	vks::Buffer vertexBuffer;
 	vks::Buffer indexBuffer;
 	int32_t vertexCount = 0;
@@ -71,8 +72,9 @@ private:
 	int g_height;
   
 public:
-	VkImageView renderView = VK_NULL_HANDLE;
-	VkCommandBuffer buffer = VK_NULL_HANDLE;
+	ImVec2 vMin;
+	ImVec2 vMax;
+	ImVec2 editor_pos;
 	// UI params are set via push constants
 	struct PushConstBlock {
 		glm::vec2 scale;
@@ -384,14 +386,29 @@ public:
 		ImGui::Begin("Example settings");
 		ImGui::Checkbox("Render models", &uiSettings.displayModels);
 		ImGui::Checkbox("Wireframe", &uiSettings.wireframe);
-
-		ImGui::Checkbox("Display logos", &uiSettings.displayLogos);
-		ImGui::Checkbox("Display background", &uiSettings.displayBackground);
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
 
+		ImGui::SetNextWindowSize(ImVec2(example->width, example->height));
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+		ImGui::Begin("Editor", NULL, window_flags);
+		
 
+		{
+			editor_pos = ImGui::GetWindowPos();
+			vMin = ImGui::GetWindowContentRegionMin();
+			vMax = ImGui::GetWindowContentRegionMax();
+
+			vMin.x += ImGui::GetWindowPos().x;
+			vMin.y += ImGui::GetWindowPos().y;
+			vMax.x += ImGui::GetWindowPos().x;
+			vMax.y += ImGui::GetWindowPos().y;
+
+		}
+
+		ImGui::End();
 
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
 		ImGui::ShowDemoWindow();
