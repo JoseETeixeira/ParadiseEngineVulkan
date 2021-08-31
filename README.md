@@ -4,7 +4,7 @@
 
 ParadiseEngine is an open source under development game engine based on Vulkan for both Windows and Linux
 
-![Blocky screenshot](doc/main.png)
+![Main](doc/main.png)
 
 ## CLONING
 
@@ -15,6 +15,9 @@ python3 download_assets.py
 ```
 
 - Install LZ4 for your platform https://github.com/lz4/lz4
+- install VulkanSceneGraph https://github.com/vsg-dev/VulkanSceneGraph/blob/master/INSTALL.md
+- Install vsgimgui https://github.com/vsg-dev/vsgimGui/
+- https://github.com/vsg-dev/vsgXchange
 
 ## Building - WINDOWS
 
@@ -36,6 +39,7 @@ sudo apt install vulkan-validationlayers-dev spirv-tools
 sudo apt install libglfw3-dev
 sudo apt install libglm-dev
 sudo apt-get install lua5.1
+sudo apt-get install lua5.1-dev
 ```
 
 Shader Compiler

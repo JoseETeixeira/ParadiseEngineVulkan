@@ -8,7 +8,7 @@
 #include "../components/Transform.hpp"
 #include "../components/Camera.hpp"
 #include "../Coordinator.hpp"
-
+#include "../../../third_party/imgui/examples/imgui_impl_vulkan.h"
 
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
@@ -139,6 +139,7 @@ public:
 			
 			example->drawUI(example->drawCmdBuffers[i]);
 			// Render imGui
+		
 			imGui->drawFrame(example->drawCmdBuffers[i]);
 			vkCmdEndRenderPass(example->drawCmdBuffers[i]);
 			VK_CHECK_RESULT(vkEndCommandBuffer(example->drawCmdBuffers[i]));
