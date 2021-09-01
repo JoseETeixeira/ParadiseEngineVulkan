@@ -11,7 +11,7 @@
 #pragma once
 
 #include <vector>
-#include "vulkan/vulkan.h"
+#include "../third_party/vulkan/vulkan.h"
 
 namespace vks
 {
@@ -166,12 +166,16 @@ namespace vks
 		}
 
 		inline VkViewport viewport(
+			float x,
+			float y,
 			float width,
 			float height,
 			float minDepth,
 			float maxDepth)
 		{
 			VkViewport viewport {};
+			viewport.x = x;
+			viewport.y = y;
 			viewport.width = width;
 			viewport.height = height;
 			viewport.minDepth = minDepth;

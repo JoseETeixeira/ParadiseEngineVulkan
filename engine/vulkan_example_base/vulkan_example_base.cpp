@@ -707,7 +707,7 @@ void VulkanExampleBase::updateOverlay()
 void VulkanExampleBase::drawUI(const VkCommandBuffer commandBuffer)
 {
 	if (settings.overlay) {
-		const VkViewport viewport = vks::initializers::viewport((float)width, (float)height, 0.0f, 1.0f);
+		const VkViewport viewport = vks::initializers::viewport(0,1,(float)width, (float)height, 0.0f, 1.0f);
 		const VkRect2D scissor = vks::initializers::rect2D(width, height, 0, 0);
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 		vkCmdSetScissor(commandBuffer, 0, 1, &scissor);
@@ -2834,10 +2834,10 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 
 	bool handled = false;
 
-	if (settings.overlay) {
-		ImGuiIO& io = ImGui::GetIO();
-		handled = io.WantCaptureMouse;
-	}
+
+	ImGuiIO& io = ImGui::GetIO();
+	handled = io.WantCaptureMouse;
+
 	mouseMoved((float)x, (float)y, handled);
 
 	if (handled) {
