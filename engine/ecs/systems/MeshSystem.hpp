@@ -115,8 +115,8 @@ public:
 
 		imGui->updateBuffers();
 
-		const VkViewport viewport = vks::initializers::viewport(imGui->offset.x, imGui->offset.y,(float)imGui->editor_size.x, (float)imGui->editor_size.y,0.0f,1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(imGui->editor_size.x, imGui->editor_size.y, imGui->offset.x, imGui->offset.y);
+		const VkViewport viewport = vks::initializers::viewport(imGui->vMin.x, imGui->vMin.y,(float)imGui->editor_size.x, (float)imGui->editor_size.y,0.0f,1.0f);
+		const VkRect2D scissor = vks::initializers::rect2D(imGui->editor_size.x-10, imGui->editor_size.y-10, imGui->offset.x, imGui->offset.y);
 		
 
 		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)

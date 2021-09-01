@@ -400,7 +400,6 @@ public:
 
 		{
 			editor_size = ImGui::GetWindowSize();
-			editor_pos = ImGui::GetWindowPos();
 			vMin = ImGui::GetWindowContentRegionMin();
 			vMax = ImGui::GetWindowContentRegionMax();
 
@@ -414,6 +413,8 @@ public:
 
 			offset.x += ImGui::GetWindowPos().x;
 			offset.y += ImGui::GetWindowPos().y;
+
+			ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 255, 255, 0, 255 ) );
 
 		}
 
