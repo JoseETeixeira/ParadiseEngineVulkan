@@ -354,13 +354,20 @@ public:
 	// Starts a new imGui frame and sets up windows and ui elements
 	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
 	{
-		
-		ImGui::NewFrame();
+		ImGuiIO& io = ImGui::GetIO();
+		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+		
+
+		ImGui::NewFrame();
+		ImGui::Begin("Paradise Engine",NULL,window_flags);
 		// Init imGui windows and elements
 
 		ImVec4 clear_color = ImColor(114, 144, 154);
 		static float f = 0.0f;
+		ImGui::Begin("Metrics");
 		ImGui::TextUnformatted(example->title.c_str());
 		ImGui::TextUnformatted(device->properties.deviceName);
 
@@ -383,6 +390,7 @@ public:
 		ImGui::Text("Camera");
 		ImGui::InputFloat3("position", &transform.position.x);
 		ImGui::InputFloat3("rotation", &transform.rotation.x);
+		ImGui::End();
 
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 		ImGui::Begin("Example settings");
@@ -393,10 +401,9 @@ public:
 		ImGui::End();
 
 
-		ImGuiWindowFlags window_flags = 0;
-		window_flags |= ImGuiWindowFlags_NoBackground;
+		
 		ImGui::Begin("Editor", NULL, window_flags);
-		ImGuiIO& io = ImGui::GetIO();
+		
 		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
 			io.WantCaptureMouse = false;
 			io.ConfigWindowsMoveFromTitleBarOnly=true;
@@ -428,6 +435,7 @@ public:
 
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
 		ImGui::ShowDemoWindow();
+		ImGui::End();
 
 		// Render to generate draw buffers
 		ImGui::Render();
