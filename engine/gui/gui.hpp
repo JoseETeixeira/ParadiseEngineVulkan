@@ -16,7 +16,7 @@
 #include <glfw3.h>
 
 #include "../../third_party/imgui/imgui.h"
-#include "../../third_party/imgui/examples/imgui_impl_vulkan.h"
+#include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
 
 #include "../ecs/components/Camera.hpp"
@@ -52,6 +52,7 @@ class ImGUI {
 private:
 	// Vulkan resources for rendering the UI
 	VkSampler sampler;
+	
 	vks::Buffer vertexBuffer;
 	vks::Buffer indexBuffer;
 	int32_t vertexCount = 0;
@@ -71,8 +72,11 @@ private:
 	int g_height;
   
 public:
-	VkImageView renderView = VK_NULL_HANDLE;
-	VkCommandBuffer buffer = VK_NULL_HANDLE;
+	ImVec2 vMin;
+	ImVec2 vMax;
+	ImVec2 offset;
+	ImVec2 editor_pos;
+	ImVec2 editor_size;
 	// UI params are set via push constants
 	struct PushConstBlock {
 		glm::vec2 scale;
@@ -384,14 +388,36 @@ public:
 		ImGui::Begin("Example settings");
 		ImGui::Checkbox("Render models", &uiSettings.displayModels);
 		ImGui::Checkbox("Wireframe", &uiSettings.wireframe);
-
-		ImGui::Checkbox("Display logos", &uiSettings.displayLogos);
-		ImGui::Checkbox("Display background", &uiSettings.displayBackground);
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
 
 
+		ImGuiWindowFlags window_flags = 0;
+		window_flags |= ImGuiWindowFlags_NoBackground;
+		ImGui::Begin("Editor", NULL, window_flags);
+		
+
+		{
+			editor_size = ImGui::GetWindowSize();
+			editor_pos = ImGui::GetWindowPos();
+			vMin = ImGui::GetWindowContentRegionMin();
+			vMax = ImGui::GetWindowContentRegionMax();
+
+			vMin.x += ImGui::GetWindowPos().x;
+			vMin.y += ImGui::GetWindowPos().y;
+			vMax.x += ImGui::GetWindowPos().x;
+			vMax.y += ImGui::GetWindowPos().y;
+
+			offset.x = 0;
+			offset.y = 0;
+
+			offset.x += ImGui::GetWindowPos().x;
+			offset.y += ImGui::GetWindowPos().y;
+
+		}
+
+		ImGui::End();
 
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
 		ImGui::ShowDemoWindow();
@@ -467,7 +493,7 @@ public:
 		vkCmdBindDescriptorSets(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 		vkCmdBindPipeline(commandBuffer, VK_PIPELINE_BIND_POINT_GRAPHICS, pipeline);
 
-		VkViewport viewport = vks::initializers::viewport(ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y, 0.0f, 1.0f);
+		VkViewport viewport = vks::initializers::viewport(0,1,ImGui::GetIO().DisplaySize.x, ImGui::GetIO().DisplaySize.y, 0.0f, 1.0f);
 		vkCmdSetViewport(commandBuffer, 0, 1, &viewport);
 
 		// UI scale and translate via push constants
