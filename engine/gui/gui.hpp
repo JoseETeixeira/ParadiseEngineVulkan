@@ -396,7 +396,11 @@ public:
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoBackground;
 		ImGui::Begin("Editor", NULL, window_flags);
-		
+		ImGuiIO& io = ImGui::GetIO();
+		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
+			io.WantCaptureMouse = false;
+			io.ConfigWindowsMoveFromTitleBarOnly=true;
+		}
 
 		{
 			editor_size = ImGui::GetWindowSize();
@@ -415,6 +419,8 @@ public:
 			offset.y += ImGui::GetWindowPos().y;
 
 			ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 255, 255, 0, 255 ) );
+			
+		
 
 		}
 
