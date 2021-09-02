@@ -106,8 +106,6 @@ public:
 	
 		// Clean up used Vulkan resources
 		// Note : Inherited destructor cleans up resources stored in base class
-		
-		meshSystem->Clean();
 
 	
 	}

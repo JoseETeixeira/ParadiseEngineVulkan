@@ -9,8 +9,6 @@ file(GLOB BASE_SRC
 "ecs/systems/*.hpp" 
 "ecs/systems/*.cpp" 
 "gui/*.hpp"
-"imgui_impl_vulkan/*.h" 
-"imgui_impl_vulkan/*.cpp" 
 "vulkan_buffer/*.h" 
 "vulkan_buffer/*.cpp" 
 "vulkan_debug/*.h" 

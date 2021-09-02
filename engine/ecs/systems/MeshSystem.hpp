@@ -73,8 +73,8 @@ public:
 		
 	};
 
-	void Clean(){
-		 vkDestroyPipeline(example->device, pipelines.solid, nullptr);
+	~MeshSystem(){
+		vkDestroyPipeline(example->device, pipelines.solid, nullptr);
 		if (pipelines.wireframe != VK_NULL_HANDLE) {
 			vkDestroyPipeline(example->device, pipelines.wireframe, nullptr);
 		}
@@ -85,7 +85,8 @@ public:
 
 		shaderData.buffer.destroy();
 		delete imGui;
-	};
+	}
+
 	
 	void updateUniformBuffers(){
 		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
