@@ -16,6 +16,7 @@
 #include <glfw3.h>
 
 #include "../../third_party/imgui/imgui.h"
+#include "../../third_party/imgui/imgui_internal.h"
 #include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
 
@@ -360,11 +361,39 @@ public:
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoBackground;
 		
-
+		
 		ImGui::NewFrame();
-		ImGui::Begin("Paradise Engine",NULL,window_flags);
-		// Init imGui windows and elements
+		ImGuiViewport* viewport = ImGui::GetMainViewport();
+		ImGui::SetNextWindowPos(viewport->Pos);
+		ImGui::SetNextWindowSize(viewport->Size);
+		ImGui::SetNextWindowViewport(viewport->ID);
+		ImGui::SetNextWindowBgAlpha(0.0f);
 
+		ImGui::Begin("Inspector");
+		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+		ImGuiID dockspace_id = ImGui::GetID("DockerSpace");
+		ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
+		ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags); // Add empty node
+		ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
+
+		ImGuiID dock_main_id = dockspace_id;
+		ImGuiID dock_up_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.05f, nullptr, &dock_main_id);
+		ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
+		ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, nullptr, &dock_main_id);
+		ImGuiID dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.2f, nullptr, &dock_main_id);
+		ImGuiID dock_down_right_id = ImGui::DockBuilderSplitNode(dock_down_id, ImGuiDir_Right, 0.6f, nullptr, &dock_down_id);
+
+		//ImGui::DockBuilderDockWindow("Actions", dock_up_id);
+		ImGui::DockBuilderDockWindow("Camera", dock_right_id);
+		ImGui::DockBuilderDockWindow("Metrics", dock_left_id);
+		//ImGui::DockBuilderDockWindow("Console", dock_down_id);
+		//ImGui::DockBuilderDockWindow("Project", dock_down_right_id);
+		ImGui::DockBuilderDockWindow("Editor", dock_down_id);
+		ImGui::DockBuilderFinish(dockspace_id);
+		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+		ImGui::End();
+				
 		ImVec4 clear_color = ImColor(114, 144, 154);
 		static float f = 0.0f;
 		ImGui::Begin("Metrics");
@@ -386,12 +415,14 @@ public:
 
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
-
+		ImGui::End();
+		ImGui::Begin("Camera");
 		ImGui::Text("Camera");
 		ImGui::InputFloat3("position", &transform.position.x);
 		ImGui::InputFloat3("rotation", &transform.rotation.x);
 		ImGui::End();
-
+		
+		
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
 		ImGui::Begin("Example settings");
 		ImGui::Checkbox("Render models", &uiSettings.displayModels);
@@ -402,7 +433,7 @@ public:
 
 
 		
-		ImGui::Begin("Editor", NULL, window_flags);
+		ImGui::Begin("Editor");
 		
 		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
 			io.WantCaptureMouse = false;
@@ -433,9 +464,11 @@ public:
 
 		ImGui::End();
 
+
+		
 		ImGui::SetNextWindowPos(ImVec2(650, 20));
 		ImGui::ShowDemoWindow();
-		ImGui::End();
+		
 
 		// Render to generate draw buffers
 		ImGui::Render();
