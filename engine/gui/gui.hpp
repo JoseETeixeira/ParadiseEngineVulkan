@@ -370,29 +370,14 @@ public:
 		ImGui::SetNextWindowBgAlpha(0.0f);
 
 		ImGui::Begin("Inspector");
-		ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-		ImGuiID dockspace_id = ImGui::GetID("DockerSpace");
-		ImGui::DockBuilderRemoveNode(dockspace_id); // Clear out existing layout
-		ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags); // Add empty node
-		ImGui::DockBuilderSetNodeSize(dockspace_id, ImGui::GetMainViewport()->Size);
-
-		ImGuiID dock_main_id = dockspace_id;
-		ImGuiID dock_up_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Up, 0.05f, nullptr, &dock_main_id);
-		ImGuiID dock_right_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Right, 0.2f, nullptr, &dock_main_id);
-		ImGuiID dock_left_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Left, 0.2f, nullptr, &dock_main_id);
-		ImGuiID dock_down_id = ImGui::DockBuilderSplitNode(dock_main_id, ImGuiDir_Down, 0.2f, nullptr, &dock_main_id);
-		ImGuiID dock_down_right_id = ImGui::DockBuilderSplitNode(dock_down_id, ImGuiDir_Right, 0.6f, nullptr, &dock_down_id);
-
-		//ImGui::DockBuilderDockWindow("Actions", dock_up_id);
-		ImGui::DockBuilderDockWindow("Camera", dock_right_id);
-		ImGui::DockBuilderDockWindow("Metrics", dock_left_id);
-		//ImGui::DockBuilderDockWindow("Console", dock_down_id);
-		//ImGui::DockBuilderDockWindow("Project", dock_down_right_id);
-		ImGui::DockBuilderDockWindow("Editor", dock_down_id);
-		ImGui::DockBuilderFinish(dockspace_id);
-		ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+		ImGuiID dockspaceID = 0;
+		
+		dockspaceID = ImGui::GetID("HUB_DockSpace");
+        ImGui::DockSpace(dockspaceID , ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
 
 		ImGui::End();
+
+		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 				
 		ImVec4 clear_color = ImColor(114, 144, 154);
 		static float f = 0.0f;
@@ -416,15 +401,17 @@ public:
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
 		ImGui::End();
+
+		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 		ImGui::Begin("Camera");
 		ImGui::Text("Camera");
 		ImGui::InputFloat3("position", &transform.position.x);
 		ImGui::InputFloat3("rotation", &transform.rotation.x);
 		ImGui::End();
 		
-		
+		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 		ImGui::SetNextWindowSize(ImVec2(200, 200));
-		ImGui::Begin("Example settings");
+		ImGui::Begin("Mesh Settings");
 		ImGui::Checkbox("Render models", &uiSettings.displayModels);
 		ImGui::Checkbox("Wireframe", &uiSettings.wireframe);
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
@@ -432,7 +419,7 @@ public:
 		ImGui::End();
 
 
-		
+		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 		ImGui::Begin("Editor");
 		
 		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
@@ -463,11 +450,6 @@ public:
 		}
 
 		ImGui::End();
-
-
-		
-		ImGui::SetNextWindowPos(ImVec2(650, 20));
-		ImGui::ShowDemoWindow();
 		
 
 		// Render to generate draw buffers
