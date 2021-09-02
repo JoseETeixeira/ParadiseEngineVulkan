@@ -4,7 +4,7 @@
 
 ParadiseEngine is an open source under development game engine based on Vulkan for both Windows and Linux
 
-![Main](doc/screenshot.png)
+![Main](doc/main.png)
 
 ## CLONING
 
@@ -99,6 +99,8 @@ Replace the path to glslc with the path to where you installed the Vulkan SDK. M
 - Entity Component system https://github.com/skypjack/entt
 
 - Job system https://github.com/hlavacs/ViennaGameJobSystem
+
+- Improve vulkan_example_base setupFrameBuffer and setupRenderPass
 
 ## DEBUGGING:
 

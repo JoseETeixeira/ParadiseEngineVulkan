@@ -97,10 +97,13 @@ public:
 	void buildCommandBuffers(){
 		VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
 
-		VkClearValue clearValues[2];
-		clearValues[0].color = example->defaultClearColor;
-		clearValues[0].color = { { 0.25f, 0.25f, 0.25f, 1.0f } };;
-		clearValues[1].depthStencil = { 1.0f, 0 };
+		VkClearValue clearValues[5];
+		clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[1].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[2].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[3].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
+		clearValues[4].depthStencil = { 1.0f, 0 };
+
 
 		VkRenderPassBeginInfo renderPassBeginInfo = vks::initializers::renderPassBeginInfo();
 		renderPassBeginInfo.renderPass = example->renderPass;
@@ -108,7 +111,7 @@ public:
 		renderPassBeginInfo.renderArea.offset.y = 0;
 		renderPassBeginInfo.renderArea.extent.width = example->width;
 		renderPassBeginInfo.renderArea.extent.height = example->height;
-		renderPassBeginInfo.clearValueCount = 2;
+		renderPassBeginInfo.clearValueCount = 5;
 		renderPassBeginInfo.pClearValues = clearValues;
 
 		imGui->newFrame(example, (example->frameCounter == 0));
@@ -124,12 +127,21 @@ public:
 			renderPassBeginInfo.framebuffer = example->frameBuffers[i];
 			VK_CHECK_RESULT(vkBeginCommandBuffer(example->drawCmdBuffers[i], &cmdBufInfo));
 			vkCmdBeginRenderPass(example->drawCmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
-			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
+			
 			// Bind scene matrices descriptor to set 0
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
 			
+			example->drawUI(example->drawCmdBuffers[i]);
+			// Render imGui
+			imGui->drawFrame(example->drawCmdBuffers[i]);
+			
+
+			vkCmdNextSubpass(example->drawCmdBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
+			vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
+			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
+			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.solid);
+			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 			
 			if (uiSettings.displayModels) {
 				for(auto& mesh: meshes) {
@@ -142,9 +154,6 @@ public:
 				
 			}
 			
-			example->drawUI(example->drawCmdBuffers[i]);
-			// Render imGui
-			imGui->drawFrame(example->drawCmdBuffers[i]);
 			
 			vkCmdEndRenderPass(example->drawCmdBuffers[i]);
 			VK_CHECK_RESULT(vkEndCommandBuffer(example->drawCmdBuffers[i]));
