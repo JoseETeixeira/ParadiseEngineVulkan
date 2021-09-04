@@ -131,7 +131,7 @@ public:
 			
 			// Bind scene matrices descriptor to set 0
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
-			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
+			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,  pipelines.solid);
 			
 			example->drawUI(example->drawCmdBuffers[i]);
 			// Render imGui
@@ -141,7 +141,7 @@ public:
 			vkCmdNextSubpass(example->drawCmdBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
 			vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
 			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
-			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.solid);
+			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
 			
 			if (uiSettings.displayModels) {
