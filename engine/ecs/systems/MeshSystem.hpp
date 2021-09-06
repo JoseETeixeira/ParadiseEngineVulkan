@@ -24,7 +24,7 @@ class MeshSystem : public System
 {
 public:
    VulkanExampleBase *example;
-
+	ImGUI *imGui = nullptr;
 	void Init(VulkanExampleBase *ex){
 		printf(".... INITIALIZING MESH SYSTEM .... \n");
 		example = ex;
@@ -35,8 +35,18 @@ public:
 
 
 		}
+
+		prepareImGui();
 		printf(".... FINISHED INITIALIZING MESH SYSTEM .... \n");
+
 		
+		
+	};
+
+	void prepareImGui(){
+		imGui = new ImGUI(example);
+		imGui->init((float)example->width, (float)example->height);
+		imGui->initResources(example->renderPass, example->queue, example->getShadersPath());
 	};
 
 	void Draw(){
@@ -63,8 +73,13 @@ public:
 		renderPassBeginInfo.pClearValues = clearValues;
 
 
-		const VkViewport viewport = vks::initializers::viewport(0, 0,(float) example->width, (float)example->height,0.0f,1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(example->width, example->height, 0, 0);
+		imGui->newFrame(example, (example->frameCounter == 0));
+
+		imGui->updateBuffers();
+
+
+		const VkViewport viewport = vks::initializers::viewport(imGui->vMin.x, imGui->vMin.y,(float)imGui->editor_size.x, (float)imGui->editor_size.y,0.0f,1.0f);
+		const VkRect2D scissor = vks::initializers::rect2D(imGui->editor_size.x-10, imGui->editor_size.y-10, imGui->offset.x, imGui->offset.y);
 		
 
 		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)
@@ -72,10 +87,13 @@ public:
 			renderPassBeginInfo.framebuffer = example->frameBuffers[i];
 			VK_CHECK_RESULT(vkBeginCommandBuffer(example->drawCmdBuffers[i], &cmdBufInfo));
 			vkCmdBeginRenderPass(example->drawCmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
-			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
-			// Bind scene matrices descriptor to set 0
 			
+			
+			example->drawUI(example->drawCmdBuffers[i]);
+			// Render imGui
+			imGui->drawFrame(example->drawCmdBuffers[i]);
+
+			vkCmdNextSubpass(example->drawCmdBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
 
 				for (auto& entity : mEntities)
 				{
@@ -83,8 +101,11 @@ public:
 					auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
 					auto& transform = gCoordinator.GetComponent<Transform>(entity);
 
+					vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
+					vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
+					vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? renderable.pipelines.wireframe : renderable.pipelines.solid);
 					vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, renderable.pipelineLayout, 0, 1, &renderable.descriptorSet, 0, nullptr);
-						vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,  renderable.pipelines.solid);
+					
 					printf("\n.... CALLED DRAW ON GLTF MODEL .... \n");
 					if(renderable.path.length() > 10 ){
 						Renderable::draw(example,renderable.model,renderable.pipelineLayout,transform,i);

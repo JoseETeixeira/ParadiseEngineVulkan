@@ -433,7 +433,7 @@ public:
 		ImGui::Begin("Editor",NULL,window_flags);
 		
 		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
-
+			io.WantCaptureMouse = false;
 			io.ConfigWindowsMoveFromTitleBarOnly=true;
 		}
 
