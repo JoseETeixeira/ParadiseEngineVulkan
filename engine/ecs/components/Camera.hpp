@@ -8,10 +8,19 @@
 #endif
 
 
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_FORCE_RADIANS
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
+
 
 struct Camera
 {
 	Mat44 projectionTransform;
+	glm::mat4 projection;
 
 
 	static Mat44 MakeProjectionTransform(float fov, float nearClip, float farClip, unsigned int viewWidth, unsigned int viewHeight)
@@ -35,5 +44,10 @@ struct Camera
 		transform.m[2][3] = -zClipBias1;
 
 		return transform;
+	}
+
+	static glm::mat4 makeprojection(float fov, float nearClip, float farClip, unsigned int viewWidth, unsigned int viewHeight, float aspect_ratio){
+		glm::mat4 ret = glm::perspective(glm::radians(fov), aspect_ratio, nearClip, farClip);
+		return ret;
 	}
 };

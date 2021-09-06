@@ -15,10 +15,20 @@
 #define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
+
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_FORCE_RADIANS
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "../../third_party/imgui/imgui.h"
+#include "../../third_party/imGuizmo/ImGuizmo.h"
 #include "../../third_party/imgui/imgui_internal.h"
 #include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
+#include "../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
 #include "../ecs/components/Camera.hpp"
 #include "../ecs/components/Transform.hpp"
@@ -353,7 +363,7 @@ public:
 	}
 
 	// Starts a new imGui frame and sets up windows and ui elements
-	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
+	void newFrame(VulkanExampleBase *example, bool updateFrameGraph, Transform meshTransform,VulkanglTFModel* glTFModel,glm::mat4 view, glm::mat4 perspective)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -420,10 +430,10 @@ public:
 
 
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
-		ImGui::Begin("Editor");
+		ImGui::Begin("Editor",NULL,window_flags);
 		
 		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
-			io.WantCaptureMouse = false;
+
 			io.ConfigWindowsMoveFromTitleBarOnly=true;
 		}
 
@@ -442,16 +452,44 @@ public:
 
 			offset.x += ImGui::GetWindowPos().x;
 			offset.y += ImGui::GetWindowPos().y;
-
-			ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 255, 255, 0, 255 ) );
 			
 		
 
 		}
+		for (auto& node : glTFModel->nodes)
+		{
+
+			ImGuizmo::BeginFrame();
+			bool isOrtographic = true;
+			ImGuizmo::SetOrthographic(&isOrtographic);
+
+			glm::mat4 rotM = glm::mat4(1.0f);
+			glm::mat4 transM;
+			glm::mat4 scaleM;
+
+			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+			glm::vec3 translation = glm::vec3(meshTransform.position.x,meshTransform.position.y,meshTransform.position.z);
+			glm::vec3 scale = glm::vec3(meshTransform.scale.x,meshTransform.scale.y,meshTransform.scale.z);
+		
+		
+			
+			transM = glm::translate(glm::mat4(1.0f), translation);
+
+			scaleM = glm::scale(glm::mat4(1.0f), scale);
+
+			//if (type == CameraType::firstperson)
+			//{
+			glm::mat4 nodeMatrix =  scaleM* rotM * transM * node.matrix;
+			ImGuiIO& io = ImGui::GetIO();
+			ImGuizmo::SetRect(0, 0, editor_size.x, editor_size.y);
+			ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(perspective), ImGuizmo::TRANSLATE,  ImGuizmo::LOCAL, glm::value_ptr(nodeMatrix), NULL, NULL);
+		}
 
 		ImGui::End();
-		
-
+	
 		// Render to generate draw buffers
 		ImGui::Render();
 	}

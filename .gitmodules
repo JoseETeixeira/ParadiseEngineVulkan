@@ -13,3 +13,6 @@
 [submodule "third_party/luajit"]
 	path = third_party/luajit
 	url = https://luajit.org/git/luajit.git
+[submodule "third_party/imGuizmo"]
+	path = third_party/imGuizmo
+	url = https://github.com/CedricGuillemet/ImGuizmo.git

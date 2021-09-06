@@ -3,6 +3,7 @@ file(GLOB BASE_SRC
 "*.hpp" 
 "*.h" 
 "../third_party/imgui/*.cpp" 
+"../third_party/imGuizmo/*.cpp" 
 "ecs/*.hpp"
 "ecs/components/*.hpp" 
 "ecs/math/*.hpp" 

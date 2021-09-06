@@ -115,7 +115,10 @@ public:
 		renderPassBeginInfo.clearValueCount = 5;
 		renderPassBeginInfo.pClearValues = clearValues;
 
-		imGui->newFrame(example, (example->frameCounter == 0));
+		
+		Transform mesh_transform = gCoordinator.GetComponent<Transform>(meshes[0]);
+		Camera cam = gCoordinator.GetComponent<Camera>(example->camera);
+		imGui->newFrame(example, (example->frameCounter == 0),mesh_transform,&glTFModel,updateViewMatrix(),cam.projection);
 
 		imGui->updateBuffers();
 
@@ -131,11 +134,16 @@ public:
 			
 			// Bind scene matrices descriptor to set 0
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
-			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,  pipelines.solid);
+			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelines.solid);
 			
+
+					
 			example->drawUI(example->drawCmdBuffers[i]);
 			// Render imGui
 			imGui->drawFrame(example->drawCmdBuffers[i]);
+			
+			
+			
 			
 
 			vkCmdNextSubpass(example->drawCmdBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
@@ -143,6 +151,7 @@ public:
 			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
 			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, uiSettings.wireframe ? pipelines.wireframe : pipelines.solid);
 			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
+			
 			
 			if (uiSettings.displayModels) {
 				for(auto& mesh: meshes) {
@@ -154,8 +163,7 @@ public:
 				}
 				
 			}
-			
-			
+
 			vkCmdEndRenderPass(example->drawCmdBuffers[i]);
 			VK_CHECK_RESULT(vkEndCommandBuffer(example->drawCmdBuffers[i]));
 		}

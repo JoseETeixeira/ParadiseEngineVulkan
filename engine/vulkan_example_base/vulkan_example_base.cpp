@@ -226,7 +226,8 @@ void VulkanExampleBase::prepare()
 	gCoordinator.AddComponent(
 		camera,
 		Camera{
-			.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
+			.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080),
+			.projection = Camera::makeprojection(45.0f, 0.1f, 1000.0f, 1920, 1080, 1920/1080)
 		});
 }
 
@@ -2893,6 +2894,7 @@ void VulkanExampleBase::windowResize()
 	if ((width > 0.0f) && (height > 0.0f)) {
 		auto& cam = gCoordinator.GetComponent<Camera>(camera);
 		cam.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, (float)width, (float)height);
+		cam.projection =  Camera::makeprojection(45.0f, 0.1f, 1000.0f, (float)width, (float)height, (float)width/height);
 	}
 
 	// Notify derived class
