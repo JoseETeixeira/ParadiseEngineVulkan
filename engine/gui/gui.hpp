@@ -363,7 +363,7 @@ public:
 	}
 
 	// Starts a new imGui frame and sets up windows and ui elements
-	void newFrame(VulkanExampleBase *example, bool updateFrameGraph, Transform meshTransform,VulkanglTFModel* glTFModel,glm::mat4 view, glm::mat4 perspective)
+	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
 	{
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
@@ -456,6 +456,7 @@ public:
 		
 
 		}
+		/*
 		for (auto& node : glTFModel->nodes)
 		{
 
@@ -486,7 +487,7 @@ public:
 			ImGuiIO& io = ImGui::GetIO();
 			ImGuizmo::SetRect(0, 0, editor_size.x, editor_size.y);
 			ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(perspective), ImGuizmo::TRANSLATE,  ImGuizmo::LOCAL, glm::value_ptr(nodeMatrix), NULL, NULL);
-		}
+		}*/
 
 		ImGui::End();
 	

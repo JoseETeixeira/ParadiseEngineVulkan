@@ -128,17 +128,7 @@ public:
 
 	~VulkanglTFModel()
 	{
-		// Release all Vulkan resources allocated for the model
-		vkDestroyBuffer(vulkanDevice->logicalDevice, vertices.buffer, nullptr);
-		vkFreeMemory(vulkanDevice->logicalDevice, vertices.memory, nullptr);
-		vkDestroyBuffer(vulkanDevice->logicalDevice, indices.buffer, nullptr);
-		vkFreeMemory(vulkanDevice->logicalDevice, indices.memory, nullptr);
-		for (Image image : images) {
-			vkDestroyImageView(vulkanDevice->logicalDevice, image.texture.view, nullptr);
-			vkDestroyImage(vulkanDevice->logicalDevice, image.texture.image, nullptr);
-			vkDestroySampler(vulkanDevice->logicalDevice, image.texture.sampler, nullptr);
-			vkFreeMemory(vulkanDevice->logicalDevice, image.texture.deviceMemory, nullptr);
-		}
+		
 	}
 
 	void loadImages(tinygltf::Model& input){
