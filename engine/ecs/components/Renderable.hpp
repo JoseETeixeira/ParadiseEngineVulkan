@@ -51,60 +51,22 @@ struct Renderable
 		
 	}
 
-	static void draw(VulkanExampleBase *example,VulkanglTFModel &model,Transform transform,Vec2 vMin, Vec2 editor_size,Vec2 offset, Pipelines &pipelines, VkPipelineLayout &pipelineLayout, VkDescriptorSet &descriptorSet){
+	static void draw(VulkanExampleBase *example,VulkanglTFModel &glTFModel, VkPipelineLayout &pipelineLayout,Transform transform,int32_t i){
 		printf("\n.... INIT DRAWING .... \n");
 		
-		buildCommandBuffers(example,model,transform,vMin,editor_size,offset,pipelines,pipelineLayout,descriptorSet);
+		buildCommandBuffers(example,glTFModel,pipelineLayout,transform,i);
 	
 		printf("\n.... FINISHED DRAWING .... \n");
 	}
 
-	static void buildCommandBuffers(VulkanExampleBase *example,VulkanglTFModel &glTFModel,Transform transform,Vec2 vMin, Vec2 editor_size,Vec2 offset, Pipelines &pipelines, VkPipelineLayout &pipelineLayout, VkDescriptorSet &descriptorSet){
-		printf("\n.... INIT BUILDING COMMAND BUFFERS .... \n");
+	static void buildCommandBuffers(VulkanExampleBase *example,VulkanglTFModel &glTFModel, VkPipelineLayout &pipelineLayout,Transform transform,int32_t i){
 		
-		VkCommandBufferBeginInfo cmdBufInfo = vks::initializers::commandBufferBeginInfo();
-
-		VkClearValue clearValues[5];
-		clearValues[0].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clearValues[1].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clearValues[2].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clearValues[3].color = { { 0.0f, 0.0f, 0.0f, 0.0f } };
-		clearValues[4].depthStencil = { 1.0f, 0 };
-
-
-		VkRenderPassBeginInfo renderPassBeginInfo = vks::initializers::renderPassBeginInfo();
-		renderPassBeginInfo.renderPass = example->renderPass;
-		renderPassBeginInfo.renderArea.offset.x = 0;
-		renderPassBeginInfo.renderArea.offset.y = 0;
-		renderPassBeginInfo.renderArea.extent.width = example->width;
-		renderPassBeginInfo.renderArea.extent.height = example->height;
-		renderPassBeginInfo.clearValueCount = 5;
-		renderPassBeginInfo.pClearValues = clearValues;
-
-
-		const VkViewport viewport = vks::initializers::viewport(0, 0,(float) example->width, (float)example->height,0.0f,1.0f);
-		const VkRect2D scissor = vks::initializers::rect2D(example->width, example->height, 0, 0);
-		
-
-		for (int32_t i = 0; i < example->drawCmdBuffers.size(); ++i)
-		{
-			renderPassBeginInfo.framebuffer = example->frameBuffers[i];
-			VK_CHECK_RESULT(vkBeginCommandBuffer(example->drawCmdBuffers[i], &cmdBufInfo));
-			vkCmdBeginRenderPass(example->drawCmdBuffers[i], &renderPassBeginInfo, VK_SUBPASS_CONTENTS_INLINE);
-			vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
-			vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
-			// Bind scene matrices descriptor to set 0
-			vkCmdBindDescriptorSets(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS, pipelineLayout, 0, 1, &descriptorSet, 0, nullptr);
-			vkCmdBindPipeline(example->drawCmdBuffers[i], VK_PIPELINE_BIND_POINT_GRAPHICS,  pipelines.solid);
-			printf("\n.... CALLED DRAW ON GLTF MODEL .... \n");
 				
 			glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
 
 			printf("\n.... FINISHED DRAW ON GLTF MODEL .... \n");
 
-			vkCmdEndRenderPass(example->drawCmdBuffers[i]);
-			VK_CHECK_RESULT(vkEndCommandBuffer(example->drawCmdBuffers[i]));
-		}
+		
 		printf("\n.... FINISHED BUILDING COMMAND BUFFERS .... \n");
 	};
 

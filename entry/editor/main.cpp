@@ -187,7 +187,7 @@ public:
 					renderable.model = Renderable::loadglTFFile(path,this);
 					
 					
-					gCoordinator.AddComponent(mesh,renderable);
+					
 					
 				}
 
@@ -252,6 +252,8 @@ public:
 			trans.position = mesh_transform.position;
 			trans.rotation = mesh_transform.rotation;
 			trans.scale = mesh_transform.scale;
+
+			gCoordinator.AddComponent(mesh,renderable);
 			
 			meshSystem->mEntities.insert(mesh);
 			
