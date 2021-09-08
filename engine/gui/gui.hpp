@@ -377,13 +377,28 @@ public:
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::SetNextWindowBgAlpha(0.0f);
 
-	
+
+	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+		ImGuiWindowFlags host_window_flags = 0;
+		host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+		host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			host_window_flags |= ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+		ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
+		ImGui::PopStyleVar(4);
+		ImGui::PopStyleColor();
+
 		ImGuiID dockspaceID = 0;
 		
 		dockspaceID = ImGui::GetID("HUB_DockSpace");
-        ImGui::DockSpaceOverViewport(viewport, ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
+        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
 
 
 
@@ -427,7 +442,7 @@ public:
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
-		
+		ImGui::End();
 	
 		// Render to generate draw buffers
 		

@@ -16,6 +16,7 @@ struct Renderable
 {
 	std::string path;
 	VulkanglTFModel model;
+	bool enabled = false;
 	
 
 	struct DescriptorSetLayouts {
@@ -182,19 +183,26 @@ struct Renderable
 		glm::mat4 view;
 		glm::mat4 rotM = glm::mat4(1.0f);
 		glm::mat4 transM;
+		glm::mat4 scaleM;
 
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.x  ), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(transform.rotation.z + 180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
 
-		glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
-	
-	
-		
+		glm::vec3 translation = glm::vec3(transform.position.x, transform.position.y, transform.position.z);
+
+		glm::vec3 rotation = glm::vec3(transform.rotation.x, transform.rotation.y, transform.rotation.z);
+		glm::vec3 scale = glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z);
+
+
+
 		transM = glm::translate(glm::mat4(1.0f), translation);
 
+		scaleM = glm::scale(glm::mat4(1.0f), scale);
 
-		view = rotM * transM;
+		//if (type == CameraType::firstperson)
+		//{
+		view = scaleM * transM * rotM ;
 
 
 		return view;

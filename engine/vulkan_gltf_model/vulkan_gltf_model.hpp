@@ -323,14 +323,13 @@ public:
 			glm::mat4 transM;
 			glm::mat4 scaleM;
 
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+			rotM = glm::rotate(rotM, glm::radians(transform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
 
 			glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
 			glm::vec3 scale = glm::vec3(transform.scale.x,transform.scale.y,transform.scale.z);
-		
-		
+
 			
 			transM = glm::translate(glm::mat4(1.0f), translation);
 
