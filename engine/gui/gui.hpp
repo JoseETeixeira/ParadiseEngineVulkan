@@ -363,29 +363,29 @@ public:
 	}
 
 	// Starts a new imGui frame and sets up windows and ui elements
-	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
+	void newFrame(VulkanExampleBase *example, bool updateFrameGraph, std::set<Entity>& entities)
 	{
+		
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoBackground;
-		
-		
-		ImGui::NewFrame();
+
+
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
 		ImGui::SetNextWindowBgAlpha(0.0f);
 
-		ImGui::Begin("Inspector");
+	
 		ImGuiID dockspaceID = 0;
 		
 		dockspaceID = ImGui::GetID("HUB_DockSpace");
-        ImGui::DockSpace(dockspaceID , ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
+        ImGui::DockSpaceOverViewport(viewport, ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
 
-		ImGui::End();
+
 
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 				
@@ -427,72 +427,10 @@ public:
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
-
-
-		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
-		ImGui::Begin("Editor",NULL,window_flags);
 		
-		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
-			io.WantCaptureMouse = false;
-			io.ConfigWindowsMoveFromTitleBarOnly=true;
-		}
-
-		{
-			editor_size = ImGui::GetWindowSize();
-			vMin = ImGui::GetWindowContentRegionMin();
-			vMax = ImGui::GetWindowContentRegionMax();
-
-			vMin.x += ImGui::GetWindowPos().x;
-			vMin.y += ImGui::GetWindowPos().y;
-			vMax.x += ImGui::GetWindowPos().x;
-			vMax.y += ImGui::GetWindowPos().y;
-
-			offset.x = 0;
-			offset.y = 0;
-
-			offset.x += ImGui::GetWindowPos().x;
-			offset.y += ImGui::GetWindowPos().y;
-			
-		
-
-		}
-		/*
-		for (auto& node : glTFModel->nodes)
-		{
-
-			ImGuizmo::BeginFrame();
-			bool isOrtographic = true;
-			ImGuizmo::SetOrthographic(&isOrtographic);
-
-			glm::mat4 rotM = glm::mat4(1.0f);
-			glm::mat4 transM;
-			glm::mat4 scaleM;
-
-			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-			glm::vec3 translation = glm::vec3(meshTransform.position.x,meshTransform.position.y,meshTransform.position.z);
-			glm::vec3 scale = glm::vec3(meshTransform.scale.x,meshTransform.scale.y,meshTransform.scale.z);
-		
-		
-			
-			transM = glm::translate(glm::mat4(1.0f), translation);
-
-			scaleM = glm::scale(glm::mat4(1.0f), scale);
-
-			//if (type == CameraType::firstperson)
-			//{
-			glm::mat4 nodeMatrix =  scaleM* rotM * transM * node.matrix;
-			ImGuiIO& io = ImGui::GetIO();
-			ImGuizmo::SetRect(0, 0, editor_size.x, editor_size.y);
-			ImGuizmo::Manipulate(glm::value_ptr(view), glm::value_ptr(perspective), ImGuizmo::TRANSLATE,  ImGuizmo::LOCAL, glm::value_ptr(nodeMatrix), NULL, NULL);
-		}*/
-
-		ImGui::End();
 	
 		// Render to generate draw buffers
-		ImGui::Render();
+		
 	}
 
 	static void draw_callback(const ImDrawList* parent_list, const ImDrawCmd* cmd)
