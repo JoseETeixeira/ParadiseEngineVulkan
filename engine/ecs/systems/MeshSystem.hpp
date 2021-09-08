@@ -239,8 +239,8 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				float *view = (float*)glm::value_ptr(renderable.updateViewMatrix(example));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
-				
 				EditTransform(view, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform);
+				
 				if (ImGuizmo::IsUsing())
 				{
 					lastUsing = matId;
@@ -251,10 +251,18 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 					glm::value_ptr(rotation),
 					glm::value_ptr(scale));
 
-				meshTransform.position.x = translation.x;
-				meshTransform.position.y = translation.y;
+					if (ImGuizmo::IsOver(mCurrentGizmoOperation))
+					{
+					meshTransform.position.x = translation.x;
+					meshTransform.position.y = translation.y;
+					
+
+					}
+				
+
 				
 				}
+
 
 				
 
