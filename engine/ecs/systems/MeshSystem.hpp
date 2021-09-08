@@ -251,13 +251,13 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 					glm::value_ptr(rotation),
 					glm::value_ptr(scale));
 
-
-				
-				}
-
 				meshTransform.position.x = translation.x;
 				meshTransform.position.y = translation.y;
 				meshTransform.position.z = translation.z;
+				
+				}
+
+				
 
 				
 			
