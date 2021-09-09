@@ -68,7 +68,7 @@ public:
 
 
 
-void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition,Transform meshTransform)
+void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition,Transform &meshTransform,glm::vec3 &translation,glm::vec3 &rotation,glm::vec3 &scale)
 {
    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
    static bool useSnap = false;
@@ -77,14 +77,16 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
    static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
    static bool boundSizing = false;
    static bool boundSizingSnap = false;
+ 
+  
 
    if (editTransformDecomposition)
    {
       ImGuiIO& io = ImGui::GetIO();
    float viewManipulateRight = io.DisplaySize.x;
    float viewManipulateTop = 0;
-
-      
+	
+       
 
 	float windowWidth = (float)ImGui::GetWindowWidth();
 	float windowHeight = (float)ImGui::GetWindowHeight();
@@ -92,11 +94,20 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 	viewManipulateTop = ImGui::GetWindowPos().y;
 
 
-
    ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
    ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
+	
+	ImGuizmo::DecomposeMatrixToComponents(
+					matrix,
+					glm::value_ptr(translation),
+					glm::value_ptr(rotation),
+					glm::value_ptr(scale));
 
+		
+
+					
+	
 
    }
 
@@ -196,6 +207,8 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 			glm::vec3 translation;
 			glm::vec3 rotation;
 			glm::vec3 scale;
+			Transform mtransform;
+
 			for (auto& entity : mEntities)
 			{
 
@@ -206,7 +219,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 
 				
-				
+				translation = glm::vec3(0.0f , 0.0f , 0.0f);
+				rotation = glm::vec3(0.0f, 0.0f ,0.0f );
+				scale = glm::vec3(1.0f, 1.0f, 1.0f);
 
 
 				glm::mat4 rotM = glm::mat4(1.0f);
@@ -217,11 +232,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
 				
-				translation = glm::vec3(meshTransform.position.x , meshTransform.position.y , meshTransform.position.z);
-				rotation = glm::vec3(meshTransform.rotation.x, meshTransform.rotation.y , meshTransform.rotation.z );
-				scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 				
-				translation.y *= 1.0f;
+				
+				
 
 				transM = glm::translate(glm::mat4(1.0f), translation);
 
@@ -239,30 +252,21 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				float *view = (float*)glm::value_ptr(renderable.updateViewMatrix(example));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
-				EditTransform(view, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform);
+				EditTransform(view, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())
 				{
+				
 					lastUsing = matId;
 					io.WantCaptureMouse = true;
-					ImGuizmo::DecomposeMatrixToComponents(
-					matrix,
-					glm::value_ptr(translation),
-					glm::value_ptr(rotation),
-					glm::value_ptr(scale));
+					meshTransform.position.x += translation.x*0.01f;
+					meshTransform.position.y += translation.y*0.01f;
+					meshTransform.position.z += translation.z*0.01f;
 
-					if (ImGuizmo::IsOver(mCurrentGizmoOperation))
-					{
-					meshTransform.position.x = translation.x;
-					meshTransform.position.y = translation.y;
-					
-
-					}
-				
-
-				
+									
 				}
 
+			
 
 				
 
@@ -289,12 +293,15 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 			imGui->drawFrame(example->drawCmdBuffers[i]);
 
 			vkCmdNextSubpass(example->drawCmdBuffers[i], VK_SUBPASS_CONTENTS_INLINE);
+			
 
 			for (auto& entity : mEntities)
 				{
 
 				auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
 				auto& transform = gCoordinator.GetComponent<Transform>(entity);
+
+
 
 				vkCmdSetViewport(example->drawCmdBuffers[i], 0, 1, &viewport);
 				vkCmdSetScissor(example->drawCmdBuffers[i], 0, 1, &scissor);
@@ -303,9 +310,14 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				printf("\n.... CALLED DRAW ON GLTF MODEL .... \n");
 				if(renderable.path.length() > 10 ){
-					Renderable::draw(example,renderable.model,renderable.pipelineLayout,transform,i);
+					
+						Renderable::draw(example,renderable.model,renderable.pipelineLayout,transform,i);
+				
+					
 
 				}
+
+
 			}
 				
 
@@ -328,7 +340,6 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 		for (auto& entity : mEntities)
 		{
 			auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
-			auto& transform = gCoordinator.GetComponent<Transform>(entity);
 			if(renderable.path.length() > 10 ){
 				Renderable::updateUniformBuffers(example,renderable.shaderData);
 			
