@@ -337,7 +337,7 @@ public:
 
 			//if (type == CameraType::firstperson)
 			//{
-			glm::mat4 nodeMatrix =  scaleM* rotM * transM * node.matrix;
+			glm::mat4 nodeMatrix =  scaleM* rotM * transM *  node.matrix;
 
 			VulkanglTFModel::Node* currentParent = node.parent;
 			while (currentParent) {

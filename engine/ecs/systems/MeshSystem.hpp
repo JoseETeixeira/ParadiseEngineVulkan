@@ -34,6 +34,7 @@ public:
 	int gizmoCount = 1;
 	float camDistance = 8.f;
 	ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
+	
 
 	const float identityMatrix[16] =
 { 1.f, 0.f, 0.f, 0.f,
@@ -48,7 +49,8 @@ public:
 		for (auto& entity : mEntities)
 		{
 			auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
-			Renderable::prepareMesh(renderable.path,ex,renderable.model,renderable.descriptorSetLayouts,renderable.shaderData,renderable.pipelines,renderable.pipelineLayout,renderable.descriptorSet,renderable.device );
+			auto& meshTransform = gCoordinator.GetComponent<Transform>(entity);
+			Renderable::prepareMesh(renderable.path,ex,renderable.model,renderable.descriptorSetLayouts,renderable.shaderData,renderable.pipelines,renderable.pipelineLayout,renderable.descriptorSet,renderable.device,meshTransform );
 
 
 		}
@@ -68,6 +70,7 @@ public:
 
 
 
+
 void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition,Transform &meshTransform,glm::vec3 &translation,glm::vec3 &rotation,glm::vec3 &scale)
 {
    static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
@@ -83,16 +86,6 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
    if (editTransformDecomposition)
    {
       ImGuiIO& io = ImGui::GetIO();
-   float viewManipulateRight = io.DisplaySize.x;
-   float viewManipulateTop = 0;
-	
-       
-
-	float windowWidth = (float)ImGui::GetWindowWidth();
-	float windowHeight = (float)ImGui::GetWindowHeight();
-	viewManipulateRight = ImGui::GetWindowPos().x + windowWidth;
-	viewManipulateTop = ImGui::GetWindowPos().y;
-
 
    ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
@@ -217,6 +210,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
 				auto& meshTransform = gCoordinator.GetComponent<Transform>(entity);
 				auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
+				auto& cameraTransform = gCoordinator.GetComponent<Transform>(example->camera);
 
 				
 				translation = glm::vec3(0.0f , 0.0f , 0.0f);
@@ -228,15 +222,15 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				
-				
-				
+				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y,meshTransform.position.z);
 
-				transM = glm::translate(glm::mat4(1.0f), translation);
+
+				transM = glm::translate(glm::mat4(1.0f), tempTrans);
 
 				scaleM = glm::scale(glm::mat4(1.0f), scale);
 
@@ -246,25 +240,27 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				ImGuizmo::SetID(matId);
 				ImGuizmo::SetDrawlist();
+				ImGuizmo::SetOrthographic(false);
 				ImGuizmo::SetRect(imGui->vMin.x, imGui->vMin.y, imGui->editor_size.x, imGui->editor_size.y);
 
 					
 
-				float *view = (float*)glm::value_ptr(renderable.updateViewMatrix(example));
+
+				float *viewMatrix = (float*)glm::value_ptr(renderable.updateViewMatrix(example, meshTransform));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
-				EditTransform(view, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
+				EditTransform(viewMatrix, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())
 				{
 				
 					lastUsing = matId;
 					io.WantCaptureMouse = true;
-					meshTransform.position.x += translation.x*0.01f;
-					meshTransform.position.y += translation.y*0.01f;
-					meshTransform.position.z += translation.z*0.01f;
-
+					meshTransform.position.x = tempTrans.x + translation.x/1000;
+					meshTransform.position.y = tempTrans.y +translation.y/1000;
+					meshTransform.position.z = tempTrans.z +translation.z/1000;
 									
 				}
+
 
 			
 
@@ -340,8 +336,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 		for (auto& entity : mEntities)
 		{
 			auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
+			auto& meshTransform = gCoordinator.GetComponent<Transform>(entity);
 			if(renderable.path.length() > 10 ){
-				Renderable::updateUniformBuffers(example,renderable.shaderData);
+				Renderable::updateUniformBuffers(example,renderable.shaderData,meshTransform);
 			
 			}
 			

@@ -220,7 +220,7 @@ void VulkanExampleBase::prepare()
 		camera,
 		Transform{
 			.position = Vec3(0.0f, 0.0f, 1.0f),
-			.rotation = Vec3(0.0f, 0.0f, 0.0f),
+			.rotation = Vec3(0.0f, 0.0f, 180.0f),
 			.scale = Vec3(1.0f, 1.0f, 1.0f)
 		});
 
@@ -667,8 +667,8 @@ void VulkanExampleBase::updateOverlay()
 	io.DeltaTime = frameTimer;
 
 	io.MousePos = ImVec2(mousePos.x, mousePos.y);
-	io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
-	io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
+	io.MouseDown[0] = mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left));
+	io.MouseDown[1] = mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right));
 
 	ImGui::NewFrame();
 

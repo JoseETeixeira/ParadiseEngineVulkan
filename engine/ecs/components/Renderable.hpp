@@ -9,6 +9,7 @@
 
 #include <algorithm>
 
+#include <glm/gtx/matrix_decompose.hpp>
 
 extern Coordinator gCoordinator;
 
@@ -42,9 +43,9 @@ struct Renderable
 	VkDescriptorSet descriptorSet;
 	VkDevice device;
 
-	static void prepareMesh(std::string path,VulkanExampleBase *example,VulkanglTFModel &model, DescriptorSetLayouts &descriptorSetLayouts,ShaderData  &shaderData , Pipelines &pipelines, VkPipelineLayout &pipelineLayout, VkDescriptorSet &descriptorSet,VkDevice &device ){
+	static void prepareMesh(std::string path,VulkanExampleBase *example,VulkanglTFModel &model, DescriptorSetLayouts &descriptorSetLayouts,ShaderData  &shaderData , Pipelines &pipelines, VkPipelineLayout &pipelineLayout, VkDescriptorSet &descriptorSet,VkDevice &device,Transform &meshTransform ){
 		printf("\n.... PREPARING MESH .... \n");
-		prepareUniformBuffers(example,shaderData);
+		prepareUniformBuffers(example,shaderData,meshTransform);
 		setupDescriptors(example,model,descriptorSetLayouts,pipelineLayout,shaderData,descriptorSet);
 		preparePipelines(example,pipelines,pipelineLayout);
 		printf("\n.... FINISHED PREPARING MESH .... \n");
@@ -178,17 +179,22 @@ struct Renderable
 		printf("\n.... FINISH SETUP PIPELINES .... \n");
 	};
 
-	static glm::mat4 updateViewMatrix(VulkanExampleBase *example){
+	static void decomposeMtx(const glm::mat4& m, glm::vec3& pos, glm::quat& rot, glm::vec3& scale)
+{
+    pos = m[3];
+    for(int i = 0; i < 3; i++)
+        scale[i] = glm::length(glm::vec3(m[i]));
+    const glm::mat3 rotMtx(
+        glm::vec3(m[0]) / scale[0],
+        glm::vec3(m[1]) / scale[1],
+        glm::vec3(m[2]) / scale[2]);
+    rot = glm::quat_cast(rotMtx);
+}
+
+	static glm::mat4 updateViewMatrix(VulkanExampleBase *example,Transform& meshTransform){
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
-		glm::mat4 view;
-		glm::mat4 rotM = glm::mat4(1.0f);
-		glm::mat4 transM;
-		glm::mat4 scaleM;
 
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.x  ), glm::vec3(1.0f, 0.0f, 0.0f));
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
-		rotM = glm::rotate(rotM, glm::radians(transform.rotation.z + 180.0f), glm::vec3(0.0f, 0.0f, 1.0f));
-
+		
 		glm::vec3 translation = glm::vec3(transform.position.x, transform.position.y, transform.position.z);
 
 		glm::vec3 rotation = glm::vec3(transform.rotation.x, transform.rotation.y, transform.rotation.z);
@@ -196,13 +202,11 @@ struct Renderable
 
 
 
-		transM = glm::translate(glm::mat4(1.0f), translation);
+		glm::vec3 cameraPos   = glm::vec3(translation.x, translation.y, translation.z );
+		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
-		scaleM = glm::scale(glm::mat4(1.0f), scale);
-
-		//if (type == CameraType::firstperson)
-		//{
-		view = scaleM * transM * rotM ;
+		auto view = glm::lookAt(cameraPos, cameraPos+cameraFront- glm::vec3(0.0f, translation.y, 0.0f), glm::vec3( 0.0f, 1.0f, 0.0f ));
+       
 
 
 		return view;
@@ -210,7 +214,7 @@ struct Renderable
 	
 	};
 
-	static void prepareUniformBuffers(VulkanExampleBase *example,ShaderData  &shaderData){
+	static void prepareUniformBuffers(VulkanExampleBase *example,ShaderData  &shaderData,Transform &meshTransform ){
 		printf("\n.... INIT PREPARE UNIFORM BUFFERS .... \n");
 		// Vertex shader uniform buffer block
 		VK_CHECK_RESULT(example->vulkanDevice->createBuffer(
@@ -222,17 +226,17 @@ struct Renderable
 		// Map persistent
 		VK_CHECK_RESULT(shaderData.buffer.map());
 
-		updateUniformBuffers(example,shaderData);
+		updateUniformBuffers(example,shaderData,meshTransform);
 
 		printf("\n.... FINISH PREPARE UNIFORM BUFFERS .... \n");
 	};
 
-	static void updateUniformBuffers(VulkanExampleBase *example,ShaderData  &shaderData){
+	static void updateUniformBuffers(VulkanExampleBase *example,ShaderData  &shaderData, Transform &meshTransform){
 
 		printf("\n.... INIT UPDATE UNIFORM BUFFERS .... \n");
 		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 		
-		shaderData.values.model = updateViewMatrix(example);
+		shaderData.values.model = updateViewMatrix(example,meshTransform);
 		shaderData.values.projection =  glm::perspective(glm::radians(45.0f), float(example->width)/float(example->height), 0.1f, 256.0f);
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 
