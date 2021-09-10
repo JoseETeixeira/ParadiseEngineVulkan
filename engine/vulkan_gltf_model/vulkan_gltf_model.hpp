@@ -19,6 +19,7 @@
 #include "vulkan/vulkan.h"
 #include "../vulkan_device/vulkan_device.h"
 #include "../vulkan_texture/vulkan_texture.h"
+#include "../vulkan_example_base/vulkan_example_base.h"
 
 #include "../../third_party/ktx/include/ktx.h"
 #include "../../third_party/ktx/include/ktxvulkan.h"
@@ -43,6 +44,9 @@
 #endif
 
 #include "../ecs/components/Transform.hpp"
+
+
+extern Coordinator gCoordinator;
 
 // Contains everything required to render a glTF model in Vulkan
 // This class is heavily simplified (compared to glTF's feature set) but retains the basic glTF structure
@@ -315,29 +319,27 @@ public:
 			nodes.push_back(node);
 		}
 	};
-	void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node, Transform transform){
-		if (node.mesh.primitives.size() > 0) {
-			// Pass the node's matrix via push constants
-			// Traverse the node hierarchy to the top-most parent to get the final matrix of the current node
-			glm::mat4 rotM = glm::mat4(1.0f);
-			glm::mat4 transM;
-			glm::mat4 scaleM;
+	void drawNode(VulkanExampleBase *example,VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node, Transform meshTransform){
+			if (node.mesh.primitives.size() > 0) {
+				glm::mat4 rotM = glm::mat4(1.0f);
+				glm::mat4 transM;
+				glm::mat4 scaleM;
 
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
+				
+				glm::vec3 translation = glm::vec3(meshTransform.position.x , meshTransform.position.y , meshTransform.position.z);
+				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
-			glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
-			glm::vec3 scale = glm::vec3(transform.scale.x,transform.scale.y,transform.scale.z);
+				transM = glm::translate(glm::mat4(1.0f), translation);
 
-			
-			transM = glm::translate(glm::mat4(1.0f), translation);
-
-			scaleM = glm::scale(glm::mat4(1.0f), scale);
-
+				scaleM = glm::scale(glm::mat4(1.0f), scale);
+				//if (type == CameraType::firstperson)
+				//{
 			//if (type == CameraType::firstperson)
 			//{
-			glm::mat4 nodeMatrix =  scaleM* rotM * transM *  node.matrix;
+			glm::mat4 nodeMatrix =  transM * rotM * scaleM * node.matrix;
 
 			VulkanglTFModel::Node* currentParent = node.parent;
 			while (currentParent) {
@@ -357,17 +359,17 @@ public:
 			}
 		}
 		for (auto& child : node.children) {
-			drawNode(commandBuffer, pipelineLayout, child,transform);
+			drawNode(example,commandBuffer, pipelineLayout, child,meshTransform);
 		}
 	};
-	void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, Transform transform){
+	void draw(VulkanExampleBase *example,VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, Transform transform){
 		// All vertices and indices are stored in single buffers, so we only need to bind once
 		VkDeviceSize offsets[1] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertices.buffer, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 		// Render all nodes at top-level
 		for (auto& node : nodes) {
-			drawNode(commandBuffer, pipelineLayout, node,transform);
+			drawNode(example,commandBuffer, pipelineLayout, node,transform);
 		}
 	};
 	void rotate_node(uint32_t index, float degrees){};

@@ -13,6 +13,10 @@
 
 extern Coordinator gCoordinator;
 
+constexpr glm::vec3 RIGHT = glm::vec3(1, 0, 0);
+constexpr glm::vec3 UP = glm::vec3(0, 1, 0);
+constexpr glm::vec3 FORWARD = glm::vec3(0, 0, 1);
+
 struct Renderable
 {
 	std::string path;
@@ -62,9 +66,10 @@ struct Renderable
 	}
 
 	static void buildCommandBuffers(VulkanExampleBase *example,VulkanglTFModel &glTFModel, VkPipelineLayout &pipelineLayout,Transform transform,int32_t i){
-		
+
+			auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 				
-			glTFModel.draw(example->drawCmdBuffers[i], pipelineLayout,transform);
+			glTFModel.draw(example,example->drawCmdBuffers[i], pipelineLayout,transform);
 
 			printf("\n.... FINISHED DRAW ON GLTF MODEL .... \n");
 
@@ -179,36 +184,24 @@ struct Renderable
 		printf("\n.... FINISH SETUP PIPELINES .... \n");
 	};
 
-	static void decomposeMtx(const glm::mat4& m, glm::vec3& pos, glm::quat& rot, glm::vec3& scale)
-{
-    pos = m[3];
-    for(int i = 0; i < 3; i++)
-        scale[i] = glm::length(glm::vec3(m[i]));
-    const glm::mat3 rotMtx(
-        glm::vec3(m[0]) / scale[0],
-        glm::vec3(m[1]) / scale[1],
-        glm::vec3(m[2]) / scale[2]);
-    rot = glm::quat_cast(rotMtx);
-}
 
 	static glm::mat4 updateViewMatrix(VulkanExampleBase *example,Transform& meshTransform){
+
+	
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
 
-		
-		glm::vec3 translation = glm::vec3(transform.position.x, transform.position.y, transform.position.z);
 
-		glm::vec3 rotation = glm::vec3(transform.rotation.x , transform.rotation.y, transform.rotation.z);
+		
+		glm::vec3 translation = glm::vec3(transform.position.x , transform.position.y  , transform.position.z);
+		glm::vec3 rotation = glm::vec3(transform.rotation.x , transform.rotation.y  , transform.rotation.z);
 		glm::vec3 scale = glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z);
 
-
-		glm::vec3 cameraPos   = glm::vec3(translation.x, translation.y, translation.z );
-		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
-
-		auto view = glm::lookAt(cameraPos, cameraPos+cameraFront- glm::vec3(0.0f, translation.y, 0.0f), glm::vec3( 0.0f, -1.0f, 0.0f ));
-       
-
-
-		return view;
+		auto mat = glm::mat4{1.f};
+		mat = glm::translate(mat, translation);
+		mat = glm::rotate(mat, glm::radians(rotation.x), UP); //x rotates around the UP axis, not the X axis
+		mat = glm::rotate(mat, glm::radians(rotation.y), RIGHT); //y rotates around the RIGHT axis, 
+		mat = glm::rotate(mat, glm::radians(rotation.z), FORWARD); //z rotates around the 'x' axis (forward)
+		return mat;
 
 	
 	};

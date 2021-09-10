@@ -247,9 +247,13 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 					
 
+				//view matrix is the inverse of the camera matrix
 
-				float *viewMatrix = (float*)glm::value_ptr(renderable.updateViewMatrix(example, meshTransform));
+				//TODO: pass view matrix and projection to the model then render from the result
+
+				float *viewMatrix = (float*)glm::value_ptr(glm::inverse(renderable.updateViewMatrix(example, meshTransform)));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
+
 				EditTransform(viewMatrix, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())
@@ -301,6 +305,8 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				auto& renderable = gCoordinator.GetComponent<Renderable>(entity);
 				auto& transform = gCoordinator.GetComponent<Transform>(entity);
+	
+
 
 
 
