@@ -197,15 +197,14 @@ struct Renderable
 		
 		glm::vec3 translation = glm::vec3(transform.position.x, transform.position.y, transform.position.z);
 
-		glm::vec3 rotation = glm::vec3(transform.rotation.x, transform.rotation.y, transform.rotation.z);
+		glm::vec3 rotation = glm::vec3(transform.rotation.x , transform.rotation.y, transform.rotation.z);
 		glm::vec3 scale = glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z);
-
 
 
 		glm::vec3 cameraPos   = glm::vec3(translation.x, translation.y, translation.z );
 		glm::vec3 cameraFront = glm::vec3(0.0f, 0.0f, -1.0f);
 
-		auto view = glm::lookAt(cameraPos, cameraPos+cameraFront- glm::vec3(0.0f, translation.y, 0.0f), glm::vec3( 0.0f, 1.0f, 0.0f ));
+		auto view = glm::lookAt(cameraPos, cameraPos+cameraFront- glm::vec3(0.0f, translation.y, 0.0f), glm::vec3( 0.0f, -1.0f, 0.0f ));
        
 
 

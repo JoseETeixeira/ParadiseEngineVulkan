@@ -222,12 +222,14 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+				
+
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x * -1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				
-				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y,meshTransform.position.z);
+				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y *-1.0f,meshTransform.position.z);
 
 
 				transM = glm::translate(glm::mat4(1.0f), tempTrans);
@@ -255,9 +257,12 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				
 					lastUsing = matId;
 					io.WantCaptureMouse = true;
-					meshTransform.position.x = tempTrans.x + translation.x/1000;
-					meshTransform.position.y = tempTrans.y +translation.y/1000;
-					meshTransform.position.z = tempTrans.z +translation.z/1000;
+
+
+
+					meshTransform.position.x -= translation.x/1000;
+					meshTransform.position.y -= translation.y/1000;
+					meshTransform.position.z -= translation.z/1000;
 									
 				}
 

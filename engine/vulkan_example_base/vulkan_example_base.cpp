@@ -220,7 +220,7 @@ void VulkanExampleBase::prepare()
 		camera,
 		Transform{
 			.position = Vec3(0.0f, 0.0f, 1.0f),
-			.rotation = Vec3(0.0f, 0.0f, 180.0f),
+			.rotation = Vec3(0.0f, 0.0f, 0.0f),
 			.scale = Vec3(1.0f, 1.0f, 1.0f)
 		});
 
