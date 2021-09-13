@@ -192,16 +192,14 @@ struct Renderable
 
 
 		
-		glm::vec3 translation = glm::vec3(transform.position.x , transform.position.y  , transform.position.z);
-		glm::vec3 rotation = glm::vec3(transform.rotation.x , transform.rotation.y  , transform.rotation.z);
-		glm::vec3 scale = glm::vec3(transform.scale.x, transform.scale.y, transform.scale.z);
+		glm::vec3 translation = glm::vec3(transform.position.x , transform.position.y , transform.position.z);
+		glm::mat4 mat = glm::lookAt(translation,glm::vec3(transform.position.x , -transform.position.y , transform.position.z)+glm::vec3(0.0f,0.0f,-1.0f),UP);
 
-		auto mat = glm::mat4{1.f};
-		mat = glm::translate(mat, translation);
-		mat = glm::rotate(mat, glm::radians(rotation.x), UP); //x rotates around the UP axis, not the X axis
-		mat = glm::rotate(mat, glm::radians(rotation.y), RIGHT); //y rotates around the RIGHT axis, 
-		mat = glm::rotate(mat, glm::radians(rotation.z), FORWARD); //z rotates around the 'x' axis (forward)
-		return mat;
+		mat = glm::rotate(mat,glm::radians(transform.rotation.x), glm::vec3(1.0f,0.0f,0.0f));
+		mat = glm::rotate(mat,glm::radians(transform.rotation.y), glm::vec3(0.0f,1.0f,0.0f));
+		mat = glm::rotate(mat,glm::radians(transform.rotation.z), glm::vec3(0.0f,0.0f,1.0f));
+	
+		return glm::inverse(mat);
 
 	
 	};
@@ -229,7 +227,7 @@ struct Renderable
 		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 		
 		shaderData.values.model = updateViewMatrix(example,meshTransform);
-		shaderData.values.projection =  glm::perspective(glm::radians(45.0f), float(example->width)/float(example->height), 0.1f, 256.0f);
+		shaderData.values.projection =  cam.projection;
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 
 		printf("\n.... FINISH PREPARE UNIFORM BUFFERS .... \n");

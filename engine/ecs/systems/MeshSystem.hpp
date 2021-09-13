@@ -224,7 +224,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x * -1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
@@ -251,7 +251,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				//TODO: pass view matrix and projection to the model then render from the result
 
-				float *viewMatrix = (float*)glm::value_ptr(glm::inverse(renderable.updateViewMatrix(example, meshTransform)));
+				float *viewMatrix = (float*)glm::value_ptr(renderable.updateViewMatrix(example, meshTransform));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
 
 				EditTransform(viewMatrix, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
@@ -264,9 +264,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 
 
-					meshTransform.position.x -= translation.x/1000;
+					meshTransform.position.x += translation.x/1000;
 					meshTransform.position.y -= translation.y/1000;
-					meshTransform.position.z -= translation.z/1000;
+					meshTransform.position.z += translation.z/1000;
 									
 				}
 
