@@ -195,11 +195,11 @@ struct Renderable
 		glm::vec3 translation = glm::vec3(transform.position.x , transform.position.y , transform.position.z);
 		glm::mat4 mat = glm::lookAt(translation,glm::vec3(transform.position.x , -transform.position.y , transform.position.z)+glm::vec3(0.0f,0.0f,-1.0f),UP);
 
-		mat = glm::rotate(mat,glm::radians(transform.rotation.x), glm::vec3(1.0f,0.0f,0.0f));
+		mat = glm::rotate(mat,glm::radians(transform.rotation.x), glm::vec3(-1.0f,0.0f,0.0f));
 		mat = glm::rotate(mat,glm::radians(transform.rotation.y), glm::vec3(0.0f,1.0f,0.0f));
 		mat = glm::rotate(mat,glm::radians(transform.rotation.z), glm::vec3(0.0f,0.0f,1.0f));
 	
-		return glm::inverse(mat);
+		return mat;
 
 	
 	};
