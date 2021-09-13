@@ -13,7 +13,7 @@
 
 
 
-#include "../../engine/ecs/components/Camera.hpp"
+#include "../../engine/ecs/components/Camera.h"
 #include "../../engine/ecs/components/Transform.hpp"
 #include "../../engine/ecs/components/Renderable.hpp"
 

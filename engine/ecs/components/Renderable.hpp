@@ -4,7 +4,7 @@
 #include "../math/Vec2.hpp"
 #include "../../vulkan_example_base/vulkan_example_base.h"
 #include "Transform.hpp"
-#include "Camera.hpp"
+#include "Camera.h"
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
 #include <algorithm>
@@ -185,24 +185,6 @@ struct Renderable
 	};
 
 
-	static glm::mat4 updateViewMatrix(VulkanExampleBase *example,Transform& meshTransform){
-
-	
-		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
-
-
-		
-		glm::vec3 translation = glm::vec3(transform.position.x , transform.position.y , transform.position.z);
-		glm::mat4 mat = glm::lookAt(translation,glm::vec3(transform.position.x , -transform.position.y , transform.position.z)+glm::vec3(0.0f,0.0f,-1.0f),UP);
-
-		mat = glm::rotate(mat,glm::radians(transform.rotation.x), glm::vec3(-1.0f,0.0f,0.0f));
-		mat = glm::rotate(mat,glm::radians(transform.rotation.y), glm::vec3(0.0f,1.0f,0.0f));
-		mat = glm::rotate(mat,glm::radians(transform.rotation.z), glm::vec3(0.0f,0.0f,1.0f));
-	
-		return mat;
-
-	
-	};
 
 	static void prepareUniformBuffers(VulkanExampleBase *example,ShaderData  &shaderData,Transform &meshTransform ){
 		printf("\n.... INIT PREPARE UNIFORM BUFFERS .... \n");
@@ -226,8 +208,8 @@ struct Renderable
 		printf("\n.... INIT UPDATE UNIFORM BUFFERS .... \n");
 		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 		
-		shaderData.values.model = updateViewMatrix(example,meshTransform);
-		shaderData.values.projection =  cam.projection;
+		shaderData.values.model = cam.getViewMat();
+		shaderData.values.projection =  cam.getProjMat();
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 
 		printf("\n.... FINISH PREPARE UNIFORM BUFFERS .... \n");

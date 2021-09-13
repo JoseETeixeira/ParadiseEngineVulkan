@@ -6,7 +6,7 @@
 #include "../../vulkan_example_base/vulkan_example_base.h"
 #include "../../gui/gui.hpp"
 #include "../components/Transform.hpp"
-#include "../components/Camera.hpp"
+#include "../components/Camera.h"
 #include "../components/Renderable.hpp"
 #include "../Coordinator.hpp"
 
@@ -251,10 +251,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				//TODO: pass view matrix and projection to the model then render from the result
 
-				float *viewMatrix = (float*)glm::value_ptr(renderable.updateViewMatrix(example, meshTransform));
 				matrix = (float*)glm::value_ptr(nodeMatrix);
 
-				EditTransform(viewMatrix, glm::value_ptr(cam.projection), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
+				EditTransform(cam.getViewMatRef(), cam.getProjMatRef(), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())
 				{

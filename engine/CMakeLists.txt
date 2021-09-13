@@ -6,6 +6,8 @@ file(GLOB BASE_SRC
 "../third_party/imGuizmo/*.cpp" 
 "ecs/*.hpp"
 "ecs/components/*.hpp" 
+"ecs/components/*.h"
+"ecs/components/*.cpp"  
 "ecs/math/*.hpp" 
 "ecs/systems/*.hpp" 
 "ecs/systems/*.cpp" 

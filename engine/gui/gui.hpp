@@ -30,7 +30,7 @@
 #include "../vulkan_example_base/vulkan_example_base.h"
 #include "../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
-#include "../ecs/components/Camera.hpp"
+#include "../ecs/components/Camera.h"
 #include "../ecs/components/Transform.hpp"
 #include "../ecs/Coordinator.hpp"
 
@@ -424,6 +424,7 @@ public:
 		}
 
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
+		
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
 		ImGui::End();
 
