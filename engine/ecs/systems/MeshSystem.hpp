@@ -240,7 +240,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				//if (type == CameraType::firstperson)
 				//{
-				glm::mat4 nodeMatrix =  scaleM* rotM * transM ;
+				glm::mat4 nodeMatrix =  transM * rotM * scaleM* renderable.model.nodes[0].matrix;
 
 				ImGuizmo::SetID(matId);
 				ImGuizmo::SetDrawlist();

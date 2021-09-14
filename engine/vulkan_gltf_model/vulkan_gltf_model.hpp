@@ -44,6 +44,7 @@
 #endif
 
 #include "../ecs/components/Transform.hpp"
+#include "../ecs/components/Camera.h"
 
 
 extern Coordinator gCoordinator;

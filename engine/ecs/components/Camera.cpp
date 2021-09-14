@@ -72,7 +72,7 @@ void Camera::genViewMat()
 
 	glm::vec3 position = glm::vec3(pos.x,-pos.y,pos.z);
 	view = glm::lookAtRH(pos, position + glm::vec3(0.0f,0.0f,-1.0f), up);
-	view = glm::rotate(view,rotation.x ,glm::vec3(1.0f,0.0f,0.0f));
+	view = glm::rotate(view,rotation.x,glm::vec3(1.0f,0.0f,0.0f));
 	view = glm::rotate(view,rotation.y,glm::vec3(0.0f,1.0f,0.0f));
 	view = glm::rotate(view,rotation.z,glm::vec3(0.0f,0.0f,1.0f));
 
@@ -81,5 +81,6 @@ void Camera::genViewMat()
 
 void Camera::genProjMat()
 {
-	proj = glm::perspective(angle, ar, nearPlane, farPlane);
+	proj = glm::perspectiveRH_NO(angle, ar, nearPlane, farPlane);
+
 }
