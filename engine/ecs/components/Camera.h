@@ -37,6 +37,7 @@ public:
 	//Get matrix data
 	glm::mat4 getViewMat();
 	float* getViewMatRef();
+	float* getInverseViewMatRef();
 	glm::mat4 getProjMat();
 	float* getProjMatRef();
 

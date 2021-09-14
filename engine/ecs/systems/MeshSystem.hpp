@@ -90,7 +90,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
    ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
    ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
-	
+	ImGuizmo::ViewManipulate(cameraView,10,ImVec2(0,0),ImVec2(100,100),0);
 	ImGuizmo::DecomposeMatrixToComponents(
 					matrix,
 					glm::value_ptr(translation),
@@ -98,7 +98,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 					glm::value_ptr(scale));
 
 		
-
+	meshTransform.position.x = translation.x;
+	meshTransform.position.y = translation.y;
+	meshTransform.position.z = translation.z;
 					
 	
 
@@ -231,7 +233,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				
-				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y *-1.0f,meshTransform.position.z);
+				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z);
 
 
 				transM = glm::translate(glm::mat4(1.0f), tempTrans);
@@ -255,6 +257,10 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				matrix = (float*)glm::value_ptr(nodeMatrix);
 
+				cam.setCameraFocus(tempTrans);
+
+				cam.genViewMat();
+				cam.genProjMat();
 				EditTransform(cam.getViewMatRef(), cam.getProjMatRef(), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())
@@ -262,12 +268,6 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				
 					lastUsing = matId;
 					io.WantCaptureMouse = true;
-
-
-
-					meshTransform.position.x += translation.x/1000;
-					meshTransform.position.y -= translation.y/1000;
-					meshTransform.position.z += translation.z/1000;
 									
 				}
 

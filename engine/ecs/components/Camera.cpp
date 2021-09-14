@@ -56,6 +56,13 @@ float* Camera::getViewMatRef()
 	return glm::value_ptr(view);
 }
 
+float* Camera::getInverseViewMatRef()
+{
+	glm::mat4 inverse = glm::inverse(view);
+	return glm::value_ptr(inverse);
+}
+
+
 glm::mat4 Camera::getProjMat()
 {
 	return proj;
@@ -70,8 +77,14 @@ void Camera::genViewMat()
 {
 
 
-	glm::vec3 position = glm::vec3(pos.x,-pos.y,pos.z);
-	view = glm::lookAtRH(pos, position + glm::vec3(0.0f,0.0f,-1.0f), up);
+	glm::vec3 position = glm::vec3(0.0f,0.0f,-1.0f);
+	glm::vec3 camFront;
+	camFront.x = -cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
+	camFront.y = sin(glm::radians(rotation.x));
+	camFront.z = cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+	camFront = glm::normalize(camFront);
+
+	view = glm::lookAt(pos, camFront , up);
 	view = glm::rotate(view,rotation.x,glm::vec3(1.0f,0.0f,0.0f));
 	view = glm::rotate(view,rotation.y,glm::vec3(0.0f,1.0f,0.0f));
 	view = glm::rotate(view,rotation.z,glm::vec3(0.0f,0.0f,1.0f));
@@ -81,6 +94,6 @@ void Camera::genViewMat()
 
 void Camera::genProjMat()
 {
-	proj = glm::perspectiveRH_NO(angle, ar, nearPlane, farPlane);
+	proj = glm::perspective(angle, ar, nearPlane, farPlane);
 
 }
