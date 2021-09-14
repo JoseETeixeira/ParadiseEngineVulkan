@@ -15,7 +15,7 @@
 #include <CoreVideo/CVDisplayLink.h>
 #endif
 
-#include "../ecs/components/Camera.h"
+
 #include "../ecs/components/Transform.hpp"
 #include "../ecs/Coordinator.hpp"
 
@@ -224,15 +224,13 @@ void VulkanExampleBase::prepare()
 			.scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		});
 
-	Camera cam;
 
 	cam.angle = 45.0f;
 	cam.ar = (float)1920/1080;
 	cam.near = 0.1f;
 	cam.far = 1000.0f;
 
-	cam.genViewMat();
-	cam.genProjMat();
+
 	gCoordinator.AddComponent(camera,cam);
 }
 

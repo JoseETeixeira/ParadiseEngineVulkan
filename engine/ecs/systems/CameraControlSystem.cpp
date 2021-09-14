@@ -18,8 +18,7 @@ void CameraControlSystem::Init()
 		cam.ar = (float)1920/1080;
 		cam.near = 0.1f;
 		cam.far = 1000.0f;
-		cam.genViewMat();
-		cam.genProjMat();
+		
 	}
 }
 
@@ -63,8 +62,7 @@ void CameraControlSystem::Update(float dt)
 		cam.setCameraPos(transform.position);
 		cam.setCameraUpVec(glm::vec3(0.0f,1.0f,0.0f));
 
-		cam.genViewMat();
-		cam.genProjMat();
+
 	}
 }
 

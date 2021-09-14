@@ -212,6 +212,9 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 				auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 				auto& cameraTransform = gCoordinator.GetComponent<Transform>(example->camera);
 
+				cam.genViewMat();
+				cam.genProjMat();
+
 				translation = glm::vec3(0.0f , 0.0f , 0.0f);
 				rotation = glm::vec3(0.0f, 0.0f ,0.0f );
 				scale = glm::vec3(1.0f, 1.0f, 1.0f);
