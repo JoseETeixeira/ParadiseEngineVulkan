@@ -4,18 +4,6 @@
 
 extern Coordinator gCoordinator;
 
-#define GLM_FORCE_RADIANS
-Camera::Camera()
-{
-	ar = 4.0f / 3.0f;
-	#ifdef GLM_FORCE_RADIANS
-		angle = 0.785398f; //45 degrees
-	#else
-		angle = 45.0f; //45 degrees
-	#endif
-	near = 0.1f;
-	far = 100.0f;
-}
 
 void Camera::setCameraPos(const glm::vec3& v)
 {

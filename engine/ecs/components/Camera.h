@@ -1,10 +1,7 @@
-#pragma once
-
 #ifndef CAMERA_H
 #define CAMERA_H
 
-#include "../math/Mat44.hpp"
-#include <cmath>
+#pragma once
 
 #if defined(_WIN32)
 	#include <corecrt_math_defines.h>
@@ -23,8 +20,6 @@
 
 class Camera {
 public:
-	//Construction/Destruction
-	Camera();
 	//Nothing to clean up
 
 	//View settings
