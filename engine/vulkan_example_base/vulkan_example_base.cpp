@@ -225,10 +225,11 @@ void VulkanExampleBase::prepare()
 		});
 
 
-	cam.angle = 45.0f;
-	cam.ar = (float)1920/1080;
-	cam.near = 0.1f;
-	cam.far = 1000.0f;
+	cam.setViewAngle(45.0f);
+	cam.setAspectRatio((float)1920/1080);
+	cam.setNearClipDist(0.1f);
+	cam.setFarClipDist(1000.0f);
+	cam.setCameraFocus(glm::vec3(0.0f,0.0f,-1.0f));
 
 
 	gCoordinator.AddComponent(camera,cam);

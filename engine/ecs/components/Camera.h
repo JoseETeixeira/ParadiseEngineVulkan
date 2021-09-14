@@ -53,8 +53,8 @@ public:
 	//Projection matrix variables
 	float ar; ///< aspect ratio
 	float angle; ///< angle in radians
-	float near; ///< near clipping distance
-	float far; ///< far clipping distance
+	float nearPlane; ///< near clipping distance
+	float farPlane; ///< far clipping distance
 
 	//functional matrices
 	glm::mat4 view; ///< View matrix for OpenGL

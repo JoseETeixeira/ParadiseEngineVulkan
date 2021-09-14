@@ -38,12 +38,12 @@ void Camera::setViewAngle(const float a)
 
 void Camera::setNearClipDist(const float d)
 {
-	near = d;
+	nearPlane = d;
 }
 
 void Camera::setFarClipDist(const float d)
 {
-	far = d;
+	farPlane = d;
 }
 
 glm::mat4 Camera::getViewMat()
@@ -81,5 +81,5 @@ void Camera::genViewMat()
 
 void Camera::genProjMat()
 {
-	proj = glm::perspective(angle, ar, near, far);
+	proj = glm::perspective(angle, ar, nearPlane, farPlane);
 }
