@@ -11,6 +11,16 @@ extern Coordinator gCoordinator;
 void CameraControlSystem::Init()
 {
 	gCoordinator.AddEventListener(METHOD_LISTENER(Events::Window::INPUT, CameraControlSystem::InputListener));
+	for (auto& entity : mEntities)
+	{
+		auto& cam = gCoordinator.GetComponent<Camera>(entity);
+		cam.angle = 45.0f;
+		cam.ar = (float)1920/1080;
+		cam.near = 0.1f;
+		cam.far = 1000.0f;
+		cam.genViewMat();
+		cam.genProjMat();
+	}
 }
 
 void CameraControlSystem::Update(float dt)
