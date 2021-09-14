@@ -2930,9 +2930,11 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 	}
 
 	auto& transform = gCoordinator.GetComponent<Transform>(camera);
+	auto& cam = gCoordinator.GetComponent<Camera>(camera);
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
 		
-		transform.rotation += glm::vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
+		transform.rotation += glm::vec3(dy * 0.001f, -dx * 0.001f, 0.0f);
+		
 		viewUpdated = true;
 	}
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
@@ -2944,6 +2946,7 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
+	cam.setCameraRotation(transform.rotation);
 
 	
 }

@@ -24,6 +24,7 @@ public:
 
 	//View settings
 	void setCameraPos(const glm::vec3& v);
+	void setCameraRotation(const glm::vec3& v);
 	void setCameraFocus(const glm::vec3& v);
 	void setCameraUpVec(const glm::vec3& v);
 
@@ -45,6 +46,7 @@ public:
 
 	//View matrix variables
 	glm::vec3 pos; ///< position of the camera
+	glm::vec3 rotation; ///< position of the camera
 	glm::vec3 fp; ///< focal point of the camera
 	glm::vec3 up; ///< the up direction for the camera
 

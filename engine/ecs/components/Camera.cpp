@@ -10,6 +10,12 @@ void Camera::setCameraPos(const glm::vec3& v)
 	pos = v;
 }
 
+
+void Camera::setCameraRotation(const glm::vec3& v)
+{
+	rotation = v;
+}
+
 void Camera::setCameraFocus(const glm::vec3& v)
 {
 	fp = v;
@@ -63,9 +69,14 @@ float* Camera::getProjMatRef()
 void Camera::genViewMat()
 {
 	view = glm::lookAt(pos, fp, up);
+	view = glm::rotate(view,rotation.x,glm::vec3(1.0f,0.0f,0.0f));
+	view = glm::rotate(view,rotation.y,glm::vec3(0.0f,1.0f,0.0f));
+	view = glm::rotate(view,rotation.z,glm::vec3(0.0f,0.0f,1.0f));
+	
 }
 
 void Camera::genProjMat()
 {
 	proj = glm::perspective(angle, ar, near, far);
+	proj[1][1] *= -1.0;
 }
