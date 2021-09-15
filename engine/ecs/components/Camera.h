@@ -20,6 +20,11 @@
 
 class Camera {
 public:
+
+	enum CameraType {
+		firstperson,
+		thirdperson
+	};
 	//Nothing to clean up
 
 	//View settings
@@ -56,10 +61,13 @@ public:
 	float angle; ///< angle in radians
 	float nearPlane; ///< near clipping distance
 	float farPlane; ///< far clipping distance
+	int type = CameraType::firstperson;
 
 	//functional matrices
 	glm::mat4 view; ///< View matrix for OpenGL
 	glm::mat4 proj; ///< Projection matrix for OpenGL
+
+	
 };
 
 

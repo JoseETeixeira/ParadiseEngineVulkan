@@ -101,6 +101,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 	meshTransform.position.x = translation.x;
 	meshTransform.position.y = translation.y;
 	meshTransform.position.z = translation.z;
+
 					
 	
 

@@ -230,6 +230,7 @@ void VulkanExampleBase::prepare()
 	cam.setNearClipDist(0.1f);
 	cam.setFarClipDist(1000.0f);
 	cam.setCameraFocus(glm::vec3(0.0f,0.0f,-1.0f));
+	cam.setCameraUpVec(glm::vec3(0.0f,-1.0f,0.0f));
 
 
 	gCoordinator.AddComponent(camera,cam);
@@ -2934,7 +2935,7 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 	auto& cam = gCoordinator.GetComponent<Camera>(camera);
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
 		
-		transform.rotation += glm::vec3(dy * 0.001f, -dx * 0.001f, 0.0f);
+		transform.rotation += glm::vec3(dy * 0.1f, -dx * 0.1f, 0.0f);
 		
 		viewUpdated = true;
 	}

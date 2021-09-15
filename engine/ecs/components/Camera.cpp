@@ -76,18 +76,27 @@ float* Camera::getProjMatRef()
 void Camera::genViewMat()
 {
 
+		glm::mat4 rotM = glm::mat4(1.0f);
+		glm::mat4 transM;
 
-	glm::vec3 position = glm::vec3(0.0f,0.0f,-1.0f);
-	glm::vec3 camFront;
-	camFront.x = -cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
-	camFront.y = sin(glm::radians(rotation.x));
-	camFront.z = cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
-	camFront = glm::normalize(camFront);
+		rotM = glm::rotate(rotM, glm::radians(rotation.x * ( -1.0f )), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
-	view = glm::lookAt(pos, camFront , up);
-	view = glm::rotate(view,rotation.x,glm::vec3(1.0f,0.0f,0.0f));
-	view = glm::rotate(view,rotation.y,glm::vec3(0.0f,1.0f,0.0f));
-	view = glm::rotate(view,rotation.z,glm::vec3(0.0f,0.0f,1.0f));
+		glm::vec3 translation = pos;
+
+		translation.y *= -1.0f;
+
+		transM = glm::translate(glm::mat4(1.0f), translation);
+
+		if (type == CameraType::firstperson)
+		{
+			view = rotM * transM;
+		}
+		else
+		{
+			view = transM * rotM;
+		}
 
 	
 }
@@ -95,5 +104,6 @@ void Camera::genViewMat()
 void Camera::genProjMat()
 {
 	proj = glm::perspective(angle, ar, nearPlane, farPlane);
+	proj[1][1] *= -1.0f;
 
 }

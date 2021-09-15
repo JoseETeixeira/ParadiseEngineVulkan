@@ -208,7 +208,7 @@ struct Renderable
 		printf("\n.... INIT UPDATE UNIFORM BUFFERS .... \n");
 		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 		
-		shaderData.values.model = cam.getViewMat();
+		shaderData.values.model = cam.getViewMat()* glm::mat4(1.0f);
 		shaderData.values.projection =  cam.getProjMat();
 		memcpy(shaderData.buffer.mapped, &shaderData.values, sizeof(shaderData.values));
 
