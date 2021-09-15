@@ -80,13 +80,21 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
    auto &cam = gCoordinator.GetComponent<Camera>(example->camera);
 
+
+
+/*
+[right.x, right.y, right.z, 0,
+up.x, up.y, up.z, 0,
+dir.x, dir.y, dir.z, 0,
+tr.x, tr.y, tr.z, 1]
+*/
    	const float identityMatrix[16] =
-{ 1.f, 0.f, 0.f, 0.f,
+{ -1.f, 0.f, 0.f, 0.f,
     0.f, -1.f, 0.f, 0.f,
     0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f };
- 
-  
+    cam.pos.x, cam.pos.y, cam.pos.z, 1.f };
+
+
 
    if (editTransformDecomposition)
    {
@@ -95,7 +103,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 	   float viewManipulateRight = ImGui::GetWindowSize().x;
    float viewManipulateTop = 0;
 
-   ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
+   ImGuizmo::DrawGrid(cameraView, cameraProjection,identityMatrix , 100.f);
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
    ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
 	 ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
