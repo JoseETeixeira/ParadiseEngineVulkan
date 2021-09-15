@@ -36,11 +36,7 @@ public:
 	ImGuizmo::OPERATION mCurrentGizmoOperation = ImGuizmo::TRANSLATE;
 	
 
-	const float identityMatrix[16] =
-{ 1.f, 0.f, 0.f, 0.f,
-    0.f, 1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    0.f, 0.f, 0.f, 1.f };
+
 
 
 	void Init(VulkanExampleBase *ex){
@@ -73,13 +69,22 @@ public:
 
 void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bool editTransformDecomposition,Transform &meshTransform,glm::vec3 &translation,glm::vec3 &rotation,glm::vec3 &scale)
 {
-   static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::LOCAL);
+   static ImGuizmo::MODE mCurrentGizmoMode(ImGuizmo::WORLD);
    static bool useSnap = false;
    static float snap[3] = { 1.f, 1.f, 1.f };
    static float bounds[] = { -0.5f, -0.5f, -0.5f, 0.5f, 0.5f, 0.5f };
    static float boundsSnap[] = { 0.1f, 0.1f, 0.1f };
    static bool boundSizing = false;
    static bool boundSizingSnap = false;
+
+
+   auto &cam = gCoordinator.GetComponent<Camera>(example->camera);
+
+   	const float identityMatrix[16] =
+{ 1.f, 0.f, 0.f, 0.f,
+    0.f, -1.f, 0.f, 0.f,
+    0.f, 0.f, 1.f, 0.f,
+    0.f, 0.f, 0.f, 1.f };
  
   
 
@@ -87,10 +92,14 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
    {
       ImGuiIO& io = ImGui::GetIO();
 
+	   float viewManipulateRight = ImGui::GetWindowSize().x;
+   float viewManipulateTop = 0;
+
    ImGuizmo::DrawGrid(cameraView, cameraProjection, identityMatrix, 100.f);
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
    ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
-	ImGuizmo::ViewManipulate(cameraView,10,ImVec2(0,0),ImVec2(100,100),0);
+	 ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
+
 	ImGuizmo::DecomposeMatrixToComponents(
 					matrix,
 					glm::value_ptr(translation),
@@ -243,7 +252,7 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				//if (type == CameraType::firstperson)
 				//{
-				glm::mat4 nodeMatrix =  transM * rotM * scaleM* renderable.model.nodes[0].matrix;
+				glm::mat4 nodeMatrix =  rotM  *  transM* scaleM* renderable.model.nodes[0].matrix;
 
 				ImGuizmo::SetID(matId);
 				ImGuizmo::SetDrawlist();
@@ -258,10 +267,8 @@ void EditTransform(float* cameraView, float* cameraProjection, float* matrix, bo
 
 				matrix = (float*)glm::value_ptr(nodeMatrix);
 
-				cam.setCameraFocus(tempTrans);
 
 				cam.genViewMat();
-				cam.genProjMat();
 				EditTransform(cam.getViewMatRef(), cam.getProjMatRef(), matrix, lastUsing == matId,meshTransform,translation,rotation,scale);
 				
 				if (ImGuizmo::IsUsing())

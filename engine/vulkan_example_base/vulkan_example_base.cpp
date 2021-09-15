@@ -2935,20 +2935,20 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 	auto& cam = gCoordinator.GetComponent<Camera>(camera);
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
 		
-		transform.rotation += glm::vec3(dy * 0.1f, -dx * 0.1f, 0.0f);
+		cam.rotate(glm::vec3(dy *0.1f ,-dx * 0.1f, 0.0f));
 		
 		viewUpdated = true;
 	}
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
-		transform.position += glm::vec3(-0.0f, 0.0f, dy * .005f);
+		cam.translate(glm::vec3(-0.0f, 0.0f, dy * .005f));
 		viewUpdated = true;
 	}
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
-		transform.position += glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
+		cam.translate (glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f));
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
-	cam.setCameraRotation(transform.rotation);
+
 
 	
 }

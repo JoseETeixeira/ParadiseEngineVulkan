@@ -61,11 +61,15 @@ public:
 	float angle; ///< angle in radians
 	float nearPlane; ///< near clipping distance
 	float farPlane; ///< far clipping distance
-	int type = CameraType::firstperson;
+	int type = CameraType::thirdperson;
 
 	//functional matrices
 	glm::mat4 view; ///< View matrix for OpenGL
 	glm::mat4 proj; ///< Projection matrix for OpenGL
+
+	void rotate(glm::vec3 delta);
+
+	void translate(glm::vec3 delta);
 
 	
 };

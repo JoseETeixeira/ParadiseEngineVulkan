@@ -43,27 +43,27 @@ void CameraControlSystem::Update(float dt)
 
 		if (mButtons.test(static_cast<std::size_t>(InputButtons::W)))
 		{
-			transform.position -= camFront * (dt * speed);
+			cam.translate(camFront * (dt * speed));
 		}
 
 		else if (mButtons.test(static_cast<std::size_t>(InputButtons::S)))
 		{
-			transform.position += camFront *(dt * speed);
+			cam.translate(camFront *(dt * speed));
+
 		}
 
 
 		if (mButtons.test(static_cast<std::size_t>(InputButtons::A)))
 		{
-			transform.position += glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed;
+			cam.translate(glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed);
 		}
 
 		else if (mButtons.test(static_cast<std::size_t>(InputButtons::D)))
 		{
-			transform.position -= glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed;
+			cam.translate(glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed);
 		}
 
-		cam.setCameraPos(transform.position);
-		cam.setCameraUpVec(glm::vec3(0.0f,1.0f,0.0f));
+
 
 
 	}

@@ -424,6 +424,7 @@ public:
 		}
 
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
+		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
 		
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
 		ImGui::End();
@@ -431,8 +432,8 @@ public:
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 		ImGui::Begin("Camera");
 		ImGui::Text("Camera");
-		ImGui::InputFloat3("position", &transform.position.x);
-		ImGui::InputFloat3("rotation", &transform.rotation.x);
+		ImGui::InputFloat3("position", &cam.pos.x);
+		ImGui::InputFloat3("rotation", &cam.rotation.x);
 		ImGui::End();
 		
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);

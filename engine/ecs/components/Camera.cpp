@@ -79,7 +79,7 @@ void Camera::genViewMat()
 		glm::mat4 rotM = glm::mat4(1.0f);
 		glm::mat4 transM;
 
-		rotM = glm::rotate(rotM, glm::radians(rotation.x * ( -1.0f )), glm::vec3(1.0f, 0.0f, 0.0f));
+		rotM = glm::rotate(rotM, glm::radians(rotation.x* ( -1.0f )), glm::vec3(1.0f, 0.0f, 0.0f));
 		rotM = glm::rotate(rotM, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 		rotM = glm::rotate(rotM, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 
@@ -107,3 +107,16 @@ void Camera::genProjMat()
 	proj[1][1] *= -1.0f;
 
 }
+
+void Camera::rotate(glm::vec3 delta)
+	{
+		this->rotation += delta;
+		genViewMat();
+	}
+
+
+void Camera::translate(glm::vec3 delta)
+	{
+		this->pos += delta;
+		genViewMat();
+	}

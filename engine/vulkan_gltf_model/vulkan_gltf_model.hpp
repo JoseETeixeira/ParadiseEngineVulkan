@@ -328,11 +328,11 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ) , glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ) *-1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
-				glm::vec3 translation = glm::vec3(meshTransform.position.x , meshTransform.position.y *-1.0f , meshTransform.position.z);
+				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y *-1.0f,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
 				transM = glm::translate(glm::mat4(1.0f), translation);
@@ -344,18 +344,19 @@ public:
 				}else{
 					nodeMatrix =  transM * rotM * scaleM * node.matrix ;
 				}
-				//{
-			//if (type == CameraType::firstperson)
-			//{
-			
+				
+
 
 			VulkanglTFModel::Node* currentParent = node.parent;
 			while (currentParent) {
 				nodeMatrix = currentParent->matrix * nodeMatrix;
 				currentParent = currentParent->parent;
 			}
+
+	
 			// Pass the final matrix to the vertex shader using push constants
 			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &nodeMatrix);
+
 			for (VulkanglTFModel::Primitive& primitive : node.mesh.primitives) {
 				if (primitive.indexCount > 0) {
 					// Get the texture index for this primitive
