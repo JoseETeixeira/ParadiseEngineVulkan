@@ -332,17 +332,19 @@ public:
 				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
-				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y *-1.0f,meshTransform.position.z)  ;
+				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
+				translation.y *= -1.0f;
 				transM = glm::translate(glm::mat4(1.0f), translation);
 
 				scaleM = glm::scale(glm::mat4(1.0f), scale);
 				glm::mat4 nodeMatrix;
+
 				if (cam.type == Camera::CameraType::firstperson){
 					 nodeMatrix =  rotM *transM  * scaleM * node.matrix ;
 				}else{
-					nodeMatrix =  transM * rotM * scaleM * node.matrix ;
+					nodeMatrix =   transM * rotM * scaleM * node.matrix ;
 				}
 				
 

@@ -88,11 +88,6 @@ up.x, up.y, up.z, 0,
 dir.x, dir.y, dir.z, 0,
 tr.x, tr.y, tr.z, 1]
 */
-   	const float identityMatrix[16] =
-{ -1.f, 0.f, 0.f, 0.f,
-    0.f, -1.f, 0.f, 0.f,
-    0.f, 0.f, 1.f, 0.f,
-    cam.pos.x, cam.pos.y, cam.pos.z, 1.f };
 
 
 
@@ -103,7 +98,7 @@ tr.x, tr.y, tr.z, 1]
 	   float viewManipulateRight = ImGui::GetWindowSize().x;
    float viewManipulateTop = 0;
 
-   ImGuizmo::DrawGrid(cameraView, cameraProjection,identityMatrix , 100.f);
+   ImGuizmo::DrawGrid(cameraView, cameraProjection, &glm::mat4(1.0f)[0][0], 10 * glm::ceil(camDistance / 10));
    ImGuizmo::DrawCubes(cameraView, cameraProjection, matrix, gizmoCount);
    ImGuizmo::Manipulate(cameraView, cameraProjection, mCurrentGizmoOperation, mCurrentGizmoMode, matrix, NULL, useSnap ? &snap[0] : NULL, boundSizing ? bounds : NULL, boundSizingSnap ? boundsSnap : NULL);
 	 ImGuizmo::ViewManipulate(cameraView, camDistance, ImVec2(viewManipulateRight - 128, viewManipulateTop), ImVec2(128, 128), 0x10101010);
