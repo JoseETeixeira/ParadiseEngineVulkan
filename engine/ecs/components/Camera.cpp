@@ -103,7 +103,6 @@ void Camera::genViewMat()
 void Camera::genProjMat()
 {
 	proj = glm::perspective(angle, ar, nearPlane, farPlane);
-	proj[1][0] *= -1.0f;
 	proj[1][1] *= -1.0f;
 	
 
