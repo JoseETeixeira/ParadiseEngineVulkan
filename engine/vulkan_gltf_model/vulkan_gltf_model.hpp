@@ -328,7 +328,7 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				if((int)cam.rotation.y%360 >= 0 ){
+				if((int)cam.rotation.y%360 >= -0.001 ){
 					rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + (cam.rotation.x*-2.0f)), glm::vec3(1.0f, 0.0f, 0.0f));
 				}else{
 					rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + (cam.rotation.x*2.0f)), glm::vec3(1.0f, 0.0f, 0.0f));
@@ -358,7 +358,7 @@ public:
 				}
 
 
-				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * cam.pos.z,0.0f));
+				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * -2.0f,0.0f));
 
 
 			// Pass the final matrix to the vertex shader using push constants
