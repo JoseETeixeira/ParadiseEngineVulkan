@@ -48,14 +48,14 @@ void CameraControlSystem::Update(float dt)
 
 		else if (mButtons.test(static_cast<std::size_t>(InputButtons::S)))
 		{
-			cam.translate(camFront *(dt * speed));
+			cam.translate(-camFront *(dt * speed));
 
 		}
 
 
 		if (mButtons.test(static_cast<std::size_t>(InputButtons::A)))
 		{
-			cam.translate(glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed);
+			cam.translate(-glm::normalize(glm::cross(camFront, glm::vec3(0.0f, 1.0f, 0.0f))) * dt *speed);
 		}
 
 		else if (mButtons.test(static_cast<std::size_t>(InputButtons::D)))
