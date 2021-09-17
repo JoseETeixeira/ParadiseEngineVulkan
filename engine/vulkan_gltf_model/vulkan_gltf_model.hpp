@@ -328,9 +328,9 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + cam.rotation.x*cam.pos.z), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
@@ -346,19 +346,16 @@ public:
 					nodeMatrix =   transM * rotM * scaleM * node.matrix ;
 				}
 
+				VulkanglTFModel::Node* currentParent = node.parent;
+				while (currentParent) {
+					nodeMatrix = currentParent->matrix * nodeMatrix;
+					currentParent = currentParent->parent;
+				}
+
+
 				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * cam.pos.z,0.0f));
 
 
-
-
-
-			VulkanglTFModel::Node* currentParent = node.parent;
-			while (currentParent) {
-				nodeMatrix = currentParent->matrix * nodeMatrix;
-				currentParent = currentParent->parent;
-			}
-
-	
 			// Pass the final matrix to the vertex shader using push constants
 			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &nodeMatrix);
 
