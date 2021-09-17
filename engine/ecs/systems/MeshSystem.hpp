@@ -111,7 +111,7 @@ tr.x, tr.y, tr.z, 1]
 
 		
 	meshTransform.position.x = translation.x;
-	meshTransform.position.y = translation.y;
+	meshTransform.position.y = -translation.y;
 	meshTransform.position.z = translation.z;
 
 					
@@ -248,6 +248,7 @@ tr.x, tr.y, tr.z, 1]
 				
 				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y  ,meshTransform.position.z);
 
+				tempTrans.y *= -1.0f;
 
 				transM = glm::translate(glm::mat4(1.0f), tempTrans);
 

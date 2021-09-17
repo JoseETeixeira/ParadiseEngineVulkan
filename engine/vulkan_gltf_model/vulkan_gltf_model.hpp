@@ -328,7 +328,7 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(cam.rotation.x +meshTransform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + cam.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
@@ -346,7 +346,7 @@ public:
 					nodeMatrix =   transM * rotM * scaleM * node.matrix  * glm::mat4(1.0f);
 				}
 
-				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * -8.0f,0.0f));
+				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * cam.pos.z,0.0f));
 
 
 
