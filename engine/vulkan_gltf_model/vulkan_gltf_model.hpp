@@ -328,9 +328,9 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + cam.rotation.x*cam.pos.z), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + cam.rotation.x*-2.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
