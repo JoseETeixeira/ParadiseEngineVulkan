@@ -328,25 +328,27 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ) *-1.0f, glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(cam.rotation.x +meshTransform.rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
-				translation.y *= -1.0f;
 				transM = glm::translate(glm::mat4(1.0f), translation);
 
 				scaleM = glm::scale(glm::mat4(1.0f), scale);
 				glm::mat4 nodeMatrix;
 
 				if (cam.type == Camera::CameraType::firstperson){
-					 nodeMatrix =  rotM *transM  * scaleM * node.matrix ;
+					 nodeMatrix =  rotM *transM  * scaleM * node.matrix * glm::mat4(1.0f) ;
 				}else{
-					nodeMatrix =   transM * rotM * scaleM * node.matrix ;
+					nodeMatrix =   transM * rotM * scaleM * node.matrix  * glm::mat4(1.0f);
 				}
-				
+
+				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * -8.0f,0.0f));
+
+
 
 
 			VulkanglTFModel::Node* currentParent = node.parent;

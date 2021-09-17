@@ -241,12 +241,12 @@ tr.x, tr.y, tr.z, 1]
 
 				
 
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x * -1.0f), glm::vec3(1.0f, 0.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
 				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
 				
 				
-				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z);
+				glm::vec3 tempTrans = glm::vec3(meshTransform.position.x,meshTransform.position.y  ,meshTransform.position.z);
 
 
 				transM = glm::translate(glm::mat4(1.0f), tempTrans);
@@ -255,7 +255,14 @@ tr.x, tr.y, tr.z, 1]
 
 				//if (type == CameraType::firstperson)
 				//{
-				glm::mat4 nodeMatrix =  rotM  *  transM* scaleM* renderable.model.nodes[0].matrix;
+					glm::mat4 nodeMatrix ;
+				if (cam.type == Camera::CameraType::firstperson){
+					 nodeMatrix =  rotM *transM  * scaleM * glm::mat4(1.0f) ;
+				}else{
+					nodeMatrix =   transM * rotM * scaleM  * glm::mat4(1.0f);
+				}
+
+
 
 				ImGuizmo::SetID(matId);
 				ImGuizmo::SetDrawlist();
