@@ -342,6 +342,8 @@ public:
 				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
+				translation.y *= -1.0f;
+
 				transM = glm::translate(glm::mat4(1.0f), translation);
 
 				scaleM = glm::scale(glm::mat4(1.0f), scale);
@@ -352,6 +354,7 @@ public:
 				projViewMatrix[0][1] *= -1.0f;
 				projViewMatrix[1][1] *= -1.0f;
 				projViewMatrix[2][1] *= -1.0f;
+				projViewMatrix[3][1] *= -1.0f;
 
 				if (cam.type == Camera::CameraType::firstperson){
 					 nodeMatrix = projViewMatrix *  rotM *transM  * scaleM * node.matrix  ;

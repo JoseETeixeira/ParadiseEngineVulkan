@@ -90,6 +90,8 @@ void Camera::genViewMat()
 
 		glm::vec3 translation = pos;
 
+		translation.y *= -1.0f;
+
 
 		transM = glm::translate(glm::mat4(1.0f), translation);
 
