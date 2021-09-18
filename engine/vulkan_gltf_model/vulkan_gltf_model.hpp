@@ -328,14 +328,16 @@ public:
 				glm::mat4 transM;
 				glm::mat4 scaleM;
 
-				if((int)cam.rotation.y%360 >= -0.001 ){
-					rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + (cam.rotation.x*-2.0f)), glm::vec3(1.0f, 0.0f, 0.0f));
-				}else{
-					rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x + (cam.rotation.x*2.0f)), glm::vec3(1.0f, 0.0f, 0.0f));
-				}
 				
-				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z ), glm::vec3(0.0f, 0.0f, 1.0f));
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+				
+				
+				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+
+			
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(1.0f, 0.0f, 0.0f));
+			
+				
 				
 				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
 				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
@@ -345,10 +347,16 @@ public:
 				scaleM = glm::scale(glm::mat4(1.0f), scale);
 				glm::mat4 nodeMatrix;
 
+				glm::mat4 projViewMatrix  = cam.getProjMat() * cam.getViewMat();
+
+				projViewMatrix[0][1] *= -1.0f;
+				projViewMatrix[1][1] *= -1.0f;
+				projViewMatrix[2][1] *= -1.0f;
+
 				if (cam.type == Camera::CameraType::firstperson){
-					 nodeMatrix =   rotM *transM  * scaleM * node.matrix  ;
+					 nodeMatrix = projViewMatrix *  rotM *transM  * scaleM * node.matrix  ;
 				}else{
-					nodeMatrix =   transM * rotM * scaleM * node.matrix ;
+					nodeMatrix = projViewMatrix * transM * rotM * scaleM * node.matrix ;
 				}
 
 				VulkanglTFModel::Node* currentParent = node.parent;
@@ -357,8 +365,7 @@ public:
 					currentParent = currentParent->parent;
 				}
 
-
-				nodeMatrix = glm::translate(nodeMatrix,glm::vec3(0.0f,cam.pos.y * -2.0f,0.0f));
+				
 
 
 			// Pass the final matrix to the vertex shader using push constants

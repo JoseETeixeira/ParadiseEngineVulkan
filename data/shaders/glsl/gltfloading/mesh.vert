@@ -5,12 +5,12 @@ layout (location = 1) in vec3 inNormal;
 layout (location = 2) in vec2 inUV;
 layout (location = 3) in vec3 inColor;
 
-layout (set = 0, binding = 0) uniform UBOScene
+layout (set = 0, binding = 0) uniform UBOScene 
 {
 	mat4 projection;
 	mat4 view;
 	vec4 lightPos;
-} uboScene;
+} ubo;
 
 layout(push_constant) uniform PushConsts {
 	mat4 model;
@@ -27,11 +27,11 @@ void main()
 	outNormal = inNormal;
 	outColor = inColor;
 	outUV = inUV;
-	gl_Position = uboScene.projection * uboScene.view * primitive.model * vec4(inPos.xyz, 1.0);
+	gl_Position =  primitive.model* vec4(inPos.xyz, 1.0);
 	
-	vec4 pos = uboScene.view * vec4(inPos, 1.0);
-	outNormal = mat3(uboScene.view) * inNormal;
-	vec3 lPos = mat3(uboScene.view) * uboScene.lightPos.xyz;
+	vec4 pos = ubo.view * vec4(inPos, 1.0);
+	outNormal = mat3(ubo.view) * inNormal;
+	vec3 lPos = mat3(ubo.view) * ubo.lightPos.xyz;
 	outLightVec = lPos - pos.xyz;
-	outViewVec = -pos.xyz;		
+	outViewVec = -pos.xyz;	
 }

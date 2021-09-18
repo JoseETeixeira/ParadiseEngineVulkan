@@ -225,7 +225,7 @@ void VulkanExampleBase::prepare()
 		});
 
 
-	cam.setViewAngle(45.0f);
+	cam.setViewAngle(glm::radians(45.0f));
 	cam.setAspectRatio((float)1920/1080);
 	cam.setNearClipDist(0.1f);
 	cam.setFarClipDist(1000.0f);

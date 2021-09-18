@@ -49,6 +49,7 @@ public:
 	//Create matrices
 	void genViewMat();
 	void genProjMat();
+	glm::vec3 getLineOfSight();
 
 	//View matrix variables
 	glm::vec3 pos; ///< position of the camera

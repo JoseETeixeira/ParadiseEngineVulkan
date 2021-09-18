@@ -4,6 +4,11 @@
 
 extern Coordinator gCoordinator;
 
+glm::vec3 Camera::getLineOfSight() {
+	return glm::normalize(glm::vec3(0.0f,0.0f,-1.0f) - pos);
+}
+
+
 
 void Camera::setCameraPos(const glm::vec3& v)
 {
@@ -103,8 +108,7 @@ void Camera::genViewMat()
 void Camera::genProjMat()
 {
 	proj = glm::perspective(angle, ar, nearPlane, farPlane);
-	proj[1][1] *= -1.0f;
-	
+
 
 
 }
