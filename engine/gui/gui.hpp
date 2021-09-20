@@ -15,12 +15,22 @@
 #define GLFW_INCLUDE_VULKAN
 #include <glfw3.h>
 
+
+#define GLM_FORCE_DEPTH_ZERO_TO_ONE
+#define GLM_FORCE_RADIANS
+#define GLM_ENABLE_EXPERIMENTAL
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_inverse.hpp>
+#include <glm/gtc/matrix_transform.hpp>
+
 #include "../../third_party/imgui/imgui.h"
+#include "../../third_party/imGuizmo/ImGuizmo.h"
 #include "../../third_party/imgui/imgui_internal.h"
 #include "../../third_party/imgui/backends/imgui_impl_vulkan.h"
 #include "../vulkan_example_base/vulkan_example_base.h"
+#include "../vulkan_gltf_model/vulkan_gltf_model.hpp"
 
-#include "../ecs/components/Camera.hpp"
+#include "../ecs/components/Camera.h"
 #include "../ecs/components/Transform.hpp"
 #include "../ecs/Coordinator.hpp"
 
@@ -353,29 +363,44 @@ public:
 	}
 
 	// Starts a new imGui frame and sets up windows and ui elements
-	void newFrame(VulkanExampleBase *example, bool updateFrameGraph)
+	void newFrame(VulkanExampleBase *example, bool updateFrameGraph, std::set<Entity>& entities)
 	{
+		
 		ImGuiIO& io = ImGui::GetIO();
 		io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
 		ImGuiWindowFlags window_flags = 0;
 		window_flags |= ImGuiWindowFlags_NoBackground;
-		
-		
-		ImGui::NewFrame();
+
+
 		ImGuiViewport* viewport = ImGui::GetMainViewport();
 		ImGui::SetNextWindowPos(viewport->Pos);
 		ImGui::SetNextWindowSize(viewport->Size);
 		ImGui::SetNextWindowViewport(viewport->ID);
-		ImGui::SetNextWindowBgAlpha(0.0f);
 
-		ImGui::Begin("Inspector");
+
+	ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
+		ImGuiWindowFlags host_window_flags = 0;
+		host_window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoDocking;
+		host_window_flags |= ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
+		if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
+			host_window_flags |= ImGuiWindowFlags_NoBackground;
+
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+		ImGui::PushStyleColor(ImGuiCol_ChildBg, IM_COL32(0, 0, 0, 0));
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0.0f);
+		ImGui::Begin("DockSpace Window", nullptr, host_window_flags);
+		ImGui::PopStyleVar(4);
+		ImGui::PopStyleColor();
+
 		ImGuiID dockspaceID = 0;
 		
 		dockspaceID = ImGui::GetID("HUB_DockSpace");
-        ImGui::DockSpace(dockspaceID , ImVec2(0.0f, 0.0f), ImGuiDockNodeFlags_None|ImGuiDockNodeFlags_PassthruCentralNode/*|ImGuiDockNodeFlags_NoResize*/);
+        ImGui::DockSpace(dockspaceID, ImVec2(0.0f, 0.0f), dockspace_flags, nullptr);
 
-		ImGui::End();
+
 
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 				
@@ -399,14 +424,16 @@ public:
 		}
 
 		auto& transform = gCoordinator.GetComponent<Transform>(example->camera);
+		auto& cam = gCoordinator.GetComponent<Camera>(example->camera);
+		
 		ImGui::PlotLines("Frame Times", &uiSettings.frameTimes[0], 50, 0, "", uiSettings.frameTimeMin, uiSettings.frameTimeMax, ImVec2(0, 80));
 		ImGui::End();
 
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
 		ImGui::Begin("Camera");
 		ImGui::Text("Camera");
-		ImGui::InputFloat3("position", &transform.position.x);
-		ImGui::InputFloat3("rotation", &transform.rotation.x);
+		ImGui::InputFloat3("position", &cam.pos.x);
+		ImGui::InputFloat3("rotation", &cam.rotation.x);
 		ImGui::End();
 		
 		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
@@ -417,43 +444,10 @@ public:
 		ImGui::Checkbox("Animate light", &uiSettings.animateLight);
 		ImGui::SliderFloat("Light speed", &uiSettings.lightSpeed, 0.1f, 1.0f);
 		ImGui::End();
-
-
-		ImGui::SetNextWindowDockID(dockspaceID , ImGuiCond_FirstUseEver);
-		ImGui::Begin("Editor");
-		
-		if((example->mousePos.x >= vMin.x &&example->mousePos.x <= vMax.x-10)&&(example->mousePos.y >= vMin.y &&example->mousePos.y <= vMax.y-10)){
-			io.WantCaptureMouse = false;
-			io.ConfigWindowsMoveFromTitleBarOnly=true;
-		}
-
-		{
-			editor_size = ImGui::GetWindowSize();
-			vMin = ImGui::GetWindowContentRegionMin();
-			vMax = ImGui::GetWindowContentRegionMax();
-
-			vMin.x += ImGui::GetWindowPos().x;
-			vMin.y += ImGui::GetWindowPos().y;
-			vMax.x += ImGui::GetWindowPos().x;
-			vMax.y += ImGui::GetWindowPos().y;
-
-			offset.x = 0;
-			offset.y = 0;
-
-			offset.x += ImGui::GetWindowPos().x;
-			offset.y += ImGui::GetWindowPos().y;
-
-			ImGui::GetForegroundDrawList()->AddRect( vMin, vMax, IM_COL32( 255, 255, 0, 255 ) );
-			
-		
-
-		}
-
 		ImGui::End();
-		
-
+	
 		// Render to generate draw buffers
-		ImGui::Render();
+		
 	}
 
 	static void draw_callback(const ImDrawList* parent_list, const ImDrawCmd* cmd)

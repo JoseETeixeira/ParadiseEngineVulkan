@@ -15,7 +15,7 @@
 #include <CoreVideo/CVDisplayLink.h>
 #endif
 
-#include "../ecs/components/Camera.hpp"
+
 #include "../ecs/components/Transform.hpp"
 #include "../ecs/Coordinator.hpp"
 
@@ -219,15 +219,21 @@ void VulkanExampleBase::prepare()
 	gCoordinator.AddComponent(
 		camera,
 		Transform{
-			.position = Vec3(0.0f, 0.0f, 1.0f),
-			.rotation = Vec3(0.0f, 0.0f, -180.0f)
+			.position = glm::vec3(0.0f, 0.0f, 1.0f),
+			.rotation = glm::vec3(0.0f, 0.0f, 0.0f),
+			.scale = glm::vec3(1.0f, 1.0f, 1.0f)
 		});
 
-	gCoordinator.AddComponent(
-		camera,
-		Camera{
-			.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, 1920, 1080)
-		});
+
+	cam.setViewAngle(glm::radians(45.0f));
+	cam.setAspectRatio((float)1920/1080);
+	cam.setNearClipDist(0.1f);
+	cam.setFarClipDist(1000.0f);
+	cam.setCameraFocus(glm::vec3(0.0f,0.0f,-1.0f));
+	cam.setCameraUpVec(glm::vec3(0.0f,-1.0f,0.0f));
+
+
+	gCoordinator.AddComponent(camera,cam);
 }
 
 VkPipelineShaderStageCreateInfo VulkanExampleBase::loadShader(std::string fileName, VkShaderStageFlagBits stage)
@@ -665,8 +671,8 @@ void VulkanExampleBase::updateOverlay()
 	io.DeltaTime = frameTimer;
 
 	io.MousePos = ImVec2(mousePos.x, mousePos.y);
-	io.MouseDown[0] = mButtons.test(static_cast<std::size_t>(MouseButtons::Left));
-	io.MouseDown[1] = mButtons.test(static_cast<std::size_t>(MouseButtons::Right));
+	io.MouseDown[0] = mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left));
+	io.MouseDown[1] = mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right));
 
 	ImGui::NewFrame();
 
@@ -2892,7 +2898,7 @@ void VulkanExampleBase::windowResize()
 
 	if ((width > 0.0f) && (height > 0.0f)) {
 		auto& cam = gCoordinator.GetComponent<Camera>(camera);
-		cam.projectionTransform = Camera::MakeProjectionTransform(45.0f, 0.1f, 1000.0f, (float)width, (float)height);
+		cam.setAspectRatio((float)width/(float)height);
 	}
 
 	// Notify derived class
@@ -2926,20 +2932,23 @@ void VulkanExampleBase::handleMouseMove(int32_t x, int32_t y)
 	}
 
 	auto& transform = gCoordinator.GetComponent<Transform>(camera);
+	auto& cam = gCoordinator.GetComponent<Camera>(camera);
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Left))) {
 		
-		transform.rotation += Vec3(dy * 1.0f, -dx * 1.0f, 0.0f);
+		cam.rotate(glm::vec3(dy *0.1f ,-dx * 0.1f, 0.0f));
+		
 		viewUpdated = true;
 	}
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Right))) {
-		transform.position += Vec3(-0.0f, 0.0f, dy * .005f);
+		cam.translate(glm::vec3(-0.0f, 0.0f, dy * .005f));
 		viewUpdated = true;
 	}
 	if (mouseButtons.test(static_cast<std::size_t>(MouseButtons::Middle))) {
-		transform.position += Vec3(-dx * 0.01f, -dy * 0.01f, 0.0f);
+		cam.translate (glm::vec3(-dx * 0.01f, -dy * 0.01f, 0.0f));
 		viewUpdated = true;
 	}
 	mousePos = glm::vec2((float)x, (float)y);
+
 
 	
 }

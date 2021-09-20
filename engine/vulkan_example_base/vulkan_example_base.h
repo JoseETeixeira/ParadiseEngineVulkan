@@ -70,6 +70,7 @@
 #include "../vulkan_texture/vulkan_texture.h"
 
 #include "../ecs/Coordinator.hpp"
+#include "../ecs/components/Camera.h"
 
 #include "../VulkanInitializers.hpp"
 #include "../benchmark.hpp"
@@ -189,6 +190,7 @@ public:
 	uint32_t height = 720;
 	std::bitset<8> mButtons;
 	std::bitset<8> mouseButtons;
+	Camera cam;
 	struct {
 		bool left = false;
 		bool right = false;

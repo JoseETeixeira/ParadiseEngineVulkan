@@ -19,6 +19,7 @@
 #include "vulkan/vulkan.h"
 #include "../vulkan_device/vulkan_device.h"
 #include "../vulkan_texture/vulkan_texture.h"
+#include "../vulkan_example_base/vulkan_example_base.h"
 
 #include "../../third_party/ktx/include/ktx.h"
 #include "../../third_party/ktx/include/ktxvulkan.h"
@@ -43,6 +44,10 @@
 #endif
 
 #include "../ecs/components/Transform.hpp"
+#include "../ecs/components/Camera.h"
+
+
+extern Coordinator gCoordinator;
 
 // Contains everything required to render a glTF model in Vulkan
 // This class is heavily simplified (compared to glTF's feature set) but retains the basic glTF structure
@@ -128,17 +133,7 @@ public:
 
 	~VulkanglTFModel()
 	{
-		// Release all Vulkan resources allocated for the model
-		vkDestroyBuffer(vulkanDevice->logicalDevice, vertices.buffer, nullptr);
-		vkFreeMemory(vulkanDevice->logicalDevice, vertices.memory, nullptr);
-		vkDestroyBuffer(vulkanDevice->logicalDevice, indices.buffer, nullptr);
-		vkFreeMemory(vulkanDevice->logicalDevice, indices.memory, nullptr);
-		for (Image image : images) {
-			vkDestroyImageView(vulkanDevice->logicalDevice, image.texture.view, nullptr);
-			vkDestroyImage(vulkanDevice->logicalDevice, image.texture.image, nullptr);
-			vkDestroySampler(vulkanDevice->logicalDevice, image.texture.sampler, nullptr);
-			vkFreeMemory(vulkanDevice->logicalDevice, image.texture.deviceMemory, nullptr);
-		}
+		
 	}
 
 	void loadImages(tinygltf::Model& input){
@@ -325,38 +320,60 @@ public:
 			nodes.push_back(node);
 		}
 	};
-	void drawNode(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node, Transform transform){
-		if (node.mesh.primitives.size() > 0) {
-			// Pass the node's matrix via push constants
-			// Traverse the node hierarchy to the top-most parent to get the final matrix of the current node
-			glm::mat4 rotM = glm::mat4(1.0f);
-			glm::mat4 transM;
-			glm::mat4 scaleM;
+	void drawNode(VulkanExampleBase *example,VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, VulkanglTFModel::Node node, Transform meshTransform){
+			if (node.mesh.primitives.size() > 0) {
+				auto &cam = gCoordinator.GetComponent<Camera>(example->camera);
 
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-			rotM = glm::rotate(rotM, glm::radians(transform.rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+				glm::mat4 rotM = glm::mat4(1.0f);
+				glm::mat4 transM;
+				glm::mat4 scaleM;
 
-			glm::vec3 translation = glm::vec3(transform.position.x,transform.position.y,transform.position.z);
-			glm::vec3 scale = glm::vec3(transform.scale.x,transform.scale.y,transform.scale.z);
-		
-		
+				
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.x ), glm::vec3(1.0f, 0.0f, 0.0f));
+				
+				
+				rotM = glm::rotate(rotM,glm::radians(meshTransform.rotation.y ), glm::vec3(0.0f, 1.0f, 0.0f));
+
 			
-			transM = glm::translate(glm::mat4(1.0f), translation);
+				rotM = glm::rotate(rotM, glm::radians(meshTransform.rotation.z), glm::vec3(1.0f, 0.0f, 0.0f));
+			
+				
+				
+				glm::vec3 translation =   glm::vec3(meshTransform.position.x,meshTransform.position.y ,meshTransform.position.z)  ;
+				glm::vec3 scale = glm::vec3(meshTransform.scale.x, meshTransform.scale.y, meshTransform.scale.z);
 
-			scaleM = glm::scale(glm::mat4(1.0f), scale);
+				translation.y *= -1.0f;
 
-			//if (type == CameraType::firstperson)
-			//{
-			glm::mat4 nodeMatrix =  scaleM* rotM * transM * node.matrix;
+				transM = glm::translate(glm::mat4(1.0f), translation);
 
-			VulkanglTFModel::Node* currentParent = node.parent;
-			while (currentParent) {
-				nodeMatrix = currentParent->matrix * nodeMatrix;
-				currentParent = currentParent->parent;
-			}
+				scaleM = glm::scale(glm::mat4(1.0f), scale);
+				glm::mat4 nodeMatrix;
+
+				glm::mat4 projViewMatrix  = cam.getProjMat() * cam.getViewMat();
+
+				projViewMatrix[0][1] *= -1.0f;
+				projViewMatrix[1][1] *= -1.0f;
+				projViewMatrix[2][1] *= -1.0f;
+				projViewMatrix[3][1] *= -1.0f;
+
+				if (cam.type == Camera::CameraType::firstperson){
+					 nodeMatrix = projViewMatrix *  rotM *transM  * scaleM * node.matrix  ;
+				}else{
+					nodeMatrix = projViewMatrix * transM * rotM * scaleM * node.matrix ;
+				}
+
+				VulkanglTFModel::Node* currentParent = node.parent;
+				while (currentParent) {
+					nodeMatrix = currentParent->matrix * nodeMatrix;
+					currentParent = currentParent->parent;
+				}
+
+				
+
+
 			// Pass the final matrix to the vertex shader using push constants
 			vkCmdPushConstants(commandBuffer, pipelineLayout, VK_SHADER_STAGE_VERTEX_BIT, 0, sizeof(glm::mat4), &nodeMatrix);
+
 			for (VulkanglTFModel::Primitive& primitive : node.mesh.primitives) {
 				if (primitive.indexCount > 0) {
 					// Get the texture index for this primitive
@@ -368,17 +385,17 @@ public:
 			}
 		}
 		for (auto& child : node.children) {
-			drawNode(commandBuffer, pipelineLayout, child,transform);
+			drawNode(example,commandBuffer, pipelineLayout, child,meshTransform);
 		}
 	};
-	void draw(VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, Transform transform){
+	void draw(VulkanExampleBase *example,VkCommandBuffer commandBuffer, VkPipelineLayout pipelineLayout, Transform transform){
 		// All vertices and indices are stored in single buffers, so we only need to bind once
 		VkDeviceSize offsets[1] = { 0 };
 		vkCmdBindVertexBuffers(commandBuffer, 0, 1, &vertices.buffer, offsets);
 		vkCmdBindIndexBuffer(commandBuffer, indices.buffer, 0, VK_INDEX_TYPE_UINT32);
 		// Render all nodes at top-level
 		for (auto& node : nodes) {
-			drawNode(commandBuffer, pipelineLayout, node,transform);
+			drawNode(example,commandBuffer, pipelineLayout, node,transform);
 		}
 	};
 	void rotate_node(uint32_t index, float degrees){};

@@ -13,7 +13,7 @@
 
 
 
-#include "../../engine/ecs/components/Camera.hpp"
+#include "../../engine/ecs/components/Camera.h"
 #include "../../engine/ecs/components/Transform.hpp"
 #include "../../engine/ecs/components/Renderable.hpp"
 
@@ -94,8 +94,8 @@ public:
 			signature.set(gCoordinator.GetComponentType<Renderable>());
 			gCoordinator.SetSystemSignature<MeshSystem>(signature);
 		}
-
-		meshSystem->Init(this);
+		
+		
 
 		
 
@@ -117,7 +117,7 @@ public:
 	void draw()
 	{
 		VulkanExampleBase::prepareFrame();
-		meshSystem->buildCommandBuffers();
+		meshSystem->Draw();
 		submitInfo.commandBufferCount = 1;
 		submitInfo.pCommandBuffers = &drawCmdBuffers[currentBuffer];
 		VK_CHECK_RESULT(vkQueueSubmit(queue, 1, &submitInfo, VK_NULL_HANDLE));
@@ -164,7 +164,14 @@ public:
 			std::map<std::string,luabridge::LuaRef> key_value_map = readTable(entities[iterator.key()]);
 			std::string path;
 			Entity mesh = gCoordinator.CreateEntity();
+
+			
 			gCoordinator.AddComponent(mesh,Transform{});
+
+			Renderable renderable;
+
+			
+			
 			Transform mesh_transform;
 			for (auto it = key_value_map.begin(); it != key_value_map.end(); it++)
 			{
@@ -174,6 +181,14 @@ public:
 					path = it->second.cast<std::string>();
 					
 					std::cout <<path;
+
+
+					renderable.path = path;
+					renderable.model = Renderable::loadglTFFile(path,this);
+					
+					
+					
+					
 				}
 
 				if(it->first.compare("px")==0){
@@ -232,14 +247,20 @@ public:
 
 
 			}
-			meshSystem->addMesh(mesh,path);
+			
 			auto& trans = gCoordinator.GetComponent<Transform>(mesh);
 			trans.position = mesh_transform.position;
 			trans.rotation = mesh_transform.rotation;
 			trans.scale = mesh_transform.scale;
+
+			gCoordinator.AddComponent(mesh,renderable);
+			
+			meshSystem->mEntities.insert(mesh);
 			
 			// Use  and  here
 		}
+
+		
 
 	}
 	
@@ -249,7 +270,7 @@ public:
 		
 		VulkanExampleBase::prepare();
 		setupLua();
-	
+		meshSystem->Init(this);
 		prepared = true;
 	}
 
@@ -269,13 +290,14 @@ public:
 		io.MouseDown[1] = mouseBtns.right;
 
 		draw();
+		
 
-		meshSystem->updateUniformBuffers();
+
 	}
 
 	virtual void viewChanged()
 	{
-		meshSystem->updateUniformBuffers();
+
 	}
 
 	
