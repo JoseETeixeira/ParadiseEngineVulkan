@@ -4,7 +4,7 @@
 
 ParadiseEngine is an open source under development game engine based on Vulkan for both Windows and Linux
 
-![Main](doc/main.png)
+![Main](doc/screenshot.png)
 
 ## CLONING
 
@@ -96,6 +96,9 @@ Create a compile.sh file with the following contents:
 Replace the path to glslc with the path to where you installed the Vulkan SDK. Make the script executable with chmod +x compile.sh and run it.`
 
 ## TODO:
+
+- Start setting up nodes and node hierarchy
+
 - Change [staging buffer](https://vulkan-tutorial.com/en/Vertex_buffers/Staging_buffer) to use [VulkanMemoryAllocator] (https://github.com/GPUOpen-LibrariesAndSDKs/VulkanMemoryAllocator)
 
 - Entity Component system https://github.com/skypjack/entt
