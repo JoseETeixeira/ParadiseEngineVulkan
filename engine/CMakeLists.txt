@@ -3,6 +3,7 @@ file(GLOB BASE_SRC
 "*.hpp" 
 "*.h" 
 "../third_party/imgui/*.cpp" 
+"../third_party/vulkan_memory_allocator/vk_mem_alloc.cpp" 
 "../third_party/imGuizmo/*.cpp" 
 "ecs/*.hpp"
 "ecs/components/*.hpp" 

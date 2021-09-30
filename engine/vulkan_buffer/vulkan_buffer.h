@@ -13,7 +13,26 @@
 #include <vector>
 
 #include "vulkan/vulkan.h"
-#include "../vulkan_tools/vulkan_tools.h"
+#include <math.h>
+#include <stdlib.h>
+#include <string>
+#include <cstring>
+#include <fstream>
+#include <assert.h>
+#include <stdio.h>
+#include <vector>
+#include <iostream>
+#include <stdexcept>
+#include <fstream>
+#if defined(_WIN32)
+#include <windows.h>
+#include <fcntl.h>
+#include <io.h>
+#elif defined(__ANDROID__)
+#include "VulkanAndroid.h"
+#include <android/asset_manager.h>
+#endif
+#include "../../third_party/vulkan_memory_allocator/vk_mem_alloc.h"
 
 namespace vks
 {	
@@ -23,6 +42,7 @@ namespace vks
 	*/
 	struct Buffer
 	{
+		VmaAllocation m_allocation{VK_NULL_HANDLE};
 		VkDevice device;
 		VkBuffer buffer = VK_NULL_HANDLE;
 		VkDeviceMemory memory = VK_NULL_HANDLE;

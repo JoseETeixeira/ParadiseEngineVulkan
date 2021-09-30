@@ -12,7 +12,8 @@
 
 #include "../vulkan_buffer/vulkan_buffer.h"
 #include "../vulkan_tools/vulkan_tools.h"
-#include "vulkan/vulkan.h"
+#include "../../third_party/vulkan_memory_allocator/vk_mem_alloc.h"
+#include "../../third_party/vulkan/vulkan.h"
 #include <algorithm>
 #include <assert.h>
 #include <exception>
@@ -52,6 +53,8 @@ struct VulkanDevice
 	{
 		return logicalDevice;
 	};
+
+	VmaAllocator m_allocator{VK_NULL_HANDLE};
 	explicit VulkanDevice(VkPhysicalDevice physicalDevice);
 	~VulkanDevice();
 	uint32_t        getMemoryType(uint32_t typeBits, VkMemoryPropertyFlags properties, VkBool32 *memTypeFound = nullptr) const;
@@ -67,5 +70,9 @@ struct VulkanDevice
 	void            flushCommandBuffer(VkCommandBuffer commandBuffer, VkQueue queue, bool free = true);
 	bool            extensionSupported(std::string extension);
 	VkFormat        getSupportedDepthFormat(bool checkSamplingSupport);
+
+	//MEMORY ALLOCATOR
+	VkResult create_allocator();
+	VmaAllocator GetAllocatorHandle() const { return m_allocator; }
 };
 }        // namespace vks

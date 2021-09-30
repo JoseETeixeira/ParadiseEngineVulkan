@@ -18,6 +18,36 @@ namespace vks
 	*
 	* @param physicalDevice Physical device that is to be used
 	*/
+
+	VkResult VulkanDevice::create_allocator() {
+		VmaVulkanFunctions vk_funcs = {
+			vkGetPhysicalDeviceProperties,
+			vkGetPhysicalDeviceMemoryProperties,
+			vkAllocateMemory,
+			vkFreeMemory,
+			vkMapMemory,
+			vkUnmapMemory,
+			vkFlushMappedMemoryRanges,
+			vkInvalidateMappedMemoryRanges,
+			vkBindBufferMemory,
+			vkBindImageMemory,
+			vkGetBufferMemoryRequirements,
+			vkGetImageMemoryRequirements,
+			vkCreateBuffer,
+			vkDestroyBuffer,
+			vkCreateImage,
+			vkDestroyImage,
+			vkCmdCopyBuffer
+		};
+
+		VmaAllocatorCreateInfo create_info = {};
+		create_info.device = logicalDevice;
+		create_info.physicalDevice = physicalDevice;
+		create_info.pVulkanFunctions = &vk_funcs;
+
+		return vmaCreateAllocator(&create_info, &m_allocator);
+	}
+
 	VulkanDevice::VulkanDevice(VkPhysicalDevice physicalDevice)
 	{
 		assert(physicalDevice);

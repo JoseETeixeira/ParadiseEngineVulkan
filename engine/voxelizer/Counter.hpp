@@ -2,6 +2,7 @@
 #define COUNTER_HPP
 
 #include "../../third_party/vulkan/vulkan.h"
+#include "../vulkan_device/vulkan_device.hpp"
 #include <memory>
 
 class Counter {
@@ -10,7 +11,7 @@ private:
 	std::shared_ptr<VkFence> m_fence;
 
 public:
-	void Initialize(const std::shared_ptr<VkDevice> &device);
+	void Initialize(const std::shared_ptr<VkCommandPool> &command_pool,const std::shared_ptr<vks::VulkanDevice> &device);
 	void Reset(const std::shared_ptr<VkCommandPool> &command_pool, uint32_t value = 0);
 	uint32_t Read(const std::shared_ptr<VkCommandPool> &command_pool) const;
 
