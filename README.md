@@ -75,6 +75,8 @@ make
 - https://eliasdaler.wordpress.com/2016/01/07/using-lua-with-c-in-practice-part4/
 - https://learnopengl.com/Getting-started/Camera
 https://www.geeksforgeeks.org/integrating-lua-in-cpp/
+- https://maverick.inria.fr/Publications/2009/CNLE09/CNLE09.pdf
+- http://gigavoxels.inrialpes.fr/documentation.html
 
 ## COMPILING SHADERS (TEMPORARY, WILL BE AUTO-IMPLEMENTED LATER)
 
