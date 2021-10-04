@@ -29,7 +29,15 @@ file(GLOB BASE_SRC
 "vulkan_tools/*.h" 
 "vulkan_tools/*.cpp" 
 "vulkan_ui_overlay/*.h" 
-"vulkan_ui_overlay/*.cpp")
+"vulkan_ui_overlay/*.cpp"
+"myvk/*.cpp"
+"myvk/*.hpp"
+"myvk/*.h"
+"voxelizer/*.cpp"
+"voxelizer/*.hpp"
+"voxelizer/*.h"
+
+)
 file(GLOB BASE_HEADERS "*.hpp" "*.h")
 
 set(KTX_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../third_party/ktx)

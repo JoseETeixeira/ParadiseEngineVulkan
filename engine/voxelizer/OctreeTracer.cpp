@@ -48,7 +48,7 @@ void OctreeTracer::create_frame_resources(const std::shared_ptr<myvk::Device> &d
 void OctreeTracer::create_main_graphics_pipeline(const std::shared_ptr<myvk::RenderPass> &render_pass,
                                                  uint32_t subpass) {
 	constexpr uint32_t kOctreeTracerFragSpv[] = {
-#include "spirv/octree_tracer.frag.u32"
+#include "../../shaders/spirv/octree_tracer.frag.u32"
 	};
 	std::shared_ptr<myvk::Device> device = render_pass->GetDevicePtr();
 
@@ -117,7 +117,7 @@ void OctreeTracer::create_beam_render_pass(const std::shared_ptr<myvk::Device> &
 
 void OctreeTracer::create_beam_graphics_pipeline(const std::shared_ptr<myvk::Device> &device) {
 	constexpr uint32_t kOctreeTracerBeamFragSpv[] = {
-#include "spirv/octree_tracer_beam.frag.u32"
+#include "../../shaders/spirv/octree_tracer_beam.frag.u32"
 	};
 	std::shared_ptr<myvk::ShaderModule> vert_shader_module, frag_shader_module;
 	vert_shader_module = myvk::ShaderModule::Create(device, kQuadVertSpv, sizeof(kQuadVertSpv));

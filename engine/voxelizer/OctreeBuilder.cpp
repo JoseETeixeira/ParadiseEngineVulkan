@@ -105,7 +105,7 @@ void OctreeBuilder::create_pipeline(const std::shared_ptr<myvk::Device> &device)
 
 	{
 		constexpr uint32_t kOctreeTagNodeCompSpv[] = {
-#include "spirv/octree_tag_node.comp.u32"
+#include "../../shaders/spirv/octree_tag_node.comp.u32"
 		};
 		std::shared_ptr<myvk::ShaderModule> octree_tag_node_shader_module =
 		    myvk::ShaderModule::Create(device, kOctreeTagNodeCompSpv, sizeof(kOctreeTagNodeCompSpv));
@@ -114,7 +114,7 @@ void OctreeBuilder::create_pipeline(const std::shared_ptr<myvk::Device> &device)
 
 	{
 		constexpr uint32_t kOctreeInitNodeCompSpv[] = {
-#include "spirv/octree_init_node.comp.u32"
+#include "../../shaders/spirv/octree_init_node.comp.u32"
 		};
 		std::shared_ptr<myvk::ShaderModule> octree_init_node_shader_module =
 		    myvk::ShaderModule::Create(device, kOctreeInitNodeCompSpv, sizeof(kOctreeInitNodeCompSpv));
@@ -123,7 +123,7 @@ void OctreeBuilder::create_pipeline(const std::shared_ptr<myvk::Device> &device)
 
 	{
 		constexpr uint32_t kOctreeAllocNodeCompSpv[] = {
-#include "spirv/octree_alloc_node.comp.u32"
+#include "../../shaders/spirv/octree_alloc_node.comp.u32"
 		};
 		std::shared_ptr<myvk::ShaderModule> octree_alloc_node_shader_module =
 		    myvk::ShaderModule::Create(device, kOctreeAllocNodeCompSpv, sizeof(kOctreeAllocNodeCompSpv));
@@ -132,7 +132,7 @@ void OctreeBuilder::create_pipeline(const std::shared_ptr<myvk::Device> &device)
 
 	{
 		constexpr uint32_t kOctreeModifyArgCompSpv[] = {
-#include "spirv/octree_modify_arg.comp.u32"
+#include "../../shaders/spirv/octree_modify_arg.comp.u32"
 		};
 		std::shared_ptr<myvk::ShaderModule> octree_modify_arg_shader_module =
 		    myvk::ShaderModule::Create(device, kOctreeModifyArgCompSpv, sizeof(kOctreeModifyArgCompSpv));

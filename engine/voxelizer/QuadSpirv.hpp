@@ -3,6 +3,6 @@
 
 #include <cinttypes>
 constexpr uint32_t kQuadVertSpv[] = {
-#include "spirv/quad.vert.u32"
+#include "../../shaders/spirv/quad.vert.u32"
 };
 #endif

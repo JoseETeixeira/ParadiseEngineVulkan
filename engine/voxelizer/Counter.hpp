@@ -1,21 +1,21 @@
 #ifndef COUNTER_HPP
 #define COUNTER_HPP
 
-#include "../../third_party/vulkan/vulkan.h"
-#include "../vulkan_device/vulkan_device.hpp"
-#include <memory>
+#include "myvk/Buffer.hpp"
+#include "myvk/CommandBuffer.hpp"
+#include "myvk/Fence.hpp"
 
 class Counter {
 private:
-	std::shared_ptr<VkCommandBuffer> m_buffer, m_staging_buffer;
-	std::shared_ptr<VkFence> m_fence;
+	std::shared_ptr<myvk::Buffer> m_buffer, m_staging_buffer;
+	std::shared_ptr<myvk::Fence> m_fence;
 
 public:
-	void Initialize(const std::shared_ptr<VkCommandPool> &command_pool,const std::shared_ptr<vks::VulkanDevice> &device);
-	void Reset(const std::shared_ptr<VkCommandPool> &command_pool, uint32_t value = 0);
-	uint32_t Read(const std::shared_ptr<VkCommandPool> &command_pool) const;
+	void Initialize(const std::shared_ptr<myvk::Device> &device);
+	void Reset(const std::shared_ptr<myvk::CommandPool> &command_pool, uint32_t value = 0);
+	uint32_t Read(const std::shared_ptr<myvk::CommandPool> &command_pool) const;
 
-	const std::shared_ptr<VkCommandBuffer> &GetBuffer() const { return m_buffer; }
+	const std::shared_ptr<myvk::Buffer> &GetBuffer() const { return m_buffer; }
 };
 
 #endif

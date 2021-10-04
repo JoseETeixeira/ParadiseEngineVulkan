@@ -1,15 +1,12 @@
 #include "Counter.hpp"
-#include "../VulkanBuffer.hpp"
 
-void Counter::Initialize(const std::shared_ptr<VkCommandPool> &command_pool,const std::shared_ptr<vks::VulkanDevice> &device) {
-
-
-	m_buffer = vks::initializers::CreateBuffer(device, sizeof(uint32_t), VMA_MEMORY_USAGE_GPU_ONLY,
+void Counter::Initialize(const std::shared_ptr<myvk::Device> &device) {
+	m_buffer = myvk::Buffer::Create(device, sizeof(uint32_t), VMA_MEMORY_USAGE_GPU_ONLY,
 	                                VK_BUFFER_USAGE_STORAGE_BUFFER_BIT | VK_BUFFER_USAGE_TRANSFER_DST_BIT |
 	                                    VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
-	m_staging_buffer = vks::initializers::CreateBuffer(device, sizeof(uint32_t), VMA_MEMORY_USAGE_CPU_ONLY,
+	m_staging_buffer = myvk::Buffer::Create(device, sizeof(uint32_t), VMA_MEMORY_USAGE_CPU_ONLY,
 	                                        VK_BUFFER_USAGE_TRANSFER_DST_BIT | VK_BUFFER_USAGE_TRANSFER_SRC_BIT);
-	//m_fence = myvk::Fence::Create(device);
+	m_fence = myvk::Fence::Create(device);
 }
 
 void Counter::Reset(const std::shared_ptr<myvk::CommandPool> &command_pool, uint32_t value) {

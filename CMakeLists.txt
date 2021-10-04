@@ -11,10 +11,13 @@ set(NAME ParadiseEngine)
 project(${NAME})
 
 include_directories(third_party)
-include_directories(third_party/glm)
 include_directories(third_party/glfw/lib-vc2019)
 include_directories(third_party/glfw/include/GLFW)
 include_directories(third_party/imgui)
+include_directories(third_party/meshoptimizer/src)
+include_directories(third_party/stb_image)
+include_directories(third_party/tinyexr)
+include_directories(third_party/tinyfiledialogs)
 include_directories(third_party/imGuizmo)
 include_directories(third_party/tinygltf)
 include_directories(third_party/ktx/include)
@@ -37,6 +40,13 @@ include_directories(engine/vulkan_swap_chain)
 include_directories(engine/vulkan_texture)
 include_directories(engine/vulkan_tools)
 include_directories(engine/vulkan_ui_overlay)
+
+add_subdirectory(third_party/volk)
+add_subdirectory(third_party/glm)
+
+add_subdirectory(third_party/spdlog)
+add_subdirectory(third_party/tiny_obj_loader)
+
 
 
 OPTION(USE_D2D_WSI "Build the project using Direct to Display swapchain" OFF)
@@ -166,7 +176,7 @@ IF(WIN32)
 ELSEIF(APPLE)
 	link_libraries(${Vulkan_LIBRARY} "-framework AppKit" "-framework QuartzCore")
 ELSE(WIN32)
-	link_libraries(${XCB_LIBRARIES} ${Vulkan_LIBRARY} ${Vulkan_LIBRARY} ${DIRECTFB_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+	link_libraries(${XCB_LIBRARIES} glm spdlog tinyobjloader ${Vulkan_LIBRARY} ${Vulkan_LIBRARY} ${DIRECTFB_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 ENDIF(WIN32)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")

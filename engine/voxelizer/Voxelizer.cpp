@@ -66,13 +66,13 @@ void Voxelizer::create_render_pass(const std::shared_ptr<myvk::Device> &device) 
 
 void Voxelizer::create_pipeline(const std::shared_ptr<myvk::Device> &device) {
 	constexpr uint32_t kVoxelizerVertSpv[] = {
-#include "spirv/voxelizer.vert.u32"
+#include "../../shaders/spirv/voxelizer.vert.u32"
 	};
 	constexpr uint32_t kVoxelizerGeomSpv[] = {
-#include "spirv/voxelizer.geom.u32"
+#include "../../shaders/spirv/voxelizer.geom.u32"
 	};
 	constexpr uint32_t kVoxelizerFragSpv[] = {
-#include "spirv/voxelizer.frag.u32"
+#include "../../shaders/spirv/voxelizer.frag.u32"
 	};
 
 	m_pipeline_layout =
