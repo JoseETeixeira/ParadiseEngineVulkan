@@ -1,7 +1,6 @@
 #pragma once
 
-#include "../math/Vec3.hpp"
-#include "../math/Vec2.hpp"
+#include "../../voxelizer/VoxelOctree.hpp"
 #include "../../vulkan_example_base/vulkan_example_base.h"
 #include "Transform.hpp"
 #include "Camera.h"
@@ -22,7 +21,7 @@ struct Renderable
 	std::string path;
 	VulkanglTFModel model;
 	bool enabled = false;
-	
+
 
 	struct DescriptorSetLayouts {
 		VkDescriptorSetLayout matrices;

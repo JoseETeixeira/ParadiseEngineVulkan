@@ -13,8 +13,6 @@
 #include "../../../third_party/imgui/imgui.h"
 #include "../../../third_party/imGuizmo/ImGuizmo.h"
 #include "../../../third_party/imgui/backends/imgui_impl_vulkan.h"
-#include "../math/Vec3.hpp"
-#include "../math/Vec2.hpp"
 #include "../../vulkan_gltf_model/vulkan_gltf_model.hpp"
 #include <glm/gtx/matrix_decompose.hpp>
 #include <algorithm>

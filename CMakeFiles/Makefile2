@@ -56,7 +56,6 @@ CMAKE_BINARY_DIR = /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngi
 all: third_party/volk/all
 all: third_party/glm/all
 all: third_party/spdlog/all
-all: third_party/tiny_obj_loader/all
 all: engine/all
 all: entry/all
 
@@ -66,7 +65,6 @@ all: entry/all
 preinstall: third_party/volk/preinstall
 preinstall: third_party/glm/preinstall
 preinstall: third_party/spdlog/preinstall
-preinstall: third_party/tiny_obj_loader/preinstall
 preinstall: engine/preinstall
 preinstall: entry/preinstall
 
@@ -76,7 +74,6 @@ preinstall: entry/preinstall
 clean: third_party/volk/clean
 clean: third_party/glm/clean
 clean: third_party/spdlog/clean
-clean: third_party/tiny_obj_loader/clean
 clean: engine/clean
 clean: entry/clean
 
@@ -173,25 +170,6 @@ third_party/spdlog/clean: third_party/spdlog/CMakeFiles/spdlog.dir/clean
 .PHONY : third_party/spdlog/clean
 
 #=============================================================================
-# Directory level rules for directory third_party/tiny_obj_loader
-
-# Recursive "all" directory target.
-third_party/tiny_obj_loader/all: third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all
-
-.PHONY : third_party/tiny_obj_loader/all
-
-# Recursive "preinstall" directory target.
-third_party/tiny_obj_loader/preinstall:
-
-.PHONY : third_party/tiny_obj_loader/preinstall
-
-# Recursive "clean" directory target.
-third_party/tiny_obj_loader/clean: third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/clean
-third_party/tiny_obj_loader/clean: third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/clean
-
-.PHONY : third_party/tiny_obj_loader/clean
-
-#=============================================================================
 # Directory level rules for directory third_party/volk
 
 # Recursive "all" directory target.
@@ -216,7 +194,7 @@ third_party/volk/clean: third_party/volk/CMakeFiles/volk.dir/clean
 third_party/volk/CMakeFiles/volk.dir/all:
 	$(MAKE) -f third_party/volk/CMakeFiles/volk.dir/build.make third_party/volk/CMakeFiles/volk.dir/depend
 	$(MAKE) -f third_party/volk/CMakeFiles/volk.dir/build.make third_party/volk/CMakeFiles/volk.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=83,84 "Built target volk"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=77,78 "Built target volk"
 .PHONY : third_party/volk/CMakeFiles/volk.dir/all
 
 # Build rule for subdir invocation for target.
@@ -243,7 +221,7 @@ third_party/volk/CMakeFiles/volk.dir/clean:
 third_party/spdlog/CMakeFiles/spdlog.dir/all:
 	$(MAKE) -f third_party/spdlog/CMakeFiles/spdlog.dir/build.make third_party/spdlog/CMakeFiles/spdlog.dir/depend
 	$(MAKE) -f third_party/spdlog/CMakeFiles/spdlog.dir/build.make third_party/spdlog/CMakeFiles/spdlog.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=73,74,75,76,77,78,79,80 "Built target spdlog"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=69,70,71,72,73,74,75,76 "Built target spdlog"
 .PHONY : third_party/spdlog/CMakeFiles/spdlog.dir/all
 
 # Build rule for subdir invocation for target.
@@ -264,73 +242,18 @@ third_party/spdlog/CMakeFiles/spdlog.dir/clean:
 .PHONY : third_party/spdlog/CMakeFiles/spdlog.dir/clean
 
 #=============================================================================
-# Target rules for target third_party/tiny_obj_loader/CMakeFiles/uninstall.dir
-
-# All Build rule for target.
-third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/all:
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/build.make third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/depend
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/build.make third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num= "Built target uninstall"
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/all
-
-# Build rule for subdir invocation for target.
-third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 0
-	$(MAKE) -f CMakeFiles/Makefile2 third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 0
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/rule
-
-# Convenience name for target.
-uninstall: third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/rule
-
-.PHONY : uninstall
-
-# clean rule for target.
-third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/clean:
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/build.make third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/clean
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/uninstall.dir/clean
-
-#=============================================================================
-# Target rules for target third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir
-
-# All Build rule for target.
-third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all:
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/build.make third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/depend
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/build.make third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=81,82 "Built target tinyobjloader"
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all
-
-# Build rule for subdir invocation for target.
-third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 2
-	$(MAKE) -f CMakeFiles/Makefile2 third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 0
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/rule
-
-# Convenience name for target.
-tinyobjloader: third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/rule
-
-.PHONY : tinyobjloader
-
-# clean rule for target.
-third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/clean:
-	$(MAKE) -f third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/build.make third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/clean
-.PHONY : third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/clean
-
-#=============================================================================
 # Target rules for target engine/CMakeFiles/base.dir
 
 # All Build rule for target.
 engine/CMakeFiles/base.dir/all: third_party/spdlog/CMakeFiles/spdlog.dir/all
-engine/CMakeFiles/base.dir/all: third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all
 	$(MAKE) -f engine/CMakeFiles/base.dir/build.make engine/CMakeFiles/base.dir/depend
 	$(MAKE) -f engine/CMakeFiles/base.dir/build.make engine/CMakeFiles/base.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66,67,68,69,70 "Built target base"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,61,62,63,64,65,66 "Built target base"
 .PHONY : engine/CMakeFiles/base.dir/all
 
 # Build rule for subdir invocation for target.
 engine/CMakeFiles/base.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 80
+	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 74
 	$(MAKE) -f CMakeFiles/Makefile2 engine/CMakeFiles/base.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 0
 .PHONY : engine/CMakeFiles/base.dir/rule
@@ -350,16 +273,15 @@ engine/CMakeFiles/base.dir/clean:
 
 # All Build rule for target.
 entry/CMakeFiles/editor.dir/all: third_party/spdlog/CMakeFiles/spdlog.dir/all
-entry/CMakeFiles/editor.dir/all: third_party/tiny_obj_loader/CMakeFiles/tinyobjloader.dir/all
 entry/CMakeFiles/editor.dir/all: engine/CMakeFiles/base.dir/all
 	$(MAKE) -f entry/CMakeFiles/editor.dir/build.make entry/CMakeFiles/editor.dir/depend
 	$(MAKE) -f entry/CMakeFiles/editor.dir/build.make entry/CMakeFiles/editor.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=71,72 "Built target editor"
+	@$(CMAKE_COMMAND) -E cmake_echo_color --switch=$(COLOR) --progress-dir=/media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles --progress-num=67,68 "Built target editor"
 .PHONY : entry/CMakeFiles/editor.dir/all
 
 # Build rule for subdir invocation for target.
 entry/CMakeFiles/editor.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 82
+	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 76
 	$(MAKE) -f CMakeFiles/Makefile2 entry/CMakeFiles/editor.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start /media/eduardo/29F419E21696543C/Projects/Pessoal/ParadiseEngine/ParadiseEngineVulkan/CMakeFiles 0
 .PHONY : entry/CMakeFiles/editor.dir/rule

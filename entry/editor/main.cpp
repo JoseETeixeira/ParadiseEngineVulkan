@@ -18,8 +18,6 @@
 #include "../../engine/ecs/components/Renderable.hpp"
 
 #include "../../engine/ecs/Coordinator.hpp"
-#include "../../engine/ecs/math/Vec3.hpp"
-
 #include "../../engine/ecs/systems/CameraControlSystem.hpp"
 #include "../../engine/vulkan_example_base/vulkan_example_base.h"
 
@@ -185,6 +183,8 @@ public:
 
 					renderable.path = path;
 					renderable.model = Renderable::loadglTFFile(path,this);
+					//TODO: voxelize model
+					
 					
 					
 					

@@ -1,7 +1,6 @@
 #include "PlayerControlSystem.hpp"
 
 #include "../components/Player.hpp"
-#include "../components/Thrust.hpp"
 #include "../components/Transform.hpp"
 #include "../Coordinator.hpp"
 

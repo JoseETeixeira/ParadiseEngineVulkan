@@ -45,7 +45,6 @@ add_subdirectory(third_party/volk)
 add_subdirectory(third_party/glm)
 
 add_subdirectory(third_party/spdlog)
-add_subdirectory(third_party/tiny_obj_loader)
 
 
 
@@ -176,7 +175,7 @@ IF(WIN32)
 ELSEIF(APPLE)
 	link_libraries(${Vulkan_LIBRARY} "-framework AppKit" "-framework QuartzCore")
 ELSE(WIN32)
-	link_libraries(${XCB_LIBRARIES} glm spdlog tinyobjloader ${Vulkan_LIBRARY} ${Vulkan_LIBRARY} ${DIRECTFB_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
+	link_libraries(${XCB_LIBRARIES} glm spdlog ${Vulkan_LIBRARY} ${Vulkan_LIBRARY} ${DIRECTFB_LIBRARIES} ${WAYLAND_CLIENT_LIBRARIES} ${CMAKE_THREAD_LIBS_INIT})
 ENDIF(WIN32)
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin/")
